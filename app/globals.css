@@ -5,6 +5,16 @@
   --foreground: #171717;
 }
 
+@theme {
+  --color-caramel-900: #ebc281;
+}
+
+@layer base {
+  /* h1 {
+    font-family: 'Fredericka the Great', serif;
+  } */
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

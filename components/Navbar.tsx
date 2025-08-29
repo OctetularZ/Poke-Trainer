@@ -19,7 +19,7 @@ const Navbar = () => {
           <Link href="#">Team Builder</Link>
         </li>
       </ul>
-      <h1 className="justify-self-center">Poke Trainer</h1>
+      <h1 className="justify-self-center text-caramel-900">Poke Trainer</h1>
       <ul className="flex gap-5 justify-self-end items-center">
         <li>
           <Link href="#">Login</Link>
