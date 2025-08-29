@@ -18,7 +18,7 @@ interface PokemonBasic {
 export async function GET(request: NextRequest) {
   try {
     // GET request to PokeAPI
-    const res = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=10');
+    const res = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=10', {next: {revalidate: 3600}});
 
     if (!res.ok) {
       return NextResponse.json({ error: 'Failed to fetch Pokémon data!' }, { status: res.status });
