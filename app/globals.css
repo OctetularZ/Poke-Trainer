@@ -10,9 +10,9 @@
 }
 
 @layer base {
-  /* h1 {
-    font-family: 'Fredericka the Great', serif;
-  } */
+  h1 {
+    font-family: var(--pokefont), serif;
+  }
 }
 
 @theme inline {
