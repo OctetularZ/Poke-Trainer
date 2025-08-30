@@ -25,7 +25,7 @@ const PokeGrid = () => {
   }, [])
 
   return (
-    <div className="flex flex-row flex-wrap gap-25 justify-center pb-10">
+    <div className="flex flex-row flex-wrap gap-10 justify-center pb-10">
       {pokemon?.map((poke) => (
         <PokeCard
           key={poke.id}
