@@ -6,6 +6,9 @@ import localFont from "next/font/local"
 export const metadata: Metadata = {
   title: "Poke Trainer",
   description: "Train your pokemon skills",
+  icons: {
+    icon: "/favicon.png",
+  },
 }
 
 const pokeFont = localFont({
