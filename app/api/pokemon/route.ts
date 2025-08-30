@@ -13,12 +13,16 @@ export interface PokemonBasic {
     front_default: string;
     back_default: string;
   };
+  showdown: {
+    front_default: string;
+    back_default: string;
+  };
 }
 
 export async function GET(request: NextRequest) {
   try {
     // GET request to PokeAPI
-    const res = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=10', {next: {revalidate: 3600}});
+    const res = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=12', {next: {revalidate: 3600}});
 
     if (!res.ok) {
       return NextResponse.json({ error: 'Failed to fetch Pokémon data!' }, { status: res.status });
@@ -40,8 +44,12 @@ export async function GET(request: NextRequest) {
           id: data.id,
           name: data.name,
           sprites: {
-            front_default: data.sprites.front_default,
-            back_default: data.sprites.back_default,
+            front_default: data.sprites.front_default ?? '',
+            back_default: data.sprites.back_default ?? '',
+          },
+          showdown: {
+            front_default: data.sprites.other?.showdown?.front_default ?? '',
+            back_default: data.sprites.other?.showdown?.back_default ?? '',
           }
         };
         return filtered;
