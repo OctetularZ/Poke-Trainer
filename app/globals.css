@@ -1,17 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #0F0F10;
   --foreground: #171717;
 }
 
 @theme {
-  --color-caramel-900: #ebc281;
+  --color-charmander-blue-50: #daf9ff;
+  --color-charmander-blue-100: #aee7ff;
+  --color-charmander-blue-200: #80d5fc;
+  --color-charmander-blue-300: #50c5f9;
+  --color-charmander-blue-400: #29B6F6;
+  --color-charmander-blue-500: #099adc;
+  --color-charmander-blue-600: #0078ac;
+  --color-charmander-blue-700: #00567c;
+  --color-charmander-blue-800: #00344d;
+  --color-charmander-blue-900: #00131f;
+  --color-charmander-pale-200: #81D4FA;
+  --color-charmander-dull-200: #1C2B38;
 }
 
 @layer base {
-  h1 {
-    font-family: var(--pokefont), serif;
+  h1, li {
+    font-family: 'Pixelify Sans', serif;
   }
 }
 
@@ -20,13 +32,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
