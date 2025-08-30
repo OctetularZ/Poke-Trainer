@@ -9,6 +9,7 @@ interface urlData {
 export interface PokemonBasic {
   id: number;
   name: string;
+  types: PokemonType[];
   sprites: {
     front_default: string;
     back_default: string;
@@ -17,6 +18,16 @@ export interface PokemonBasic {
     front_default: string;
     back_default: string;
   };
+}
+
+export interface PokemonType {
+  slot: number,
+  type: Type
+}
+
+export interface Type {
+  name: string,
+  url: string
 }
 
 export async function GET(request: NextRequest) {
@@ -43,6 +54,7 @@ export async function GET(request: NextRequest) {
       const filtered: PokemonBasic = {
           id: data.id,
           name: data.name,
+          types: data.types,
           sprites: {
             front_default: data.sprites.front_default ?? '',
             back_default: data.sprites.back_default ?? '',

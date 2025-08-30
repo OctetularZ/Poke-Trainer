@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import PokeCard from "./PokeCard"
-import { PokemonBasic } from "../api/pokemon/route"
+import { PokemonBasic } from "../api/all_pokemon/route"
 
 const PokeGrid = () => {
   const [pokemon, setPokemon] = useState<PokemonBasic[]>()
@@ -8,7 +8,7 @@ const PokeGrid = () => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch("/api/pokemon") // your API route path
+    fetch("/api/all_pokemon") // your API route path
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch Pokémon")
         return res.json()
@@ -25,13 +25,14 @@ const PokeGrid = () => {
   }, [])
 
   return (
-    <div className="flex flex-row flex-wrap gap-25 justify-center">
+    <div className="flex flex-row flex-wrap gap-25 justify-center pb-10">
       {pokemon?.map((poke) => (
         <PokeCard
           key={poke.id}
           id={poke.id}
           name={`${poke.name.charAt(0).toUpperCase()}${poke.name.slice(1)}`}
           sprite={poke.showdown.front_default}
+          types={poke.types}
         />
       ))}
     </div>
