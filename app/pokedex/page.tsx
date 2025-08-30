@@ -26,7 +26,7 @@ const Pokedex = () => {
   }, [])
 
   return (
-    <div className="flex justify-center gap-5 p-5">
+    <div className="flex flex-col justify-center justify-self-center items-center gap-5 py-5 w-11/12 bg-blue-700">
       <h1 className="text-white text-6xl mt-10">Pokedex</h1>
       <PokeGrid />
     </div>

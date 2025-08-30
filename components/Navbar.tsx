@@ -5,7 +5,7 @@ import React from "react"
 
 const Navbar = () => {
   return (
-    <nav className="grid grid-cols-[1fr_auto_1fr] items-center justify-center justify-self-center mt-10 bg-charmander-dull-200 w-11/12 pl-5 pr-2 py-2 rounded-4xl text-white">
+    <nav className="grid grid-cols-[1fr_auto_1fr] items-center justify-center justify-self-center mt-10 bg-charmander-dull-200 w-11/12 pl-5 pr-2 py-2 rounded-4xl text-white shadow-md drop-shadow-[0_0_10px_rgba(41,150,246,0.7)]">
       <ul className="flex gap-5 justify-self-start items-center text-2xl">
         <li>
           <Link href="/">Home</Link>
