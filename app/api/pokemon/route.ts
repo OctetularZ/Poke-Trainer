@@ -6,7 +6,7 @@ interface urlData {
   url: string;
 }
 
-interface PokemonBasic {
+export interface PokemonBasic {
   id: number;
   name: string;
   sprites: {
