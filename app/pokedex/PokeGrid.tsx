@@ -1,6 +1,9 @@
+"use client"
 import React, { useEffect, useState } from "react"
 import PokeCard from "./PokeCard"
 import { PokemonBasic } from "../api/all_pokemon/route"
+import Image from "next/image"
+import { motion } from "motion/react"
 
 const fetchSize = 12
 
@@ -46,14 +49,32 @@ const PokeGrid = () => {
           />
         ))}
       </div>
-      {/* Load more button */}
-      {!allLoaded && (
-        <button
-          onClick={fetchPokemon}
-          className="px-6 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-md cursor-pointer hover:bg-red-600"
+      {loading ? (
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{
+            duration: 0.3,
+            ease: "linear",
+            repeat: Infinity,
+            repeatDelay: 1,
+          }}
         >
-          {loading ? "Loading..." : "Load More"}
-        </button>
+          <Image
+            src={"/pixel-great-ball.png"}
+            width={50}
+            height={50}
+            alt="pixel-great-ball-loading"
+          ></Image>
+        </motion.div>
+      ) : (
+        !allLoaded && (
+          <button
+            onClick={fetchPokemon}
+            className="px-6 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-md cursor-pointer hover:bg-red-600"
+          >
+            Load More
+          </button>
+        )
       )}
     </>
   )
