@@ -31,9 +31,11 @@ export interface Type {
 }
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const limit = parseInt(searchParams.get("limit") || "12", 10);
   try {
     // GET request to PokeAPI
-    const res = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=12', {next: {revalidate: 3600}});
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}`, {next: {revalidate: 3600}});
 
     if (!res.ok) {
       return NextResponse.json({ error: 'Failed to fetch Pokémon data!' }, { status: res.status });
