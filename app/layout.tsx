@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
-import localFont from "next/font/local"
 
 export const metadata: Metadata = {
   title: "Poke Trainer",
@@ -11,23 +10,13 @@ export const metadata: Metadata = {
   },
 }
 
-const pokeFont = localFont({
-  src: [
-    {
-      path: "./fonts/Pokemon Classic.ttf",
-    },
-  ],
-  variable: "--pokefont",
-  display: "swap",
-})
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={pokeFont.variable}>
+    <html lang="en">
       <body>
         <Navbar />
         {children}
