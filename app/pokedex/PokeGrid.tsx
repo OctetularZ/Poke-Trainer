@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import PokeCard from "./PokeCard"
-import { PokemonBasic } from "../api/all_pokemon/route"
+import { PokemonBasic } from "../api/pokemon/route"
 import Image from "next/image"
 import { motion } from "motion/react"
 
@@ -18,7 +18,7 @@ const PokeGrid = () => {
     setLoading(true)
     try {
       const res = await fetch(
-        `/api/all_pokemon?limit=${fetchSize}&offset=${offset}`
+        `/api/pokemon?limit=${fetchSize}&offset=${offset}`
       )
       const data: PokemonBasic[] = await res.json()
 

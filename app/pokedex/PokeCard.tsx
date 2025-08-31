@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import React from "react"
-import { PokemonType } from "../api/all_pokemon/route"
+import { PokemonType } from "../api/pokemon/route"
 import { typeColours } from "./typeColours"
 
 interface Pokemon {
@@ -13,7 +13,7 @@ interface Pokemon {
 
 const PokeCard = ({ id, name, sprite, types }: Pokemon) => {
   return (
-    <Link href={"#"}>
+    <Link href={`${id}`}>
       <div className="flex flex-col justify-center items-center w-55 bg-charmander-dull-200 rounded-2xl pt-10 pb-8 px-5">
         <div className="relative mb-5 w-[100px] h-[100px] items-center">
           <Image
