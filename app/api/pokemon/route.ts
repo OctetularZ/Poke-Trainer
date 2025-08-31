@@ -1,4 +1,3 @@
-import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
 interface urlData {
@@ -10,72 +9,92 @@ export interface PokemonBasic {
   id: number;
   name: string;
   types: PokemonType[];
-  sprites: {
-    front_default: string;
-    back_default: string;
-  };
-  showdown: {
-    front_default: string;
-    back_default: string;
-  };
+  sprites: { front_default: string; back_default: string };
+  showdown: { front_default: string; back_default: string };
 }
 
 export interface PokemonType {
-  slot: number,
-  type: Type
+  slot: number;
+  type: Type;
 }
 
 export interface Type {
-  name: string,
-  url: string
+  name: string;
+  url: string;
+}
+
+export interface TypeOfPokemon {
+  slot: number;
+  pokemon: urlData;
 }
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const limit = parseInt(searchParams.get("limit") || "12", 10);
   const offset = parseInt(searchParams.get("offset") || "0", 10);
+  const typesParam = searchParams.get("types");
+
+  const filteredPokemons: Record<string, PokemonBasic> = {};
+  const pokemonCounts: Record<string, number> = {};
+
   try {
-    // GET request to PokeAPI
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`, {next: {revalidate: 3600}});
+    let pokemonList: urlData[] = [];
 
-    if (!res.ok) {
-      return NextResponse.json({ error: 'Failed to fetch Pokémon data!' }, { status: res.status });
-    }
+    if (typesParam) {
+      const typeNames = typesParam.split(",");
+      let filteredPokemons: Record<string, urlData> = {};
 
-    const urlData = await res.json();
-    const results = urlData.results;
+      for (let type of typeNames) {
+        const typeRes = await fetch(`https://pokeapi.co/api/v2/type/${type}`);
+        const typeData = await typeRes.json();
+        
+        typeData.pokemon.forEach((p: TypeOfPokemon) => {
+          if (!filteredPokemons[p.pokemon.name]) {
+            filteredPokemons[p.pokemon.name] = p.pokemon;
+          }
 
-    // Fetch full data for each Pokemon
-    const detailedPromises = results.map(async (pokemon: urlData) => {
-      const res = await fetch(pokemon.url);
-      const data = await res.json();
-
-      if (!res.ok) {
-        return NextResponse.json({error: `Failed to fetch data for ${pokemon.name}`}, {status: res.status})
+          pokemonCounts[p.pokemon.name] = (pokemonCounts[p.pokemon.name] || 0) + 1;
+        });
       }
 
-      const filtered: PokemonBasic = {
-          id: data.id,
-          name: data.name,
-          types: data.types,
-          sprites: {
-            front_default: data.sprites.front_default ?? '',
-            back_default: data.sprites.back_default ?? '',
-          },
-          showdown: {
-            front_default: data.sprites.other?.showdown?.front_default ?? '',
-            back_default: data.sprites.other?.showdown?.back_default ?? '',
-          }
-        };
-        return filtered;
+      pokemonList = Object.entries(pokemonCounts)
+        .filter(([_, count]) => count === typeNames.length)
+        .map(([name, _]) => filteredPokemons[name]);
+    } else {
+      // Normal fetch if not filter selected
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`);
+      const data = await res.json();
+      pokemonList = data.results;
+    }
+
+    const paginated = typesParam 
+      ? pokemonList.slice(offset, offset + limit)
+      : pokemonList;
+
+    const detailedPromises = paginated.map(async (p: urlData) => {
+      const res = await fetch(p.url);
+      const data = await res.json();
+
+      return {
+        id: data.id,
+        name: data.name,
+        types: data.types,
+        sprites: {
+          front_default: data.sprites.front_default ?? "",
+          back_default: data.sprites.back_default ?? "",
+        },
+        showdown: {
+          front_default: data.sprites.other?.showdown?.front_default ?? "",
+          back_default: data.sprites.other?.showdown?.back_default ?? "",
+        },
+      } as PokemonBasic;
     });
 
     const pokemonData = await Promise.all(detailedPromises);
 
     return NextResponse.json(pokemonData);
-
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Something went wrong!' }, { status: 500 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Something went wrong!" }, { status: 500 });
   }
 }
