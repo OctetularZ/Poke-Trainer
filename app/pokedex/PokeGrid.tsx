@@ -94,7 +94,12 @@ const PokeGrid = () => {
             key={poke.id}
             id={poke.id}
             name={`${poke.name.charAt(0).toUpperCase()}${poke.name.slice(1)}`}
-            sprite={poke.showdown.front_default}
+            sprite={
+              poke.showdown.front_default ||
+              poke.showdown.front_default ||
+              poke.sprites.front_default ||
+              "/placeholder.png"
+            }
             types={poke.types}
           />
         ))}

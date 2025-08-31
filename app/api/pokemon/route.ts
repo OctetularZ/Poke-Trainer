@@ -11,6 +11,7 @@ export interface PokemonBasic {
   types: PokemonType[];
   sprites: { front_default: string; back_default: string };
   showdown: { front_default: string; back_default: string };
+  officialArtwork: {front_default: string}
 }
 
 export interface PokemonType {
@@ -87,6 +88,7 @@ export async function GET(request: NextRequest) {
           front_default: data.sprites.other?.showdown?.front_default ?? "",
           back_default: data.sprites.other?.showdown?.back_default ?? "",
         },
+        officialArtwork: data.sprites.other?.['official-artwork']?.front_default ?? ""
       } as PokemonBasic;
     });
 
