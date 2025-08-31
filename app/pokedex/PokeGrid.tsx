@@ -5,28 +5,10 @@ import { PokemonBasic } from "../api/pokemon/route"
 import Image from "next/image"
 import { motion } from "motion/react"
 import Filter from "./Filter"
+import { typeColours } from "./typeColours"
 
 const fetchSize = 12
-const types = [
-  "normal",
-  "fire",
-  "water",
-  "grass",
-  "electric",
-  "ice",
-  "fighting",
-  "poison",
-  "ground",
-  "flying",
-  "psychic",
-  "bug",
-  "rock",
-  "ghost",
-  "dark",
-  "dragon",
-  "steel",
-  "fairy",
-]
+const types = Object.keys(typeColours)
 
 const PokeGrid = () => {
   const [pokemon, setPokemon] = useState<PokemonBasic[]>([])
@@ -70,22 +52,26 @@ const PokeGrid = () => {
 
   return (
     <div className="flex flex-col items-center">
-      {/* Type filter checkboxes */}
+      {/* Type filter buttons */}
       <div className="flex flex-wrap gap-2 my-5">
-        {types.map((type) => (
-          <label
-            key={type}
-            className="flex items-center gap-1 text-white cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              value={type}
-              checked={selectedTypes.includes(type)}
-              onChange={() => toggleType(type)}
-            />
-            {type.charAt(0).toUpperCase() + type.slice(1)}
-          </label>
-        ))}
+        {types.map((type) => {
+          const isSelected = selectedTypes.includes(type)
+
+          return (
+            <button
+              key={type}
+              onClick={() => toggleType(type)}
+              className={`px-3 py-1 rounded-md font-semibold text-white 
+              ${
+                isSelected
+                  ? `${typeColours[type as keyof typeof typeColours]}`
+                  : "bg-gray-700 hover:bg-gray-600"
+              }`}
+            >
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </button>
+          )
+        })}
       </div>
 
       <div className="flex flex-row flex-wrap gap-10 pt-10 justify-center pb-10">
