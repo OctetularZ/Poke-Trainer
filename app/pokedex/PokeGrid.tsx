@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import PokeCard from "./PokeCard"
 import { PokemonBasic } from "../api/all_pokemon/route"
 
-const chunkSize = 12
+const fetchSize = 12
 
 const PokeGrid = () => {
   const [pokemon, setPokemon] = useState<PokemonBasic[]>([])
@@ -15,13 +15,13 @@ const PokeGrid = () => {
     setLoading(true)
     try {
       const res = await fetch(
-        `/api/all_pokemon?limit=${chunkSize}&offset=${offset}`
+        `/api/all_pokemon?limit=${fetchSize}&offset=${offset}`
       )
       const data: PokemonBasic[] = await res.json()
 
-      if (data.length < chunkSize) setAllLoaded(true) // no more data
+      if (data.length < fetchSize) setAllLoaded(true) // No more data to load
       setPokemon((prev) => [...prev, ...data])
-      setOffset((prev) => prev + chunkSize)
+      setOffset((prev) => prev + fetchSize)
     } catch (err) {
       console.error(err)
     } finally {
@@ -30,7 +30,7 @@ const PokeGrid = () => {
   }
 
   useEffect(() => {
-    fetchPokemon() // fetch first batch on mount
+    fetchPokemon()
   }, [])
 
   return (
