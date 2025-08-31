@@ -6,6 +6,7 @@ import Image from "next/image"
 import { motion } from "motion/react"
 import Filter from "./Filter"
 import { typeColours } from "./typeColours"
+import TypeFilter from "./Filter"
 
 const fetchSize = 12
 const types = Object.keys(typeColours)
@@ -52,27 +53,12 @@ const PokeGrid = () => {
 
   return (
     <div className="flex flex-col items-center">
-      {/* Type filter buttons */}
-      <div className="flex flex-wrap gap-2 my-5">
-        {types.map((type) => {
-          const isSelected = selectedTypes.includes(type)
-
-          return (
-            <button
-              key={type}
-              onClick={() => toggleType(type)}
-              className={`px-3 py-1 rounded-md font-semibold text-white 
-              ${
-                isSelected
-                  ? `${typeColours[type as keyof typeof typeColours]}`
-                  : "bg-gray-700 hover:bg-gray-600"
-              }`}
-            >
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </button>
-          )
-        })}
-      </div>
+      <TypeFilter
+        types={types}
+        selectedTypes={selectedTypes}
+        toggleType={toggleType}
+        typeColours={typeColours}
+      />
 
       <div className="flex flex-row flex-wrap gap-10 pt-10 justify-center pb-10">
         {pokemon?.map((poke) => (
