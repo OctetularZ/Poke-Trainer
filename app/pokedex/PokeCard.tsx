@@ -24,7 +24,7 @@ const PokeCard = ({ id, name, sprite, types }: Pokemon) => {
             unoptimized={true}
           />
         </div>
-        <p className="text-gray-400">#{id}</p>
+        <p className="text-gray-400">#{id.toString().padStart(4, "0")}</p>
         <h1 className="text-white text-2xl pb-3 text-wrap text-center">
           {name}
         </h1>
