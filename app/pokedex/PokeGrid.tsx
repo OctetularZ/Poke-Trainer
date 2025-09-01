@@ -4,9 +4,16 @@ import PokeCard from "./PokeCard"
 import { PokemonBasic } from "../api/pokemon/route"
 import Image from "next/image"
 import { motion } from "motion/react"
-import Filter from "./Filter"
 import { typeColours } from "./typeColours"
-import TypeFilter from "./Filter"
+import TypeFilter from "./TypeFilter"
+import {
+  Field,
+  Label,
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react"
 
 const fetchSize = 12
 const types = Object.keys(typeColours)
@@ -18,15 +25,32 @@ const PokeGrid = () => {
   const [error, setError] = useState<string | null>(null)
   const [allLoaded, setAllLoaded] = useState(false)
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+  const [selectedAbility, setSelectedAbility] = useState<string>("")
+
+  const abilities = [
+    "overgrow",
+    "blaze",
+    "torrent",
+    "shield-dust",
+    "run-away",
+    // ...add more as needed
+  ]
 
   const fetchPokemon = async (reset = false) => {
     setLoading(true)
     try {
       if (reset) setAllLoaded(false)
 
+      const abilityQuery = selectedAbility
+        ? `&abilities=${selectedAbility}`
+        : ""
+
       const res = await fetch(
         `/api/pokemon?limit=${fetchSize}&offset=${reset ? 0 : offset}` +
-          (selectedTypes.length > 0 ? `&types=${selectedTypes.join(",")}` : "")
+          (selectedTypes.length > 0
+            ? `&types=${selectedTypes.join(",")}`
+            : "") +
+          abilityQuery
       )
       const data: PokemonBasic[] = await res.json()
 
@@ -42,7 +66,7 @@ const PokeGrid = () => {
 
   useEffect(() => {
     fetchPokemon(true)
-  }, [selectedTypes])
+  }, [selectedTypes, selectedAbility])
 
   const toggleType = (type: string) => {
     setSelectedTypes((prev) =>
@@ -59,6 +83,55 @@ const PokeGrid = () => {
         toggleType={toggleType}
         typeColours={typeColours}
       />
+
+      {/* Ability Selector */}
+      <div className="my-4 w-60">
+        <Field>
+          <Label className="text-white">Ability:</Label>
+          <Listbox value={selectedAbility} onChange={setSelectedAbility}>
+            <div className="relative">
+              <ListboxButton className="w-full px-2 py-1 rounded border border-gray-300 bg-white text-left">
+                {selectedAbility
+                  ? (() => {
+                      const ability = abilities.find(
+                        (a) => a === selectedAbility
+                      )
+                      return ability
+                        ? ability.charAt(0).toUpperCase() + ability.slice(1)
+                        : selectedAbility
+                    })()
+                  : "All"}
+              </ListboxButton>
+              <ListboxOptions className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
+                <ListboxOption
+                  key=""
+                  value=""
+                  className={({ active, selected }) =>
+                    `cursor-pointer select-none px-4 py-2 ${
+                      active ? "bg-charmander-blue-100" : ""
+                    } ${selected ? "font-bold" : ""}`
+                  }
+                >
+                  All
+                </ListboxOption>
+                {abilities.map((ability) => (
+                  <ListboxOption
+                    key={ability}
+                    value={ability}
+                    className={({ active, selected }) =>
+                      `cursor-pointer select-none px-4 py-2 ${
+                        active ? "bg-charmander-blue-100" : ""
+                      } ${selected ? "font-bold" : ""}`
+                    }
+                  >
+                    {ability.charAt(0).toUpperCase() + ability.slice(1)}
+                  </ListboxOption>
+                ))}
+              </ListboxOptions>
+            </div>
+          </Listbox>
+        </Field>
+      </div>
 
       <div className="flex flex-row flex-wrap gap-10 pt-10 justify-center pb-10">
         {pokemon?.map((poke) => (
