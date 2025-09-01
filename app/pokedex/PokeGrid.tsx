@@ -14,6 +14,12 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react"
+import { NextResponse } from "next/server"
+
+interface Ability {
+  name: string
+  url: string
+}
 
 const fetchSize = 12
 const types = Object.keys(typeColours)
@@ -26,15 +32,7 @@ const PokeGrid = () => {
   const [allLoaded, setAllLoaded] = useState(false)
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [selectedAbility, setSelectedAbility] = useState<string>("")
-
-  const abilities = [
-    "overgrow",
-    "blaze",
-    "torrent",
-    "shield-dust",
-    "run-away",
-    // ...add more as needed
-  ]
+  const [abilities, setAbilities] = useState<Ability[]>([])
 
   const fetchPokemon = async (reset = false) => {
     setLoading(true)
@@ -64,9 +62,29 @@ const PokeGrid = () => {
     }
   }
 
+  const fetchAbilities = async () => {
+    const res = await fetch("https://pokeapi.co/api/v2/ability/?limit=500")
+    if (!res.ok)
+      return NextResponse.json(
+        { error: "Failed to fetch pokemon abilities! Please refresh" },
+        { status: 500 }
+      )
+    const data = await res.json()
+
+    return data.results
+  }
+
   useEffect(() => {
     fetchPokemon(true)
   }, [selectedTypes, selectedAbility])
+
+  useEffect(() => {
+    const loadAbilities = async () => {
+      const abilitiesData = await fetchAbilities()
+      setAbilities(abilitiesData)
+    }
+    loadAbilities()
+  }, [])
 
   const toggleType = (type: string) => {
     setSelectedTypes((prev) =>
@@ -92,9 +110,12 @@ const PokeGrid = () => {
             <ListboxButton className="w-60 px-2 py-1 rounded border border-gray-300 bg-white text-left">
               {selectedAbility
                 ? (() => {
-                    const ability = abilities.find((a) => a === selectedAbility)
+                    const ability = abilities.find(
+                      (a) => a.name === selectedAbility
+                    )
                     return ability
-                      ? ability.charAt(0).toUpperCase() + ability.slice(1)
+                      ? ability.name.charAt(0).toUpperCase() +
+                          ability.name.slice(1)
                       : selectedAbility
                   })()
                 : "All"}
@@ -113,15 +134,15 @@ const PokeGrid = () => {
               </ListboxOption>
               {abilities.map((ability) => (
                 <ListboxOption
-                  key={ability}
-                  value={ability}
+                  key={ability.name}
+                  value={ability.name}
                   className={({ active, selected }) =>
                     `cursor-pointer select-none px-4 py-2 ${
                       active ? "bg-charmander-blue-100" : ""
                     } ${selected ? "font-bold" : ""}`
                   }
                 >
-                  {ability.charAt(0).toUpperCase() + ability.slice(1)}
+                  {ability.name.charAt(0).toUpperCase() + ability.name.slice(1)}
                 </ListboxOption>
               ))}
             </ListboxOptions>
