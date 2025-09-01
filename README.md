@@ -7,7 +7,7 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 
 ## Preview
 
-# Pokdex
+### Pokèdex
 
 <p align="center">
   <img src="/public/Pokedex MK1.gif" />
