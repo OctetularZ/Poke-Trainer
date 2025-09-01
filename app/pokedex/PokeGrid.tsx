@@ -85,52 +85,48 @@ const PokeGrid = () => {
       />
 
       {/* Ability Selector */}
-      <div className="my-4 w-60">
-        <Field>
-          <Label className="text-white">Ability:</Label>
-          <Listbox value={selectedAbility} onChange={setSelectedAbility}>
-            <div className="relative">
-              <ListboxButton className="w-full px-2 py-1 rounded border border-gray-300 bg-white text-left">
-                {selectedAbility
-                  ? (() => {
-                      const ability = abilities.find(
-                        (a) => a === selectedAbility
-                      )
-                      return ability
-                        ? ability.charAt(0).toUpperCase() + ability.slice(1)
-                        : selectedAbility
-                    })()
-                  : "All"}
-              </ListboxButton>
-              <ListboxOptions className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
+      <div className="flex flex-col items-center my-4 w-60">
+        <h1 className="text-white mb-2">Ability:</h1>
+        <Listbox value={selectedAbility} onChange={setSelectedAbility}>
+          <div className="relative">
+            <ListboxButton className="w-60 px-2 py-1 rounded border border-gray-300 bg-white text-left">
+              {selectedAbility
+                ? (() => {
+                    const ability = abilities.find((a) => a === selectedAbility)
+                    return ability
+                      ? ability.charAt(0).toUpperCase() + ability.slice(1)
+                      : selectedAbility
+                  })()
+                : "All"}
+            </ListboxButton>
+            <ListboxOptions className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
+              <ListboxOption
+                key=""
+                value=""
+                className={({ active, selected }) =>
+                  `cursor-pointer select-none px-4 py-2 ${
+                    active ? "bg-charmander-blue-100" : ""
+                  } ${selected ? "font-bold" : ""}`
+                }
+              >
+                All
+              </ListboxOption>
+              {abilities.map((ability) => (
                 <ListboxOption
-                  key=""
-                  value=""
+                  key={ability}
+                  value={ability}
                   className={({ active, selected }) =>
                     `cursor-pointer select-none px-4 py-2 ${
                       active ? "bg-charmander-blue-100" : ""
                     } ${selected ? "font-bold" : ""}`
                   }
                 >
-                  All
+                  {ability.charAt(0).toUpperCase() + ability.slice(1)}
                 </ListboxOption>
-                {abilities.map((ability) => (
-                  <ListboxOption
-                    key={ability}
-                    value={ability}
-                    className={({ active, selected }) =>
-                      `cursor-pointer select-none px-4 py-2 ${
-                        active ? "bg-charmander-blue-100" : ""
-                      } ${selected ? "font-bold" : ""}`
-                    }
-                  >
-                    {ability.charAt(0).toUpperCase() + ability.slice(1)}
-                  </ListboxOption>
-                ))}
-              </ListboxOptions>
-            </div>
-          </Listbox>
-        </Field>
+              ))}
+            </ListboxOptions>
+          </div>
+        </Listbox>
       </div>
 
       <div className="flex flex-row flex-wrap gap-10 pt-10 justify-center pb-10">
