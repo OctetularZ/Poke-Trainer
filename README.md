@@ -1,4 +1,4 @@
-# Poké Trainer
+# Pokè Trainer
 
 A **Next.js-powered companion website for Pokémon fans** — featuring a Pokédex, Pokémon info, fun mini-games, AI battle simulations, user accounts, and more.  
 (**In active development**.)
