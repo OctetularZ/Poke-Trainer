@@ -7,8 +7,10 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 
 ## Preview
 
+# Pokdex
+
 <p align="center">
-  <img src="/public/Pokedex MK1.gif" width="200" />
+  <img src="/public/Pokedex MK1.gif" />
 </p>
 
 ---
