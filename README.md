@@ -42,8 +42,8 @@ Expect frequent updates as features are added.
 
 ## Roadmap
 
-- [ ] Set up project structure with Next.js
-- [ ] Build Pokédex with dynamic routing for Pokémon pages 
+- [x] Set up project structure with Next.js
+- [x] Build Pokédex with dynamic routing for Pokémon pages 
 - [ ] Configure NextAuth.js for authentication  
 - [ ] Integrate Prisma with PostgreSQL  
 - [ ] Connect AWS S3 for cloud storage   
