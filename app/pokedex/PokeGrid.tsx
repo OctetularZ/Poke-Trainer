@@ -15,6 +15,7 @@ import {
   ListboxOptions,
 } from "@headlessui/react"
 import { NextResponse } from "next/server"
+import { FaChevronCircleDown } from "react-icons/fa"
 
 interface Ability {
   name: string
@@ -103,11 +104,11 @@ const PokeGrid = () => {
       />
 
       {/* Ability Selector */}
-      <div className="flex flex-col items-center my-4 w-60">
-        <h1 className="text-white mb-2">Ability:</h1>
+      <div className="flex flex-col items-center my-4 w-60 text-white">
+        <h1 className="text-white text-lg mb-2">Ability:</h1>
         <Listbox value={selectedAbility} onChange={setSelectedAbility}>
           <div className="relative">
-            <ListboxButton className="w-60 px-2 py-1 rounded border border-gray-300 bg-white text-left">
+            <ListboxButton className="flex flex-row justify-between items-center w-60 px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 text-left">
               {selectedAbility
                 ? (() => {
                     const ability = abilities.find(
@@ -115,18 +116,19 @@ const PokeGrid = () => {
                     )
                     return ability
                       ? ability.name.charAt(0).toUpperCase() +
-                          ability.name.slice(1)
+                          ability.name.slice(1).replace("-", " ")
                       : selectedAbility
                   })()
                 : "All"}
+              <FaChevronCircleDown />
             </ListboxButton>
-            <ListboxOptions className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
+            <ListboxOptions className="absolute z-10 mt-1 w-full bg-charmander-dull-200 border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
               <ListboxOption
                 key=""
                 value=""
                 className={({ active, selected }) =>
                   `cursor-pointer select-none px-4 py-2 ${
-                    active ? "bg-charmander-blue-100" : ""
+                    active ? "bg-charmander-blue-500" : ""
                   } ${selected ? "font-bold" : ""}`
                 }
               >
@@ -138,11 +140,12 @@ const PokeGrid = () => {
                   value={ability.name}
                   className={({ active, selected }) =>
                     `cursor-pointer select-none px-4 py-2 ${
-                      active ? "bg-charmander-blue-100" : ""
+                      active ? "bg-charmander-blue-500" : ""
                     } ${selected ? "font-bold" : ""}`
                   }
                 >
-                  {ability.name.charAt(0).toUpperCase() + ability.name.slice(1)}
+                  {ability.name.charAt(0).toUpperCase() +
+                    ability.name.slice(1).replace("-", " ")}
                 </ListboxOption>
               ))}
             </ListboxOptions>
@@ -155,7 +158,9 @@ const PokeGrid = () => {
           <PokeCard
             key={poke.id}
             id={poke.id}
-            name={`${poke.name.charAt(0).toUpperCase()}${poke.name.slice(1)}`}
+            name={`${poke.name.charAt(0).toUpperCase()}${poke.name
+              .slice(1)
+              .replace("-", " ")}`}
             sprite={
               poke.showdown.front_default ||
               poke.showdown.front_default ||

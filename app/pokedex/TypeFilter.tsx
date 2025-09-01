@@ -17,7 +17,7 @@ const TypeFilter: React.FC<TypeFilterProps> = ({
 }) => {
   return (
     <div className="flex flex-col items-center">
-      <h4 className="text-3xl text-white">Type:</h4>
+      <h1 className="text-lg text-white">Type:</h1>
       <div className="flex flex-wrap gap-2 my-5 justify-center w-10/12">
         {types.map((type) => {
           const isSelected = selectedTypes.includes(type)
