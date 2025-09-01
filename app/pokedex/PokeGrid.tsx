@@ -97,7 +97,7 @@ const PokeGrid = () => {
         !allLoaded && (
           <button
             onClick={() => fetchPokemon()}
-            className="px-6 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-md cursor-pointer hover:bg-red-600"
+            className="px-6 py-3 bg-charmander-blue-500 text-white font-semibold rounded-lg shadow-md drop-shadow-[0_0_10px_rgba(41,150,246,0.7)] cursor-pointer hover:bg-charmander-blue-300 transition-colors "
           >
             Load More
           </button>

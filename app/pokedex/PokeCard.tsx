@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import React from "react"
 import { PokemonType } from "../api/pokemon/route"
-import { typeColours } from "./typeColours"
+import { typeColours, typeColoursHex } from "./typeColours"
 
 interface Pokemon {
   id: number
@@ -34,7 +34,12 @@ const PokeCard = ({ id, name, sprite, types }: Pokemon) => {
               key={index}
               className={`text-white text-xl ${
                 typeColours[type.type.name as keyof typeof typeColours]
-              } rounded-lg px-3`}
+              } rounded-lg px-3 shadow-md`}
+              style={{
+                filter: `drop-shadow(0 0 8px ${
+                  typeColoursHex[type.type.name as keyof typeof typeColoursHex]
+                })`,
+              }}
             >
               {`${type.type.name.charAt(0).toUpperCase()}${type.type.name.slice(
                 1

@@ -18,3 +18,24 @@ export const typeColours = {
   "poison": "bg-fuchsia-500",
   "rock": "bg-yellow-900",
 }
+
+export const typeColoursHex = {
+  "fire": "#ef4444",
+  "water": "#3b82f6",
+  "grass": "#22c55e",
+  "electric": "#fde047",
+  "ice": "#a5f3fc",
+  "fighting": "#f97316",
+  "poison": "#d946ef",
+  "ground": "#854d0e",
+  "flying": "#7dd3fc",
+  "psychic": "#db2777",
+  "bug": "#84cc16",
+  "rock": "#713f12",
+  "ghost": "#3730a3",
+  "dragon": "#f43f5e",
+  "dark": "#44403c",
+  "steel": "#94a3b8",
+  "fairy": "#f9a8d4",
+  "normal": "#a3a3a3"
+}
