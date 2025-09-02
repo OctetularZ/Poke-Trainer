@@ -9,12 +9,12 @@ interface TypeFilterProps {
   typeColours: Record<string, string>
 }
 
-const TypeFilter: React.FC<TypeFilterProps> = ({
+const TypeFilter = ({
   types,
   selectedTypes,
   toggleType,
   typeColours,
-}) => {
+}: TypeFilterProps) => {
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-lg text-white">Type:</h1>

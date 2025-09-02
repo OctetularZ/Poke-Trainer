@@ -101,6 +101,26 @@ const PokeGrid = () => {
         setSelectedAbility={setSelectedAbility}
       />
 
+      {loading && (
+        <motion.div
+          className="mt-5"
+          animate={{ rotate: 360 }}
+          transition={{
+            duration: 0.3,
+            ease: "linear",
+            repeat: Infinity,
+            repeatDelay: 1,
+          }}
+        >
+          <Image
+            src={"/pixel-great-ball.png"}
+            width={50}
+            height={50}
+            alt="pixel-great-ball-loading"
+          ></Image>
+        </motion.div>
+      )}
+
       <div className="flex flex-row flex-wrap gap-10 pt-10 justify-center pb-10">
         {pokemon?.map((poke) => (
           <PokeCard

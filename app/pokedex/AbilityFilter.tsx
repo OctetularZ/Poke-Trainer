@@ -18,11 +18,11 @@ interface AbilityFilterProps {
   setSelectedAbility: (ability: string) => void
 }
 
-const AbilityFilter: React.FC<AbilityFilterProps> = ({
+const AbilityFilter = ({
   abilities,
   selectedAbility,
   setSelectedAbility,
-}) => (
+}: AbilityFilterProps) => (
   <div className="flex flex-col items-center my-4 w-60 text-white">
     <h1 className="text-white text-lg mb-2">Ability:</h1>
     <Listbox value={selectedAbility} onChange={setSelectedAbility}>
