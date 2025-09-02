@@ -26,7 +26,7 @@ const TypeFilter = ({
             <button
               key={type}
               onClick={() => toggleType(type)}
-              className={`px-3 py-1 rounded-md font-semibold text-white ${
+              className={`px-3 py-1 rounded-md cursor-pointer font-semibold text-white ${
                 isSelected
                   ? `${typeColours[type as keyof typeof typeColours]}`
                   : "bg-gray-700 hover:bg-gray-600"

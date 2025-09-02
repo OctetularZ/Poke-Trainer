@@ -27,7 +27,7 @@ const AbilityFilter = ({
     <h1 className="text-white text-lg mb-2">Ability:</h1>
     <Listbox value={selectedAbility} onChange={setSelectedAbility}>
       <div className="relative">
-        <ListboxButton className="flex flex-row justify-between items-center w-60 px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 text-left">
+        <ListboxButton className="flex flex-row justify-between items-center w-60 px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer">
           {selectedAbility
             ? (() => {
                 const ability = abilities.find(

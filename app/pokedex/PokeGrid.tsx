@@ -7,7 +7,9 @@ import { motion } from "motion/react"
 import { typeColours } from "./typeColours"
 import TypeFilter from "./TypeFilter"
 import AbilityFilter from "./AbilityFilter"
+import SearchFilter from "./SearchFilter"
 import { NextResponse } from "next/server"
+import Link from "next/link"
 
 interface Ability {
   name: string
@@ -26,6 +28,9 @@ const PokeGrid = () => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [selectedAbility, setSelectedAbility] = useState<string>("")
   const [abilities, setAbilities] = useState<Ability[]>([])
+  const [allPokemonNames, setAllPokemonNames] = useState<string[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [inputFocused, setInputFocused] = useState(false)
 
   const fetchPokemon = async (reset = false) => {
     setLoading(true)
@@ -86,8 +91,24 @@ const PokeGrid = () => {
     setAllLoaded(false)
   }
 
+  useEffect(() => {
+    const fetchAllNames = async () => {
+      const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1300")
+      const data = await res.json()
+      setAllPokemonNames(
+        data.results.map((pokemon: { name: string }) => pokemon.name)
+      )
+    }
+    fetchAllNames()
+  }, [])
+
+  const filteredNames = allPokemonNames.filter((name) =>
+    name.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   return (
     <div className="flex flex-col items-center">
+      <SearchFilter allPokemonNames={allPokemonNames} />
       <TypeFilter
         types={types}
         selectedTypes={selectedTypes}
