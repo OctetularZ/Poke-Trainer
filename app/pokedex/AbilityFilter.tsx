@@ -27,7 +27,7 @@ const AbilityFilter = ({
     <h1 className="text-white text-lg mb-2">Ability:</h1>
     <Listbox value={selectedAbility} onChange={setSelectedAbility}>
       <div className="relative">
-        <ListboxButton className="flex flex-row justify-between items-center w-60 px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer">
+        <ListboxButton className="flex flex-row justify-between items-center w-60 px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer focus:outline-none">
           {selectedAbility
             ? (() => {
                 const ability = abilities.find(
@@ -41,7 +41,7 @@ const AbilityFilter = ({
             : "All"}
           <FaChevronCircleDown />
         </ListboxButton>
-        <ListboxOptions className="absolute z-10 mt-1 w-full bg-charmander-dull-200 border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
+        <ListboxOptions className="absolute z-10 mt-1 w-full bg-charmander-dull-200 border border-gray-300 rounded shadow-lg max-h-60 overflow-auto focus:outline-none">
           <ListboxOption
             key=""
             value=""

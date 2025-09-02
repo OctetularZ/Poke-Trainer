@@ -23,7 +23,7 @@ const SearchFilter = ({ allPokemonNames }: SearchFilterProps) => {
         onFocus={() => setInputFocused(true)}
         onBlur={() => setInputFocused(false)}
         placeholder="Search Pokémon..."
-        className="px-2 py-1 w-60 rounded border border-gray-300 text-white focus:outline-none"
+        className="px-2 py-1 w-60 rounded border bg-charmander-dull-200 border-gray-300 text-white focus:outline-none"
       />
       {searchTerm && inputFocused && (
         <ul className="text-white absolute left-0 top-full max-h-60 overflow-auto w-60 bg-charmander-dull-200 rounded shadow z-10">
