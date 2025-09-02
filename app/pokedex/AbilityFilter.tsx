@@ -24,7 +24,7 @@ const AbilityFilter = ({
   setSelectedAbility,
 }: AbilityFilterProps) => (
   <div className="flex flex-col items-center my-4 w-60 text-white">
-    <h1 className="text-white text-lg mb-2">Ability:</h1>
+    <h1 className="text-white text-xl mb-2">Ability:</h1>
     <Listbox value={selectedAbility} onChange={setSelectedAbility}>
       <div className="relative">
         <ListboxButton className="flex flex-row justify-between items-center w-60 px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer focus:outline-none">

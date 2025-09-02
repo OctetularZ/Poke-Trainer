@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react"
 import PokeCard from "./PokeCard"
 import { PokemonBasic } from "../api/pokemon/route"
 import Image from "next/image"
-import { motion } from "motion/react"
+import { motion, AnimatePresence } from "motion/react"
 import { typeColours } from "./typeColours"
 import TypeFilter from "./TypeFilter"
 import AbilityFilter from "./AbilityFilter"
 import SearchFilter from "./SearchFilter"
 import { NextResponse } from "next/server"
 import Link from "next/link"
+import { FaChevronCircleDown } from "react-icons/fa"
 
 interface Ability {
   name: string
@@ -29,8 +30,7 @@ const PokeGrid = () => {
   const [selectedAbility, setSelectedAbility] = useState<string>("")
   const [abilities, setAbilities] = useState<Ability[]>([])
   const [allPokemonNames, setAllPokemonNames] = useState<string[]>([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [inputFocused, setInputFocused] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
 
   const fetchPokemon = async (reset = false) => {
     setLoading(true)
@@ -102,25 +102,42 @@ const PokeGrid = () => {
     fetchAllNames()
   }, [])
 
-  const filteredNames = allPokemonNames.filter((name) =>
-    name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
   return (
     <div className="flex flex-col items-center">
       <SearchFilter allPokemonNames={allPokemonNames} />
-      <TypeFilter
-        types={types}
-        selectedTypes={selectedTypes}
-        toggleType={toggleType}
-        typeColours={typeColours}
-      />
 
-      <AbilityFilter
-        abilities={abilities}
-        selectedAbility={selectedAbility}
-        setSelectedAbility={setSelectedAbility}
-      />
+      <button
+        className="flex flex-row justify-center items-center gap-2 py-1 w-10/12 text-white cursor-pointer rounded-md bg-charmander-dull-200"
+        onClick={() => setShowFilters((prev) => !prev)}
+      >
+        <h1>Filter</h1>
+        <FaChevronCircleDown />
+      </button>
+
+      <AnimatePresence>
+        {showFilters && (
+          <motion.div
+            className="flex flex-col justify-center items-center py-3 rounded-md bg-charmander-blue-900 w-10/12"
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -50, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <TypeFilter
+              types={types}
+              selectedTypes={selectedTypes}
+              toggleType={toggleType}
+              typeColours={typeColours}
+            />
+
+            <AbilityFilter
+              abilities={abilities}
+              selectedAbility={selectedAbility}
+              setSelectedAbility={setSelectedAbility}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {loading && (
         <motion.div

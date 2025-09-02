@@ -24,7 +24,7 @@
 }
 
 @layer base {
-  h1, li, button {
+  h1, li, button, input {
     font-family: 'Pixelify Sans', serif;
   }
   h4 {
