@@ -10,7 +10,7 @@ import AbilityFilter from "./AbilityFilter"
 import SearchFilter from "./SearchFilter"
 import { NextResponse } from "next/server"
 import Link from "next/link"
-import { FaChevronCircleDown } from "react-icons/fa"
+import { FaChevronCircleDown, FaChevronCircleUp } from "react-icons/fa"
 
 interface Ability {
   name: string
@@ -111,16 +111,21 @@ const PokeGrid = () => {
         onClick={() => setShowFilters((prev) => !prev)}
       >
         <h1>Filter</h1>
-        <FaChevronCircleDown />
+        <motion.div
+          animate={{ rotate: showFilters ? -180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <FaChevronCircleDown />
+        </motion.div>
       </button>
 
       <AnimatePresence>
         {showFilters && (
           <motion.div
             className="flex flex-col justify-center items-center py-3 rounded-md bg-charmander-blue-900 w-10/12"
-            initial={{ y: -50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -50, opacity: 0 }}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
             <TypeFilter
