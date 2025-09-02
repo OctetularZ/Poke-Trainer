@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="/public/preview/Poke Trainer Banner.png" />
+</p>
+
 # Pokè Trainer
 
 A **Next.js-powered companion website for Pokémon fans** — featuring a Pokédex, Pokémon info, fun mini-games, AI battle simulations, user accounts, and more.  
@@ -10,7 +14,7 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 ### Pokèdex (In progress)
 
 <p align="center">
-  <img src="/public/Pokedex MK1.gif" />
+  <img src="/public/preview/Pokedex MK1.gif" />
 </p>
 
 ---
