@@ -25,7 +25,7 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 - **Pokémon Info** – Type, stats, abilities, evolutions, and more.
 - **"Guess the Pokémon" Game** – A mini-game to test your Pokémon knowledge.
 - **AI Battle Simulator** – Challenge an AI opponent to Pokémon battles.
-- **User Authentication** – Secure login and registration using [NextAuth.js](https://next-auth.js.org/) (might change).
+- **User Authentication** – Secure login and registration using Zod and [NextAuth.js](https://next-auth.js.org/) (might change).
 - **User Data & Profiles** – Managed with [Prisma](https://www.prisma.io/) on a PostgreSQL database.
 - **Cloud Storage** – AWS S3 (might change) for user assets, saved data, or media files.
 - **Responsive Design** – Optimized for desktop and mobile devices.
