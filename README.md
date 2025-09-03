@@ -35,7 +35,7 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 ## Tech Stack
 
 - **Framework:** [Next.js](https://nextjs.org/)
-- **Authentication:** [NextAuth.js](https://next-auth.js.org/) (might change)
+- **Authentication:** Zod and [NextAuth.js](https://next-auth.js.org/) (might change)
 - **Database & ORM:** [PostgreSQL](https://www.postgresql.org/) + [Prisma](https://www.prisma.io/)
 - **Cloud Storage:** [AWS S3](https://aws.amazon.com/s3/) (planned) (might change)
 - **Styling:** Tailwind CSS
