@@ -128,17 +128,16 @@ const PokeGrid = () => {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
+            <AbilityFilter
+              abilities={abilities}
+              selectedAbility={selectedAbility}
+              setSelectedAbility={setSelectedAbility}
+            />
             <TypeFilter
               types={types}
               selectedTypes={selectedTypes}
               toggleType={toggleType}
               typeColours={typeColours}
-            />
-
-            <AbilityFilter
-              abilities={abilities}
-              selectedAbility={selectedAbility}
-              setSelectedAbility={setSelectedAbility}
             />
           </motion.div>
         )}
