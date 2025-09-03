@@ -25,7 +25,7 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 - **Pokémon Info** – Type, stats, abilities, evolutions, and more.
 - **"Guess the Pokémon" Game** – A mini-game to test your Pokémon knowledge.
 - **AI Battle Simulator** – Challenge an AI opponent to Pokémon battles.
-- **User Authentication** – Secure login and registration using Zod and [NextAuth.js](https://next-auth.js.org/) (might change).
+- **User Authentication** – Secure login and registration using Zod and [Better Auth](https://www.better-auth.com/) (might change).
 - **User Data & Profiles** – Managed with [Prisma](https://www.prisma.io/) on a PostgreSQL database.
 - **Cloud Storage** – AWS S3 (might change) for user assets, saved data, or media files.
 - **Responsive Design** – Optimized for desktop and mobile devices.
@@ -35,7 +35,7 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 ## Tech Stack
 
 - **Framework:** [Next.js](https://nextjs.org/)
-- **Authentication:** Zod and [NextAuth.js](https://next-auth.js.org/) (might change)
+- **Authentication:** Zod and [Better Auth](https://www.better-auth.com/) (might change)
 - **Database & ORM:** [PostgreSQL](https://www.postgresql.org/) + [Prisma](https://www.prisma.io/)
 - **Cloud Storage:** [AWS S3](https://aws.amazon.com/s3/) (planned) (might change)
 - **Styling:** Tailwind CSS
@@ -54,7 +54,7 @@ Expect frequent updates as features are added.
 
 - [x] Set up project structure with Next.js
 - [x] Build Pokédex with dynamic routing for Pokémon pages
-- [ ] Configure NextAuth.js for authentication
+- [ ] Configure BetterAuth for authentication
 - [ ] Integrate Prisma with PostgreSQL
 - [ ] Connect AWS S3 for cloud storage
 - [ ] Implement "Guess the Pokémon" mini-game
