@@ -103,7 +103,7 @@ const PokeGrid = () => {
   }, [])
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       <SearchFilter allPokemonNames={allPokemonNames} />
 
       <button
@@ -184,6 +184,7 @@ const PokeGrid = () => {
       </div>
       {loading ? (
         <motion.div
+          className="mb-10"
           animate={{ rotate: 360 }}
           transition={{
             duration: 0.3,
@@ -203,7 +204,7 @@ const PokeGrid = () => {
         !allLoaded && (
           <button
             onClick={() => fetchPokemon()}
-            className="px-6 py-3 bg-charmander-blue-500 text-white font-semibold rounded-lg shadow-md drop-shadow-[0_0_10px_rgba(41,150,246,0.7)] cursor-pointer hover:bg-charmander-blue-300 transition-colors "
+            className="px-6 py-3 mb-10 bg-charmander-blue-500 text-white font-semibold rounded-lg shadow-md drop-shadow-[0_0_10px_rgba(41,150,246,0.7)] cursor-pointer hover:bg-charmander-blue-300 transition-colors "
           >
             Load More
           </button>
