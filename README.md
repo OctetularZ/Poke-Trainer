@@ -54,8 +54,8 @@ Expect frequent updates as features are added.
 
 - [x] Set up project structure with Next.js
 - [x] Build Pokédex with dynamic routing for Pokémon pages
-- [ ] Configure BetterAuth for authentication
-- [ ] Integrate Prisma with PostgreSQL
+- [x] Configure BetterAuth for authentication
+- [x] Integrate Prisma with PostgreSQL
 - [ ] Connect AWS S3 for cloud storage
 - [ ] Implement "Guess the Pokémon" mini-game
 - [ ] Add Pokémon battle simulator with AI logic
