@@ -55,6 +55,7 @@ const PokeGrid = () => {
       setOffset((prev) => (reset ? fetchSize : prev + fetchSize))
     } catch (err) {
       console.error(err)
+      setError("Could not fetch Pokémon")
     } finally {
       setLoading(false)
     }
@@ -62,11 +63,11 @@ const PokeGrid = () => {
 
   const fetchAbilities = async () => {
     const res = await fetch("https://pokeapi.co/api/v2/ability/?limit=500")
-    if (!res.ok)
-      return NextResponse.json(
-        { error: "Failed to fetch pokemon abilities! Please refresh" },
-        { status: 500 }
-      )
+    if (!res.ok) {
+      setError("Failed to fetch pokemon abilities! Please refresh")
+      setLoading(false)
+      return
+    }
     const data = await res.json()
 
     return data.results
