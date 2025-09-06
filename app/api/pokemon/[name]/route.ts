@@ -1,4 +1,3 @@
-import { dt } from "motion/react-client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface PokemonRouteProps {
