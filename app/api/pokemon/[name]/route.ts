@@ -1,3 +1,4 @@
+import { dt } from "motion/react-client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface PokemonRouteProps {
@@ -11,13 +12,34 @@ export interface PokemonInfo {
   height: number,
   weight: number,
   abilities: PokemonAbility[],
-  moves: []
+  moves: PokemonMove[]
 }
 
 export interface PokemonAbility {
   is_hidden: boolean,
   slot: number,
   ability: {name: string, url: string}
+}
+
+export interface PokemonMove {
+  move: Move
+}
+
+export interface Move {
+  id: number,
+  name: string,
+  accuracy: number,
+  effect_chance: number,
+  pp: number,
+  priority: number
+  power: number,
+  damage_class: MoveDamageClass
+}
+
+export interface MoveDamageClass {
+  id: number,
+  name: string,
+  descriptions: {description: string}[]
 }
 
 export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
@@ -29,7 +51,15 @@ export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
     
     const data: PokemonInfo = await res.json()
 
-    const pokemonData = {id: data.id} as PokemonInfo
+    const pokemonData = {
+      id: data.id,
+      name: data.name,
+      base_experience: data.base_experience,
+      height: data.height,
+      weight: data.weight,
+      abilities: data.abilities,
+      moves: data.moves
+    } as PokemonInfo
 
     return NextResponse.json(pokemonData)
   }

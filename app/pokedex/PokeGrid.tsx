@@ -94,22 +94,41 @@ const PokeGrid = () => {
 
   useEffect(() => {
     const fetchAllNames = async () => {
-      const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1300")
-      const data = await res.json()
+      try {
+        const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1300")
+        const data = await res.json()
 
-      const detailPromises = data.results.map(
-        async (pokemon: { name: string; url: string }) => {
-          const pokemonRes = await fetch(pokemon.url)
-          const pokemonData = await pokemonRes.json()
-          return pokemonData.is_default ? pokemonData.name : null
+        const batchSize = 250
+        const names: string[] = []
+
+        for (let i = 0; i < data.results.length; i += batchSize) {
+          const batch = data.results.slice(i, i + batchSize)
+
+          const detailPromises = batch.map(
+            async (pokemon: { name: string; url: string }) => {
+              try {
+                const pokemonRes = await fetch(pokemon.url)
+                if (!pokemonRes.ok) {
+                  setError("Failed to Fetch Pokemon names")
+                  return
+                }
+                const pokemonData = await pokemonRes.json()
+                return pokemonData.is_default ? pokemonData.name : null
+              } catch (err) {
+                console.error("Failed to fetch:", pokemon.url, err)
+                return null
+              }
+            }
+          )
+
+          const batchResults = await Promise.all(detailPromises)
+          names.push(...batchResults.filter((n): n is string => Boolean(n)))
         }
-      )
 
-      const pokemonNames = await Promise.all(detailPromises)
-
-      setAllPokemonNames(
-        pokemonNames.filter((name): name is string => Boolean(name))
-      )
+        setAllPokemonNames(names)
+      } catch (err) {
+        console.error("Fetch failed:", err)
+      }
     }
 
     fetchAllNames()
