@@ -8,8 +8,7 @@ import { typeColours } from "./typeColours"
 import TypeFilter from "./TypeFilter"
 import AbilityFilter from "./AbilityFilter"
 import SearchFilter from "./SearchFilter"
-import { NextResponse } from "next/server"
-import Link from "next/link"
+import allPokemonNames from "@/data/pokemon-names.json"
 import { FaChevronCircleDown, FaChevronCircleUp } from "react-icons/fa"
 
 interface Ability {
@@ -29,7 +28,9 @@ const PokeGrid = () => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [selectedAbility, setSelectedAbility] = useState<string>("")
   const [abilities, setAbilities] = useState<Ability[]>([])
-  const [allPokemonNames, setAllPokemonNames] = useState<string[]>([])
+  const [filteredPokemonNames, setFilteredPokemonNames] =
+    useState<string[]>(allPokemonNames)
+
   const [showFilters, setShowFilters] = useState(false)
 
   const fetchPokemon = async (reset = false) => {
@@ -92,51 +93,9 @@ const PokeGrid = () => {
     setAllLoaded(false)
   }
 
-  useEffect(() => {
-    const fetchAllNames = async () => {
-      try {
-        const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1300")
-        const data = await res.json()
-
-        const batchSize = 250
-        const names: string[] = []
-
-        for (let i = 0; i < data.results.length; i += batchSize) {
-          const batch = data.results.slice(i, i + batchSize)
-
-          const detailPromises = batch.map(
-            async (pokemon: { name: string; url: string }) => {
-              try {
-                const pokemonRes = await fetch(pokemon.url)
-                if (!pokemonRes.ok) {
-                  setError("Failed to Fetch Pokemon names")
-                  return
-                }
-                const pokemonData = await pokemonRes.json()
-                return pokemonData.is_default ? pokemonData.name : null
-              } catch (err) {
-                console.error("Failed to fetch:", pokemon.url, err)
-                return null
-              }
-            }
-          )
-
-          const batchResults = await Promise.all(detailPromises)
-          names.push(...batchResults.filter((n): n is string => Boolean(n)))
-        }
-
-        setAllPokemonNames(names)
-      } catch (err) {
-        console.error("Fetch failed:", err)
-      }
-    }
-
-    fetchAllNames()
-  }, [])
-
   return (
     <div className="flex flex-col items-center w-full">
-      <SearchFilter allPokemonNames={allPokemonNames} />
+      <SearchFilter allPokemonNames={filteredPokemonNames} />
 
       <button
         className="flex flex-row justify-center items-center gap-2 py-1 w-10/12 text-white cursor-pointer rounded-md bg-charmander-dull-200"
