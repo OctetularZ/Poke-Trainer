@@ -8,6 +8,7 @@ interface urlData {
 export interface PokemonBasic {
   id: number;
   name: string;
+  is_default: boolean;
   types: PokemonType[];
   sprites: { front_default: string; back_default: string };
   showdown: { front_default: string; back_default: string };
@@ -118,6 +119,7 @@ export async function GET(request: NextRequest) {
       return {
         id: data.id,
         name: data.name,
+        is_default: data.is_default,
         types: data.types,
         sprites: {
           front_default: data.sprites.front_default ?? "",
@@ -133,7 +135,9 @@ export async function GET(request: NextRequest) {
 
     const pokemonData = await Promise.all(detailedPromises);
 
-    return NextResponse.json(pokemonData);
+    const filteredPokemon = pokemonData.filter((p) => p.is_default);
+
+    return NextResponse.json(filteredPokemon);
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Something went wrong!" }, { status: 500 });

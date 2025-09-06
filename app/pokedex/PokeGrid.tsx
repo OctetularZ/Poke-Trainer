@@ -96,10 +96,22 @@ const PokeGrid = () => {
     const fetchAllNames = async () => {
       const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1300")
       const data = await res.json()
+
+      const detailPromises = data.results.map(
+        async (pokemon: { name: string; url: string }) => {
+          const pokemonRes = await fetch(pokemon.url)
+          const pokemonData = await pokemonRes.json()
+          return pokemonData.is_default ? pokemonData.name : null
+        }
+      )
+
+      const pokemonNames = await Promise.all(detailPromises)
+
       setAllPokemonNames(
-        data.results.map((pokemon: { name: string }) => pokemon.name)
+        pokemonNames.filter((name): name is string => Boolean(name))
       )
     }
+
     fetchAllNames()
   }, [])
 

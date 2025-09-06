@@ -5,7 +5,10 @@ interface PokemonRouteProps {
 }
 
 export interface PokemonInfo {
-  id: number
+  id: number,
+  name: string,
+  base_experience: number,
+  height: number
 }
 
 export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
