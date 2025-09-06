@@ -8,7 +8,16 @@ export interface PokemonInfo {
   id: number,
   name: string,
   base_experience: number,
-  height: number
+  height: number,
+  weight: number,
+  abilities: PokemonAbility[],
+  moves: []
+}
+
+export interface PokemonAbility {
+  is_hidden: boolean,
+  slot: number,
+  ability: {name: string, url: string}
 }
 
 export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
