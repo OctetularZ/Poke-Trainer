@@ -11,7 +11,7 @@ const Hero = () => {
     <section className="flex flex-col items-center">
       <div
         id={"hero"}
-        className="flex flex-row justify-center gap-20 items-center pt-30"
+        className="flex flex-row flex-wrap justify-center gap-20 items-center pt-30"
       >
         <motion.div
           animate={{ y: 50 }}
@@ -48,11 +48,13 @@ const Hero = () => {
               KE TRAINER!
             </span>
           </h1>
-          <h2 className="text-white/70 text-center text-xl">
+          <h2 className="text-white/50 text-center text-xl">
             Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur alias placeat fugit, debitis excepturi doloribus
-            laudantium unde cum libero. Quo, temporibus ipsa voluptates ratione
-            distinctio dignissimos odio reprehenderit aperiam mollitia.
+            Consequuntur alias <span className="text-white">placeat fugit</span>
+            , debitis excepturi doloribus laudantium unde cum libero. Quo,
+            temporibus ipsa{" "}
+            <span className="text-white">voluptates ratione distinctio</span>{" "}
+            dignissimos odio reprehenderit aperiam mollitia.
           </h2>
         </div>
         {/* <button
@@ -68,12 +70,33 @@ const Hero = () => {
         Github
       </button> */}
       </div>
-      <Link href={"#"}>
-        <div className="flex flex-col gap-2 justify-center items-center">
-          <h2 className="text-white text-xl pt-20">See More</h2>
+      <div className="flex flex-col gap-3 justify-center items-center">
+        <Link href={"#"}>
+          <motion.button
+            whileHover={{
+              backgroundColor: "#29B6F6",
+              color: "white",
+              transition: { color: { delay: 0.1 } },
+            }}
+            className="py-2 px-5 mt-20 rounded-md bg-white cursor-pointer"
+          >
+            Learn More
+          </motion.button>
+        </Link>
+        <motion.div
+          animate={{ y: 10 }}
+          transition={{
+            type: "spring",
+            bounce: 1,
+            stiffness: 30,
+            repeat: Infinity,
+            repeatType: "reverse",
+            delay: 1,
+          }}
+        >
           <FaChevronDown color="white" height={20} width={20} />
-        </div>
-      </Link>
+        </motion.div>
+      </div>
     </section>
   )
 }
