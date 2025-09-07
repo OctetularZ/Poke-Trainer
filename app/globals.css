@@ -24,7 +24,7 @@
 }
 
 @layer base {
-  h1, li, button, input {
+  h1, h2, li, button, input {
     font-family: 'Pixelify Sans', serif;
   }
   h4 {
@@ -40,6 +40,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
