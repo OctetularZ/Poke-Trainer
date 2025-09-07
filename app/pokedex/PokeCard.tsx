@@ -26,7 +26,7 @@ const PokeCard = ({ id, name, sprite, types }: Pokemon) => {
         </div>
         <p className="text-gray-400">#{id.toString().padStart(4, "0")}</p>
         <h1 className="text-white text-2xl pb-3 text-wrap text-center">
-          {name}
+          {`${name.charAt(0).toUpperCase()}${name.slice(1).replace("-", " ")}`}
         </h1>
         <div className="flex flex-row gap-5">
           {types.map((type: PokemonType, index) => (

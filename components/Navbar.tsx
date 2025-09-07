@@ -24,6 +24,7 @@ const Navbar = () => {
         <h1 className="flex items-center justify-center justify-self-center text-bold text-4xl">
           P
           <Image
+            className="-mx-1"
             src={"/pixel-great-ball.png"}
             height={40}
             width={40}

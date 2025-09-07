@@ -8,11 +8,8 @@ import { FaChevronDown } from "react-icons/fa"
 
 const Hero = () => {
   return (
-    <section className="flex flex-col items-center">
-      <div
-        id={"hero"}
-        className="flex flex-row flex-wrap justify-center gap-20 items-center pt-30"
-      >
+    <section id={"hero"} className="flex flex-col items-center">
+      <div className="flex flex-row flex-wrap justify-center gap-20 items-center pt-30">
         <motion.div
           animate={{ y: 50 }}
           transition={{
@@ -71,7 +68,7 @@ const Hero = () => {
       </button> */}
       </div>
       <div className="flex flex-col gap-3 justify-center items-center">
-        <Link href={"#"}>
+        <Link href={"#pokedex"}>
           <motion.button
             whileHover={{
               backgroundColor: "#29B6F6",

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { PokemonType } from "../route";
 
 interface PokemonRouteProps {
   params: Promise<{ name: string }>
@@ -8,6 +9,17 @@ export interface PokemonInfo {
   id: number,
   name: string,
   base_experience: number,
+  types: PokemonType[],
+  sprites: { 
+    front_default: string; 
+    back_default: string;
+    other: {
+      showdown: {
+        front_default: string; 
+        back_default: string
+      }
+    } 
+  }
   height: number,
   weight: number,
   abilities: PokemonAbility[],
@@ -54,6 +66,17 @@ export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
       id: data.id,
       name: data.name,
       base_experience: data.base_experience,
+      types: data.types,
+      sprites: {
+          front_default: data.sprites.front_default ?? "",
+          back_default: data.sprites.back_default ?? "",
+          other: {
+            showdown: {
+              front_default: data.sprites.other.showdown.front_default ?? "",
+              back_default: data.sprites.other.showdown.back_default ?? ""
+            }
+          }
+        },
       height: data.height,
       weight: data.weight,
       abilities: data.abilities,
