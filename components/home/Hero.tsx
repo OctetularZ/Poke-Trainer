@@ -42,7 +42,7 @@ const Hero = () => {
                 alt="Great Ball"
                 className="inline-block -mx-2"
               />
-              KE TRAINER!
+              KÉ TRAINER!
             </span>
           </h1>
           <h2 className="text-white/50 text-center text-xl">

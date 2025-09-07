@@ -11,7 +11,7 @@ const Navbar = () => {
           <Link href="/">Home</Link>
         </li>
         <li>
-          <Link href="/pokedex">Pokedex</Link>
+          <Link href="/pokedex">Pokédex</Link>
         </li>
         <li>
           <Link href="#">Guesser?</Link>
@@ -30,7 +30,7 @@ const Navbar = () => {
             width={40}
             alt="Pixel Great Ball"
           ></Image>
-          KE TRAINER
+          KÉ TRAINER
         </h1>
       </Link>
       <ul className="flex gap-5 justify-self-end items-center text-2xl">

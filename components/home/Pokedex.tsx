@@ -26,8 +26,21 @@ const Pokedex = () => {
   }, [])
 
   return (
-    <section id={"pokdex"} className="flex flex-col items-center">
-      <div className="flex flex-row flex-wrap justify-center gap-20 items-center pt-30">
+    <section id={"pokedex"} className="flex flex-col items-center">
+      <div className="flex flex-row flex-wrap justify-center pb-20 gap-40 items-center pt-30">
+        <div className="flex flex-col justify-center items-center max-w-150">
+          <h1 className="text-white text-5xl pb-5">Pokédex</h1>
+          <h2 className="text-white/60 text-xl text-center text-highlight">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor
+            quidem ratione enim. Voluptatum officiis quaerat omnis eaque
+            tempore! Autem, praesentium ut. Sunt fugiat aliquid expedita a
+            cupiditate iusto ex exercitationem. Quos possimus doloribus ea ullam
+            veritatis! <mark>Placeat enim beatae</mark> fugit sed tempora
+            mollitia, modi deleniti cupiditate optio corporis voluptatum
+            officiis dignissimos error itaque laboriosam ipsa quam reiciendis
+            ullam facere deserunt?
+          </h2>
+        </div>
         {loading ? (
           <PokeCardSkeleton />
         ) : (
