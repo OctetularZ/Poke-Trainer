@@ -49,6 +49,12 @@ const PokeGrid = () => {
             : "") +
           abilityQuery
       )
+
+      if (!res.ok) {
+        console.error("Could not fetch Pokemon")
+        setError("Could not fetch Pokémon")
+        return
+      }
       const data: PokemonBasic[] = await res.json()
 
       if (data.length < fetchSize) setAllLoaded(true)
@@ -56,7 +62,6 @@ const PokeGrid = () => {
       setOffset((prev) => (reset ? fetchSize : prev + fetchSize))
     } catch (err) {
       console.error(err)
-      setError("Could not fetch Pokémon")
     } finally {
       setLoading(false)
     }

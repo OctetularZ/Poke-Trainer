@@ -3,7 +3,6 @@ import Link from "next/link"
 import Image from "next/image"
 import React from "react"
 import { motion } from "motion/react"
-import { githubSignIn, googleSignIn } from "@/lib/auth-client"
 import { FaChevronDown } from "react-icons/fa"
 
 const Hero = () => {

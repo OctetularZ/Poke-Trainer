@@ -16,6 +16,7 @@ const Test = ({ pokemon }: Props) => {
       const res = await fetch(`/api/pokemon/${pokemon}`)
       if (!res.ok) {
         console.error("Could not fetch Pokémon")
+        setError("Could not fetch Pokémon")
         setLoading(false)
         return
       }
