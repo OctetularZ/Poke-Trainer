@@ -1,14 +1,16 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
-import { motion } from "motion/react"
+import { motion, Variants } from "motion/react"
 import { PokemonInfo } from "@/app/api/pokemon/[name]/route"
 import PokeCard from "@/app/pokedex/components/PokeCard"
 import PokeCardSkeleton from "../skeletons/PokeCardSkeleton"
+import { FaArrowRight } from "react-icons/fa6"
 
 const Pokedex = () => {
   const [showcasePokemon, setShowcasePokemon] = useState<PokemonInfo>()
   const [loading, setLoading] = useState(true)
+  const [hovered, setHovered] = useState(false)
   const [error, setError] = useState("")
 
   useEffect(() => {
@@ -29,6 +31,11 @@ const Pokedex = () => {
     fetchPokemon()
   }, [])
 
+  const arrowVariants: Variants = {
+    initial: { x: -40 },
+    hover: { x: 0 },
+  }
+
   return (
     <section id={"pokedex"} className="flex flex-col items-center">
       <div className="flex flex-row flex-wrap justify-center pb-20 gap-40 items-center pt-30">
@@ -44,6 +51,30 @@ const Pokedex = () => {
             officiis dignissimos error itaque laboriosam ipsa quam reiciendis
             ullam facere deserunt?
           </h2>
+          <div className="flex flex-row gap-3 mt-10 justify-center items-center">
+            <Link href={"/pokedex"}>
+              <motion.button
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+                whileHover={{
+                  backgroundColor: "#29B6F6",
+                  color: "white",
+                  transition: { color: { delay: 0.1 } },
+                }}
+                className="py-2 px-5 rounded-md bg-white cursor-pointer"
+              >
+                Visit Pokédex
+              </motion.button>
+            </Link>
+            <motion.div
+              className="-z-5"
+              variants={arrowVariants}
+              initial="initial"
+              animate={hovered ? "hover" : "initial"}
+            >
+              <FaArrowRight color="white" size={20} />
+            </motion.div>
+          </div>
         </div>
         {loading ? (
           <PokeCardSkeleton />

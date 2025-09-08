@@ -9,23 +9,25 @@ const Hero = () => {
   return (
     <section id={"hero"} className="flex flex-col items-center">
       <div className="flex flex-row flex-wrap justify-center gap-20 items-center pt-30">
-        <motion.div
-          animate={{ y: 50 }}
-          transition={{
-            type: "spring",
-            bounce: 1,
-            stiffness: 30,
-            repeat: Infinity,
-            repeatType: "reverse",
-            delay: 1,
-          }}
-        >
-          <Image
-            src={"/home/Mega-Charizard-X-Sprite.png"}
-            width={500}
-            height={500}
-            alt="Charizard Mega X"
-          />
+        <motion.div initial={{ y: -750 }} animate={{ y: 0 }}>
+          <motion.div
+            animate={{ y: 50 }}
+            transition={{
+              type: "spring",
+              bounce: 1,
+              stiffness: 30,
+              repeat: Infinity,
+              repeatType: "reverse",
+              delay: 1,
+            }}
+          >
+            <Image
+              src={"/home/Mega-Charizard-X-Sprite.png"}
+              width={500}
+              height={500}
+              alt="Charizard Mega X"
+            />
+          </motion.div>
         </motion.div>
         <div className="max-w-150">
           <h1 className="text-7xl text-white text-center leading-20 pb-5">
@@ -66,7 +68,7 @@ const Hero = () => {
         Github
       </button> */}
       </div>
-      <div className="flex flex-col gap-3 justify-center items-center">
+      <div className="flex flex-col gap-3 mt-15 justify-center items-center">
         <Link href={"#pokedex"}>
           <motion.button
             whileHover={{
@@ -74,7 +76,7 @@ const Hero = () => {
               color: "white",
               transition: { color: { delay: 0.1 } },
             }}
-            className="py-2 px-5 mt-20 rounded-md bg-white cursor-pointer"
+            className="py-2 px-5 rounded-md bg-white cursor-pointer"
           >
             Learn More
           </motion.button>
@@ -90,7 +92,7 @@ const Hero = () => {
             delay: 1,
           }}
         >
-          <FaChevronDown color="white" height={20} width={20} />
+          <FaChevronDown color="white" />
         </motion.div>
       </div>
     </section>
