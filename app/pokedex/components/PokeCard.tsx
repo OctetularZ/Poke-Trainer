@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import React from "react"
-import { PokemonType } from "../api/pokemon/route"
+import { PokemonType } from "@/app/api/pokemon/route"
 import { typeColours, typeColoursHex } from "./typeColours"
 
 interface Pokemon {

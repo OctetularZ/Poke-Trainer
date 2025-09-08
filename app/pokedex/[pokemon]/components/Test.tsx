@@ -1,7 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import { PokemonInfo } from "@/app/api/pokemon/[name]/route"
-import { NextResponse } from "next/server"
 
 interface Props {
   pokemon: string

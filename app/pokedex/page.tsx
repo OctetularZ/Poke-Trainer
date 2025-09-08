@@ -1,5 +1,5 @@
 import React from "react"
-import PokeGrid from "./PokeGrid"
+import PokeGrid from "./components/PokeGrid"
 
 const Pokedex = () => {
   return (

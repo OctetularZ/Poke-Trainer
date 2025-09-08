@@ -4,7 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { motion } from "motion/react"
 import { PokemonInfo } from "@/app/api/pokemon/[name]/route"
-import PokeCard from "@/app/pokedex/PokeCard"
+import PokeCard from "@/app/pokedex/components/PokeCard"
 import PokeCardSkeleton from "../skeletons/PokeCardSkeleton"
 
 const Pokedex = () => {

@@ -1,5 +1,5 @@
 import React from "react"
-import Test from "./Test"
+import Test from "./components/Test"
 
 interface PokemonPageProps {
   params: Promise<{ pokemon: string }>

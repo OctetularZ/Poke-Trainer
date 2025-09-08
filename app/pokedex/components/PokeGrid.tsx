@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import PokeCard from "./PokeCard"
-import { PokemonBasic } from "../api/pokemon/route"
+import { PokemonBasic } from "@/app/api/pokemon/route"
 import Image from "next/image"
 import { motion, AnimatePresence } from "motion/react"
 import { typeColours } from "./typeColours"
@@ -9,7 +9,7 @@ import TypeFilter from "./TypeFilter"
 import AbilityFilter from "./AbilityFilter"
 import SearchFilter from "./SearchFilter"
 import allPokemonNames from "@/data/pokemon-names.json"
-import { FaChevronCircleDown, FaChevronCircleUp } from "react-icons/fa"
+import { FaChevronCircleDown } from "react-icons/fa"
 
 interface Ability {
   name: string
