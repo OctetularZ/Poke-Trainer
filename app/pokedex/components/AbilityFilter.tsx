@@ -65,7 +65,7 @@ const AbilityFilter = ({
               key=""
               value=""
               className={({ active, selected }) =>
-                `cursor-pointer select-none px-4 py-2 ${
+                `cursor-pointer select-none font-pixel px-4 py-2 ${
                   active ? "bg-charmander-blue-400" : ""
                 } ${selected ? "font-bold bg-charmander-blue-500" : ""}`
               }
@@ -78,7 +78,7 @@ const AbilityFilter = ({
                 key={ability.name}
                 value={ability.name}
                 className={({ active, selected }) =>
-                  `cursor-pointer select-none px-4 py-2 ${
+                  `cursor-pointer select-none font-pixel px-4 py-2 ${
                     active ? "bg-charmander-blue-400" : ""
                   } ${selected ? "font-bold bg-charmander-blue-500" : ""}`
                 }

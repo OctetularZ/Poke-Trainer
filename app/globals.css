@@ -21,6 +21,10 @@
   --color-charmander-blue-900: #00131f;
   --color-charmander-pale-200: #81D4FA;
   --color-charmander-dull-200: #1C2B38;
+
+  --font-pixel: 'Pixelify Sans', serif;
+  --font-jersey: 'Jersey 15', sans-serif;
+  --font-poppins: 'Poppins', sans-serif;
 }
 
 @layer base {
