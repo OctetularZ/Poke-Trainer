@@ -6,12 +6,16 @@ import { PokemonInfo } from "@/app/api/pokemon/[name]/route"
 import PokeCard from "@/app/pokedex/components/PokeCard"
 import PokeCardSkeleton from "../skeletons/PokeCardSkeleton"
 import { FaArrowRight } from "react-icons/fa6"
+import allPokemonNames from "@/data/pokemon-names.json"
+import SearchFilter from "@/app/pokedex/components/SearchFilter"
 
 const Pokedex = () => {
   const [showcasePokemon, setShowcasePokemon] = useState<PokemonInfo>()
   const [loading, setLoading] = useState(true)
   const [hovered, setHovered] = useState(false)
   const [error, setError] = useState("")
+  const [filteredPokemonNames, setFilteredPokemonNames] =
+    useState<string[]>(allPokemonNames)
 
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -76,20 +80,23 @@ const Pokedex = () => {
             </motion.div>
           </div>
         </div>
-        {loading ? (
-          <PokeCardSkeleton />
-        ) : (
-          <PokeCard
-            id={showcasePokemon!.id}
-            name={showcasePokemon!.name}
-            sprite={
-              showcasePokemon?.sprites.other.showdown.front_default ||
-              showcasePokemon?.sprites.front_default ||
-              "/placeholder.png"
-            }
-            types={showcasePokemon!.types}
-          />
-        )}
+        <div className="flex flex-col justify-center items-center">
+          <SearchFilter allPokemonNames={filteredPokemonNames} />
+          {loading ? (
+            <PokeCardSkeleton />
+          ) : (
+            <PokeCard
+              id={showcasePokemon!.id}
+              name={showcasePokemon!.name}
+              sprite={
+                showcasePokemon?.sprites.other.showdown.front_default ||
+                showcasePokemon?.sprites.front_default ||
+                "/placeholder.png"
+              }
+              types={showcasePokemon!.types}
+            />
+          )}
+        </div>
       </div>
     </section>
   )
