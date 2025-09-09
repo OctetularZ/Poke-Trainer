@@ -55,18 +55,6 @@ const Hero = () => {
             dignissimos odio reprehenderit aperiam mollitia.
           </h2>
         </div>
-        {/* <button
-        className="text-white py-1 px-3 bg-red-500 cursor-pointer rounded"
-        onClick={googleSignIn}
-      >
-        Google
-      </button>
-      <button
-        className="text-white py-1 px-3 bg-amber-600 cursor-pointer rounded"
-        onClick={githubSignIn}
-      >
-        Github
-      </button> */}
       </div>
       <div className="flex flex-col gap-3 mt-15 justify-center items-center">
         <Link href={"#pokedex"}>

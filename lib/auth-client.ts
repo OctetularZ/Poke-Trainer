@@ -13,4 +13,12 @@ export const githubSignIn = async () => {
     const data = await authClient.signIn.social({
         provider: "github"
     })
+
+//     authClient.signIn.social({
+//   provider: "github",          // or "google", "apple", etc.
+//   callbackURL: "/dashboard",
+//   errorCallbackURL: "/error",
+//   newUserCallbackURL: "/welcome",
+//   disableRedirect: false,      // or true if you want manual handling
+// });
 }
