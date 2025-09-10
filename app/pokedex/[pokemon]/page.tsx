@@ -1,5 +1,5 @@
 import React from "react"
-import Test from "./components/Test"
+import Main from "./components/Main"
 
 interface PokemonPageProps {
   params: Promise<{ pokemon: string }>
@@ -8,7 +8,7 @@ interface PokemonPageProps {
 const page = async ({ params }: PokemonPageProps) => {
   const { pokemon } = await params
 
-  return <Test pokemon={pokemon} /> // Change
+  return <Main pokemon={pokemon} />
 }
 
 export default page

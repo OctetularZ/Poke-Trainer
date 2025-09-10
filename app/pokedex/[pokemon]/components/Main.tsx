@@ -6,7 +6,7 @@ interface Props {
   pokemon: string
 }
 
-const Test = ({ pokemon }: Props) => {
+const Main = ({ pokemon }: Props) => {
   const [pokemonInfo, setPokemonInfo] = useState<PokemonInfo>()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -40,4 +40,4 @@ const Test = ({ pokemon }: Props) => {
   )
 }
 
-export default Test
+export default Main
