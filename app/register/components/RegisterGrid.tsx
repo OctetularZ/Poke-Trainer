@@ -37,7 +37,7 @@ const RegisterGrid = () => {
           </div>
           <h2 className="text-white">
             Already have an account?{" "}
-            <Link href={"/register"}>
+            <Link href={"/login"}>
               <span className="text-charmander-dull-200 transition duration-300 inline-block hover:scale-105">
                 Sign In
               </span>

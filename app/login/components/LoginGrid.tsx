@@ -12,7 +12,7 @@ const LoginGrid = () => {
       <div className="flex flex-row justify-self-center gap-20 justify-center rounded-lg w-200 h-100 bg-charmander-dull-200">
         <div className="flex flex-col justify-center items-center w-[50%]">
           <Image
-            className="-mr-25"
+            className="-mr-20"
             src={"/home/Mega-Charizard-X-Sprite.png"}
             width={400}
             height={300}
@@ -48,7 +48,7 @@ const LoginGrid = () => {
             Don't have an account?{" "}
             <Link href={"/register"}>
               <span className="text-charmander-dull-200 transition duration-300 inline-block hover:scale-105">
-                Sign up
+                Sign Up
               </span>
             </Link>
           </h2>
