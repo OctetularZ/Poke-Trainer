@@ -39,7 +39,7 @@ const Navbar = () => {
         </li>
         <li>
           <Link href="/register">
-            <button className="py-2 px-5 bg-charmander-blue-400 rounded-4xl shadow-md drop-shadow-[0_0_10px_rgba(41,182,246,0.7)]">
+            <button className="py-2 px-5 bg-charmander-blue-400 rounded-4xl shadow-md drop-shadow-[0_0_10px_rgba(41,182,246,0.7)] cursor-pointer">
               Register
             </button>
           </Link>

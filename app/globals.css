@@ -50,6 +50,54 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@keyframes glow-orange {
+  0% {
+    box-shadow: 0 0 5px 1px rgba(238, 131, 41, 0.45), 
+                0 0 10px 2px rgba(238, 131, 41, 0.45), 
+                0 0 15px 3px rgba(238, 131, 41, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 12px 4px rgba(238, 131, 41, 0.45), 
+                0 0 18px 5px rgba(238, 131, 41, 0.45), 
+                0 0 24px 6px rgba(238, 131, 41, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 5px 1px rgba(238, 131, 41, 0.45), 
+                0 0 10px 2px rgba(238, 131, 41, 0.45), 
+                0 0 15px 3px rgba(238, 131, 41, 0.45);
+  }
+}
+
+@layer utilities {
+  .animate-glow-orange {
+    animation: glow-orange 2s infinite;
+  }
+}
+
+@keyframes glow-blue {
+  0% {
+    box-shadow: 0 0 5px 1px rgba(9, 154, 220, 0.45), 
+                0 0 10px 2px rgba(9, 154, 220, 0.45), 
+                0 0 15px 3px rgba(9, 154, 220, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 12px 4px rgba(9, 154, 220, 0.45), 
+                0 0 18px 5px rgba(9, 154, 220, 0.45), 
+                0 0 24px 6px rgba(9, 154, 220, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 5px 1px rgba(9, 154, 220, 0.45), 
+                0 0 10px 2px rgba(9, 154, 220, 0.45), 
+                0 0 15px 3px rgba(9, 154, 220, 0.45);
+  }
+}
+
+@layer utilities {
+  .animate-glow-blue {
+    animation: glow-blue 2s infinite;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
