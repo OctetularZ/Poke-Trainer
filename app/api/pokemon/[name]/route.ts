@@ -16,7 +16,11 @@ export interface PokemonInfo {
     other: {
       showdown: {
         front_default: string; 
-        back_default: string
+        back_default: string;
+      }
+      "official-artwork": {
+        front_default: string; 
+        front_shiny: string;
       }
     } 
   }
@@ -74,6 +78,10 @@ export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
             showdown: {
               front_default: data.sprites.other.showdown.front_default ?? "",
               back_default: data.sprites.other.showdown.back_default ?? ""
+            },
+            "official-artwork": {
+              front_default: data.sprites.other["official-artwork"].front_default ?? "",
+              front_shiny: data.sprites.other["official-artwork"].front_shiny ?? ""
             }
           }
         },

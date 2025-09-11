@@ -8,7 +8,11 @@ interface PokemonPageProps {
 const page = async ({ params }: PokemonPageProps) => {
   const { pokemon } = await params
 
-  return <Main pokemon={pokemon} />
+  return (
+    <div className="flex flex-col justify-center items-center">
+      <Main pokemon={pokemon} />
+    </div>
+  )
 }
 
 export default page
