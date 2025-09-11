@@ -13,7 +13,7 @@ interface Pokemon {
 
 const PokeCard = ({ id, name, sprite, types }: Pokemon) => {
   return (
-    <Link href={`/pokedex/${name}`}>
+    <Link href={`/pokedex/${name.charAt(0).toUpperCase()}${name.slice(1)}`}>
       <div className="flex flex-col justify-center items-center w-55 bg-charmander-dull-200 rounded-2xl pt-10 pb-8 px-5">
         <div className="relative mb-5 w-[100px] h-[100px] items-center">
           <Image

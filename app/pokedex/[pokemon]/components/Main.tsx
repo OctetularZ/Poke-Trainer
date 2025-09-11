@@ -52,14 +52,18 @@ const Main = ({ pokemon }: Props) => {
         />
       ) : (
         <div>
-          <Image
-            className="mr-30"
-            src={pokemonInfo?.sprites.other["official-artwork"].front_default!}
-            width={350}
-            height={350}
-            alt={`${pokemon} Sprite`}
-            unoptimized
-          />
+          <div className="mr-30">
+            <h1 className="text-center text-white text-5xl mb-20">{pokemon}</h1>
+            <Image
+              src={
+                pokemonInfo?.sprites.other["official-artwork"].front_default!
+              }
+              width={350}
+              height={350}
+              alt={`${pokemon} Sprite`}
+              unoptimized
+            />
+          </div>
           <div className="absolute top-2 right-2 px-2 max-h-[calc(100%-0.5rem)] overflow-y-scroll">
             {sprites?.map((sprite) => (
               <div
