@@ -21,7 +21,7 @@ const SearchFilter = ({ allPokemonNames }: SearchFilterProps) => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onFocus={() => setInputFocused(true)}
-        onBlur={() => setTimeout(() => setInputFocused(false), 100)}
+        onBlur={() => setTimeout(() => setInputFocused(false), 200)}
         placeholder="Search Pokémon..."
         className="px-2 py-1 w-60 rounded border bg-charmander-dull-200 border-gray-300 text-white focus:outline-none"
       />
