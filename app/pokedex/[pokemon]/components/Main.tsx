@@ -9,6 +9,7 @@ interface Props {
 
 const Main = ({ pokemon }: Props) => {
   const [pokemonInfo, setPokemonInfo] = useState<PokemonInfo>()
+  const [sprites, setSprites] = useState<string[]>()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -23,6 +24,10 @@ const Main = ({ pokemon }: Props) => {
       }
       const data = await res.json()
       setPokemonInfo(data)
+      setSprites([
+        data?.sprites.other.showdown.front_default,
+        data?.sprites.other.showdown.back_default,
+      ])
     } catch (err) {
       console.error(err)
     } finally {
@@ -35,7 +40,7 @@ const Main = ({ pokemon }: Props) => {
   }, [])
 
   return (
-    <div className="flex flex-row justify-center items-center bg-charmander-dull-200 w-200 h-150 rounded-xl my-20">
+    <div className="relative flex flex-row justify-center items-center bg-charmander-dull-200 w-200 h-150 rounded-xl my-20">
       {/* {!loading && <h1 className="text-white">Pokemon: {pokemonInfo?.id}</h1>} */}
       {loading ? (
         <Image
@@ -46,14 +51,31 @@ const Main = ({ pokemon }: Props) => {
           alt="Placeholder"
         />
       ) : (
-        <>
+        <div>
           <Image
+            className="mr-30"
             src={pokemonInfo?.sprites.other["official-artwork"].front_default!}
-            width={300}
-            height={300}
+            width={350}
+            height={350}
             alt={`${pokemon} Sprite`}
-            unoptimized={true}
+            unoptimized
           />
+          <div className="absolute top-2 right-2 px-2 max-h-[calc(100%-0.5rem)] overflow-y-scroll">
+            {sprites?.map((sprite) => (
+              <div
+                key={sprite}
+                className="flex justify-center items-center bg-charmander-blue-900 w-40 h-45 mb-2 rounded-lg shadow-sm shadow-black"
+              >
+                <Image
+                  src={sprite}
+                  width={125}
+                  height={125}
+                  alt="Pokémon Sprite"
+                  unoptimized
+                />
+              </div>
+            ))}
+          </div>
           {/* <Image
             src={pokemonInfo?.sprites.other.showdown.front_default!}
             width={100}
@@ -61,7 +83,8 @@ const Main = ({ pokemon }: Props) => {
             alt={`${pokemon} Sprite`}
             unoptimized={true}
           /> */}
-        </>
+          {/* Store sprites in a hashmap, update order each time a user clicks a sprite. Display hashmap[1] as the main image */}
+        </div>
       )}
     </div>
   )
