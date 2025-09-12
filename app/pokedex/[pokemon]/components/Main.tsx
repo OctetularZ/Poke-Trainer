@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import { PokemonInfo } from "@/app/api/pokemon/[name]/route"
+import { motion } from "motion/react"
 import Image from "next/image"
 
 interface Props {
@@ -41,20 +42,39 @@ const Main = ({ pokemon }: Props) => {
 
   return (
     <div className="relative flex flex-row justify-center items-center bg-charmander-dull-200 w-200 h-150 rounded-xl my-20">
-      {/* {!loading && <h1 className="text-white">Pokemon: {pokemonInfo?.id}</h1>} */}
       {loading ? (
-        <Image
-          className="justify-self-center"
-          src={"/placeholder.png"}
-          width={100}
-          height={100}
-          alt="Placeholder"
-        />
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{
+            duration: 0.3,
+            ease: "linear",
+            repeat: Infinity,
+            repeatDelay: 1,
+          }}
+        >
+          <Image
+            className="justify-self-center"
+            src={"/placeholder.png"}
+            width={100}
+            height={100}
+            alt="Placeholder"
+          />
+        </motion.div>
       ) : (
         <div>
-          <div className="mr-30">
-            <h1 className="text-center text-white text-5xl mb-20">{pokemon}</h1>
+          <div>
+            <div className="flex flex-row gap-3 mb-30 text-center text-5xl">
+              <h1 className=" text-white">
+                {pokemon.charAt(0).toUpperCase()}
+                {pokemon.slice(1)}
+              </h1>
+              <h1 className="text-white/50">
+                #{pokemonInfo?.id.toString().padStart(4, "0")}
+              </h1>
+            </div>
+            <p>{pokemonInfo?.species.flavor_text_entries[0].flavor_text}</p>
             <Image
+              className="relative -translate-x-15"
               src={
                 pokemonInfo?.sprites.other["official-artwork"].front_default!
               }
@@ -64,7 +84,7 @@ const Main = ({ pokemon }: Props) => {
               unoptimized
             />
           </div>
-          <div className="absolute top-2 right-2 px-2 max-h-[calc(100%-0.5rem)] overflow-y-scroll">
+          <div className="absolute bottom-2 right-2 px-2 max-h-[calc(100%-0.5rem)] overflow-y-scroll">
             {sprites?.map((sprite) => (
               <div
                 key={sprite}

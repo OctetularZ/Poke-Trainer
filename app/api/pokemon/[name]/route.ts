@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PokemonType } from "../route";
+import { PokemonSpecies } from "../species/[id]/route";
 
 interface PokemonRouteProps {
   params: Promise<{ name: string }>
@@ -24,6 +25,7 @@ export interface PokemonInfo {
       }
     } 
   }
+  species: PokemonSpecies,
   height: number,
   weight: number,
   abilities: PokemonAbility[],
@@ -61,34 +63,40 @@ export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
   const {name} = await params
   
   try {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`)
-    if (!res.ok) return NextResponse.json({error: "Could not find pokémon!"}, {status: res.status})
+    const pokemonRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`)
+    if (!pokemonRes.ok) return NextResponse.json({error: "Could not find pokémon!"}, {status: pokemonRes.status})
     
-    const data: PokemonInfo = await res.json()
+    const pokemon: PokemonInfo = await pokemonRes.json()
+
+    const speciesRes = await fetch(`${process.env.PUBLIC_BASE_URL}/api/pokemon/species/${pokemon.id}`)
+    if (!speciesRes.ok) return NextResponse.json({error: "Could not find pokémon species!"}, {status: speciesRes.status})
+    
+    const species: PokemonSpecies = await speciesRes.json()
 
     const pokemonData = {
-      id: data.id,
-      name: data.name,
-      base_experience: data.base_experience,
-      types: data.types,
+      id: pokemon.id,
+      name: pokemon.name,
+      base_experience: pokemon.base_experience,
+      types: pokemon.types,
       sprites: {
-          front_default: data.sprites.front_default ?? "",
-          back_default: data.sprites.back_default ?? "",
+          front_default: pokemon.sprites.front_default ?? "",
+          back_default: pokemon.sprites.back_default ?? "",
           other: {
             showdown: {
-              front_default: data.sprites.other.showdown.front_default ?? "",
-              back_default: data.sprites.other.showdown.back_default ?? ""
+              front_default: pokemon.sprites.other.showdown.front_default ?? "",
+              back_default: pokemon.sprites.other.showdown.back_default ?? ""
             },
             "official-artwork": {
-              front_default: data.sprites.other["official-artwork"].front_default ?? "",
-              front_shiny: data.sprites.other["official-artwork"].front_shiny ?? ""
+              front_default: pokemon.sprites.other["official-artwork"].front_default ?? "",
+              front_shiny: pokemon.sprites.other["official-artwork"].front_shiny ?? ""
             }
           }
         },
-      height: data.height,
-      weight: data.weight,
-      abilities: data.abilities,
-      moves: data.moves
+      species: species,
+      height: pokemon.height,
+      weight: pokemon.weight,
+      abilities: pokemon.abilities,
+      moves: pokemon.moves
     } as PokemonInfo
 
     return NextResponse.json(pokemonData)
