@@ -26,8 +26,12 @@ export async function GET(request: NextRequest, {params}: SpeciesRouteProps) {
     
     const data: PokemonSpecies = await res.json()
 
+    const englishFlavorTexts = data.flavor_text_entries.filter(
+      (entry) => entry.language.name === "en"
+    )
+
     const speciesData = {
-      flavor_text_entries: data.flavor_text_entries
+      flavor_text_entries: englishFlavorTexts
     } as PokemonSpecies
 
     return NextResponse.json(speciesData)
