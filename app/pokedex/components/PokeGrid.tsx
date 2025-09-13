@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import PokeCard from "./PokeCard"
-import { PokemonBasic } from "@/app/api/pokemon/route"
+import { PokemonBasic } from "@/types/pokemonBasic"
 import Image from "next/image"
 import { motion, AnimatePresence } from "motion/react"
 import { typeColours } from "./typeColours"

@@ -1,9 +1,9 @@
 "use client"
 import React, { useEffect, useState } from "react"
-import { PokemonInfo } from "@/app/api/pokemon/[name]/route"
+import { PokemonInfo } from "@/types/pokemonFull"
 import { motion } from "motion/react"
 import Image from "next/image"
-import { PokemonType } from "@/app/api/pokemon/route"
+import { PokemonType } from "@/types/pokemonBasic"
 import { typeColours, typeColoursHex } from "../../components/typeColours"
 
 interface Props {
