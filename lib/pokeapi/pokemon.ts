@@ -2,6 +2,8 @@ import { urlData, PokemonBasic, TypeOfPokemon } from "@/types/pokemonBasic";
 import { PokemonInfo } from "@/types/pokemonFull";
 import { PokemonSpecies } from "@/types/species";
 import { getPokemonSpecies } from "@/lib/pokeapi/species";
+import { getPokemonEvolution } from "./evolution";
+import { EvolutionChain } from "@/types/evolution";
 
 export async function getPokemonList(
   limit: number,
@@ -117,6 +119,8 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
 
   const species: PokemonSpecies = await getPokemonSpecies(pokemon.id.toString());
 
+  const evolution_chain: EvolutionChain = await getPokemonEvolution(species.evolution_chain.url);
+
   return {
     id: pokemon.id,
     name: pokemon.name,
@@ -140,7 +144,8 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
         },
       },
     },
-    species,
+    species: species,
+    evolution_chain: evolution_chain,
     height: pokemon.height,
     weight: pokemon.weight,
     abilities: pokemon.abilities,
