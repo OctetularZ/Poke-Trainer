@@ -3,7 +3,45 @@ import { PokemonInfo } from "@/types/pokemonFull";
 import { PokemonSpecies } from "@/types/species";
 import { getPokemonSpecies } from "@/lib/pokeapi/species";
 import { getPokemonEvolution } from "./evolution";
-import { EvolutionChain } from "@/types/evolution";
+import { ChainLink, EvolutionChain } from "@/types/evolution";
+
+const getPokemonBasic = async (name: string): Promise<PokemonBasic> => {
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`)
+  if (!res.ok) throw new Error(`Could not find ${name}`)
+  const data = await res.json()
+  return {
+    id: data.id,
+    name: data.name,
+    is_default: data.is_default,
+    types: data.types,
+    sprites: {
+      front_default: data.sprites.front_default ?? "",
+      back_default: data.sprites.back_default ?? "",
+    },
+    showdown: {
+      front_default: data.sprites.other?.showdown?.front_default ?? "",
+      back_default: data.sprites.other?.showdown?.back_default ?? "",
+    },
+    officialArtwork: {
+      front_default: data.sprites.other?.["official-artwork"]?.front_default ?? "",
+    },
+  }
+}
+
+export const getEvolutionSpeciesData = async (
+  evolutionChain: ChainLink
+): Promise<PokemonBasic[]> => {
+  const currentPokemon = await getPokemonBasic(evolutionChain.species.name)
+
+  const evolvedPokemonLists = await Promise.all(
+    evolutionChain.evolves_to.map(evolution =>
+      getEvolutionSpeciesData(evolution)
+    )
+  )
+
+  return [currentPokemon, ...evolvedPokemonLists.flat()]
+}
+
 
 export async function getPokemonList(
   limit: number,
@@ -121,6 +159,8 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
 
   const evolution_chain: EvolutionChain = await getPokemonEvolution(species.evolution_chain.url);
 
+  const evolutionSpeciesList = await getEvolutionSpeciesData(evolution_chain.chain)
+
   return {
     id: pokemon.id,
     name: pokemon.name,
@@ -145,7 +185,7 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
       },
     },
     species: species,
-    evolution_chain: evolution_chain,
+    evolution_chain: evolutionSpeciesList,
     height: pokemon.height,
     weight: pokemon.weight,
     abilities: pokemon.abilities,

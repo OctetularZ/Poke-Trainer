@@ -1,5 +1,5 @@
 import { EvolutionChain } from "./evolution";
-import { PokemonType } from "./pokemonBasic";
+import { PokemonBasic, PokemonType } from "./pokemonBasic";
 import { PokemonSpecies } from "./species";
 
 export interface PokemonInfo {
@@ -7,6 +7,7 @@ export interface PokemonInfo {
   name: string,
   base_experience: number,
   types: PokemonType[],
+  is_default: boolean,
   sprites: { 
     front_default: string; 
     back_default: string;
@@ -26,7 +27,7 @@ export interface PokemonInfo {
     }
   }
   species: PokemonSpecies,
-  evolution_chain: EvolutionChain,
+  evolution_chain: PokemonBasic[],
   height: number,
   weight: number,
   abilities: PokemonAbility[],
