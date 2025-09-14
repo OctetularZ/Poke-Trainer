@@ -23,7 +23,7 @@ export interface PokemonInfo {
         front_default: string; 
         front_shiny: string;
       }
-    } 
+    }
   }
   species: PokemonSpecies,
   evolution_chain: EvolutionChain,
