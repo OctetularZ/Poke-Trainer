@@ -71,8 +71,13 @@ const Main = ({ pokemon }: Props) => {
             <div className="flex flex-col items-center">
               <div className="flex flex-row gap-3 text-center text-5xl mt-5 mb-3">
                 <h1 className=" text-white">
-                  {pokemon.charAt(0).toUpperCase()}
-                  {pokemon.slice(1)}
+                  {pokemon
+                    .split("-")
+                    .map(
+                      (pokemon) =>
+                        pokemon.charAt(0).toUpperCase() + pokemon.slice(1)
+                    )
+                    .join("-")}
                 </h1>
                 <h1 className="text-white/50">
                   #{pokemonInfo?.id.toString().padStart(4, "0")}
