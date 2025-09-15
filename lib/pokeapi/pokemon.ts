@@ -4,8 +4,10 @@ import { PokemonSpecies } from "@/types/species";
 import { getPokemonSpecies } from "@/lib/pokeapi/species";
 import { getPokemonEvolution } from "./evolution";
 import { ChainLink, EvolutionChain } from "@/types/evolution";
+import { pokemonNameFetchHandle } from "./helpers/pokemonNameFetchHandle";
 
 const getPokemonBasic = async (name: string): Promise<PokemonBasic> => {
+  if (name in pokemonNameFetchHandle) name = pokemonNameFetchHandle[name]
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`)
   if (!res.ok) throw new Error(`Could not find ${name}`)
   const data = await res.json()

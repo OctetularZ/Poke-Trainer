@@ -5,7 +5,6 @@ import { motion } from "motion/react"
 import Image from "next/image"
 import { PokemonType } from "@/types/pokemonBasic"
 import { typeColours, typeColoursHex } from "../../components/typeColours"
-import { ChainLink, EvolutionChain } from "@/types/evolution"
 import PokeCard from "../../components/PokeCard"
 
 interface Props {
@@ -46,8 +45,8 @@ const Main = ({ pokemon }: Props) => {
   }, [])
 
   return (
-    <div className="flex flex-col justify-center items-center w-200">
-      <div className="relative flex flex-col justify-center items-center bg-charmander-dull-200 w-full h-160 rounded-xl my-20">
+    <div className="flex flex-col justify-center items-center w-200 my-20">
+      <div className="relative flex flex-col justify-center items-center bg-charmander-dull-200 w-full h-160 rounded-xl mb-20">
         {loading ? (
           <motion.div
             animate={{ rotate: 360 }}
@@ -121,12 +120,12 @@ const Main = ({ pokemon }: Props) => {
                   sprite && (
                     <div
                       key={sprite}
-                      className="flex justify-center items-center bg-charmander-blue-900 w-40 h-45 mb-2 rounded-lg shadow-sm shadow-black"
+                      className="flex justify-center items-center bg-charmander-blue-900 w-35 h-40 mb-2 rounded-lg shadow-sm shadow-black"
                     >
                       <Image
                         src={sprite}
-                        width={125}
-                        height={125}
+                        width={110}
+                        height={110}
                         alt="Pokémon Sprite"
                         unoptimized
                       />
@@ -145,7 +144,7 @@ const Main = ({ pokemon }: Props) => {
           </div>
         )}
       </div>
-      <div className="flex flex-row justify-between items-center w-full">
+      <div className="flex flex-row flex-wrap justify-between items-center w-full">
         {pokemonInfo?.evolution_chain.map((pokemon) => (
           <PokeCard
             key={pokemon.id}
