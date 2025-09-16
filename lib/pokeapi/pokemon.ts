@@ -156,9 +156,9 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
     throw new Error("Could not find pokémon!")
   }
 
-  const pokemon: PokemonInfo = await pokemonRes.json()
+  const pokemon = await pokemonRes.json()
 
-  const species: PokemonSpecies = await getPokemonSpecies(pokemon.id.toString());
+  const species: PokemonSpecies = await getPokemonSpecies(pokemon.species.url);
 
   const evolution_chain: EvolutionChain = await getPokemonEvolution(species.evolution_chain.url);
 

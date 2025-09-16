@@ -2,8 +2,8 @@ import { EvolutionChain } from "@/types/evolution";
 import { PokemonSpecies, FlavourText } from "@/types/species";
 import { getPokemonEvolution } from "./evolution";
 
-export async function getPokemonSpecies(id: string): Promise<PokemonSpecies> {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);
+export async function getPokemonSpecies(url: string): Promise<PokemonSpecies> {
+  const res = await fetch(url);
   
   if (!res.ok) {
     throw new Error("Could not find pokémon's species!");

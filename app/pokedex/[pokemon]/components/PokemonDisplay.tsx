@@ -4,6 +4,7 @@ import { motion } from "motion/react"
 import { PokemonInfo } from "@/types/pokemonFull"
 import { PokemonType } from "@/types/pokemonBasic"
 import { typeColours, typeColoursHex } from "../../components/typeColours"
+import PokeCard from "../../components/PokeCard"
 
 interface PokemonDisplayProps {
   loading: boolean
@@ -23,8 +24,8 @@ const PokemonDisplay = ({
   const [shiny, setShiny] = useState(false)
 
   return (
-    <div className="flex flex-row justify-center items-center">
-      <div className="relative flex flex-col justify-center items-center bg-charmander-dull-200 w-200 h-160 rounded-xl mb-20">
+    <div className="flex flex-row h-160 mb-20">
+      <div className="relative flex flex-col justify-center items-center bg-charmander-dull-200 w-200 h-full rounded-xl">
         {loading ? (
           <motion.div
             animate={{ rotate: 360 }}
@@ -48,7 +49,7 @@ const PokemonDisplay = ({
           <div>
             <div className="flex flex-col items-center">
               <button
-                className={`absolute top-3 right-3 py-1 px-6 ${
+                className={`absolute top-3 text-lg right-3 py-1 px-6 ${
                   shiny ? "bg-amber-500" : "bg-charmander-blue-900"
                 } text-white rounded-lg cursor-pointer multi-colour-glow-effect ${
                   shiny ? "glow-active" : ""
@@ -57,7 +58,7 @@ const PokemonDisplay = ({
               >
                 Shiny
               </button>
-              <div className="flex flex-row gap-3 text-center text-5xl mt-5 mb-3">
+              <div className="flex flex-row flex-wrap gap-3 max-w-9/12 justify-center text-center text-5xl mt-5 mb-3">
                 <h1 className=" text-white">
                   {pokemon
                     .split("-")
@@ -151,6 +152,24 @@ const PokemonDisplay = ({
           </div>
         )}
       </div>
+      {!loading && (
+        <div className="flex flex-col gap-5 items-center ml-5 max-h-full overflow-y-scroll">
+          <h2 className="text-white text-xl text-center">Forms :</h2>
+          {pokemonInfo.varieties.map((pokemon) => (
+            <PokeCard
+              key={pokemon.id}
+              id={pokemon.id}
+              name={pokemon.name}
+              sprite={
+                pokemon.showdown.front_default ||
+                pokemon.sprites.front_default ||
+                "/placeholder.png"
+              }
+              types={pokemon.types}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
