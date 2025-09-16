@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import { motion } from "motion/react"
 import { PokemonInfo } from "@/types/pokemonFull"
@@ -10,6 +10,7 @@ interface PokemonDisplayProps {
   pokemon: string
   pokemonInfo: PokemonInfo
   sprites: string[]
+  shinySprites: string[]
 }
 
 const PokemonDisplay = ({
@@ -17,7 +18,10 @@ const PokemonDisplay = ({
   pokemon,
   pokemonInfo,
   sprites,
+  shinySprites,
 }: PokemonDisplayProps) => {
+  const [shiny, setShiny] = useState(false)
+
   return (
     <div className="flex flex-row justify-center items-center">
       <div className="relative flex flex-col justify-center items-center bg-charmander-dull-200 w-200 h-160 rounded-xl mb-20">
@@ -43,6 +47,12 @@ const PokemonDisplay = ({
           // const randomItem = list[Math.floor(Math.random() * list.length)]
           <div>
             <div className="flex flex-col items-center">
+              <button
+                className="absolute top-3 right-3 py-1 px-6 bg-amber-600 text-white rounded-lg cursor-pointer"
+                onClick={() => setShiny(!shiny)}
+              >
+                Shiny
+              </button>
               <div className="flex flex-row gap-3 text-center text-5xl mt-5 mb-3">
                 <h1 className=" text-white">
                   {pokemon
@@ -84,7 +94,11 @@ const PokemonDisplay = ({
               <Image
                 className="relative -translate-x-15 mt-15"
                 src={
-                  pokemonInfo?.sprites.other["official-artwork"].front_default!
+                  shiny
+                    ? pokemonInfo?.sprites.other["official-artwork"]
+                        .front_shiny!
+                    : pokemonInfo?.sprites.other["official-artwork"]
+                        .front_default!
                 }
                 width={350}
                 height={350}
@@ -94,23 +108,41 @@ const PokemonDisplay = ({
             </div>
             <div className="absolute bottom-2 right-2 px-2 max-h-[calc(70%-0.5rem)] overflow-y-scroll">
               <h2 className="text-white text-center text-xl mb-2">Sprites :</h2>
-              {sprites?.map(
-                (sprite) =>
-                  sprite && (
-                    <div
-                      key={sprite}
-                      className="flex justify-center items-center bg-charmander-blue-900 w-35 h-40 mb-2 rounded-lg shadow-sm shadow-black"
-                    >
-                      <Image
-                        src={sprite}
-                        width={110}
-                        height={110}
-                        alt="Pokémon Sprite"
-                        unoptimized
-                      />
-                    </div>
+              {shiny
+                ? shinySprites?.map(
+                    (shinySprite) =>
+                      shinySprite && (
+                        <div
+                          key={shinySprite}
+                          className="flex justify-center items-center bg-charmander-blue-900 w-35 h-40 mb-2 rounded-lg shadow-sm shadow-black"
+                        >
+                          <Image
+                            src={shinySprite}
+                            width={110}
+                            height={110}
+                            alt="Pokémon Sprite"
+                            unoptimized
+                          />
+                        </div>
+                      )
                   )
-              )}
+                : sprites?.map(
+                    (sprite) =>
+                      sprite && (
+                        <div
+                          key={sprite}
+                          className="flex justify-center items-center bg-charmander-blue-900 w-35 h-40 mb-2 rounded-lg shadow-sm shadow-black"
+                        >
+                          <Image
+                            src={sprite}
+                            width={110}
+                            height={110}
+                            alt="Pokémon Sprite"
+                            unoptimized
+                          />
+                        </div>
+                      )
+                  )}
             </div>
           </div>
         )}

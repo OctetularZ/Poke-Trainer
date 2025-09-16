@@ -1,11 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import { PokemonInfo } from "@/types/pokemonFull"
-import { motion } from "motion/react"
-import Image from "next/image"
-import { PokemonType } from "@/types/pokemonBasic"
-import { typeColours, typeColoursHex } from "../../components/typeColours"
-import { HiArrowLongRight } from "react-icons/hi2"
 import EvolutionChain from "./EvolutionChain"
 import PokemonDisplay from "./PokemonDisplay"
 
@@ -16,6 +11,7 @@ interface Props {
 const Main = ({ pokemon }: Props) => {
   const [pokemonInfo, setPokemonInfo] = useState<PokemonInfo>()
   const [sprites, setSprites] = useState<string[]>()
+  const [shinySprites, setShinySprites] = useState<string[]>()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -35,6 +31,10 @@ const Main = ({ pokemon }: Props) => {
           data?.sprites.front_default,
         data?.sprites.other.showdown.back_default || data?.sprites.back_default,
       ])
+      setShinySprites([
+        data?.sprites.other.showdown.front_shiny || data?.sprites.front_shiny,
+        data?.sprites.other.showdown.back_shiny || data?.sprites.back_shiny,
+      ])
     } catch (err) {
       console.error(err)
     } finally {
@@ -53,6 +53,7 @@ const Main = ({ pokemon }: Props) => {
         pokemon={pokemon}
         pokemonInfo={pokemonInfo!}
         sprites={sprites!}
+        shinySprites={shinySprites!}
       />
       <EvolutionChain pokemonInfo={pokemonInfo!} />
     </div>
