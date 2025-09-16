@@ -44,11 +44,15 @@ const PokemonDisplay = ({
             />
           </motion.div>
         ) : (
-          // const randomItem = list[Math.floor(Math.random() * list.length)]
+          // const randomItem = list[Math.floor(Math.random() * list.length)] - Might implement for random flavour texts
           <div>
             <div className="flex flex-col items-center">
               <button
-                className="absolute top-3 right-3 py-1 px-6 bg-amber-600 text-white rounded-lg cursor-pointer"
+                className={`absolute top-3 right-3 py-1 px-6 ${
+                  shiny ? "bg-amber-500" : "bg-charmander-blue-900"
+                } text-white rounded-lg cursor-pointer multi-colour-glow-effect ${
+                  shiny ? "glow-active" : ""
+                } transition-all duration-300 shadow-md`}
                 onClick={() => setShiny(!shiny)}
               >
                 Shiny

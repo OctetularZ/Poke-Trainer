@@ -8,7 +8,7 @@ import Link from "next/link"
 
 const RegisterGrid = () => {
   return (
-    <div className="relative justify-self-center animate-glow-orange w-200 h-100 rounded-lg">
+    <div className="relative justify-self-center animate-pulse-orange w-200 h-100 rounded-lg">
       <div className="flex flex-row justify-self-center gap-20 justify-center rounded-lg w-200 h-100 bg-charmander-dull-200">
         <div className="flex flex-col justify-center gap-3 items-center w-[50%] bg-[#ee8329] rounded-l-lg">
           <h1 className="text-white text-center text-4xl mb-5">Register</h1>

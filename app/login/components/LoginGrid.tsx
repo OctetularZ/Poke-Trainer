@@ -8,7 +8,7 @@ import Link from "next/link"
 
 const LoginGrid = () => {
   return (
-    <div className="relative justify-self-center animate-glow-blue w-200 h-100 rounded-lg">
+    <div className="relative justify-self-center animate-pulse-blue w-200 h-100 rounded-lg">
       <div className="flex flex-row justify-self-center gap-20 justify-center rounded-lg w-200 h-100 bg-charmander-dull-200">
         <div className="flex flex-col justify-center items-center w-[50%]">
           <Image

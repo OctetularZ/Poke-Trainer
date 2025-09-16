@@ -1,3 +1,5 @@
+/* Need to clean up CSS, this actually looks disgusting */
+
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Jersey+15&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -50,7 +52,51 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@keyframes glow-orange {
+.multi-colour-glow-effect {
+  border: 1px solid rbga(255, 255, 255, .8);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  z-index: 0;
+}
+
+.multi-colour-glow-effect::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(100%);
+  height: calc(100%);
+  border-radius: 8px;
+  background: linear-gradient(
+    45deg,
+    #ff0000, #ff7300, #fffb00,
+    #48ff00, #00ffd5, #002bff,
+    #7a00ff, #ff00c8, #ff0000
+  );
+  background-size: 200%;
+  filter: blur(5px);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity .3s ease-in-out;
+  animation: multi-colour-glowing-button-effect 20s linear infinite;
+}
+
+.multi-colour-glow-effect.glow-active::before {
+  opacity: 1;
+}
+
+@keyframes multi-colour-glowing-button-effect {
+  0%{background-position: 0 0;}
+  50%{background-position: 200% 0;}
+  100%{background-position: 0 0;}
+}
+ 
+@layer utilities {
+  .animate-pulse-orange {
+    animation: pulse-orange 2s infinite;
+  }
+}
+
+@keyframes pulse-orange {
   0% {
     box-shadow: 0 0 5px 1px rgba(238, 131, 41, 0.45), 
                 0 0 10px 2px rgba(238, 131, 41, 0.45), 
@@ -68,13 +114,7 @@
   }
 }
 
-@layer utilities {
-  .animate-glow-orange {
-    animation: glow-orange 2s infinite;
-  }
-}
-
-@keyframes glow-blue {
+@keyframes pulse-blue {
   0% {
     box-shadow: 0 0 5px 1px rgba(9, 154, 220, 0.45), 
                 0 0 10px 2px rgba(9, 154, 220, 0.45), 
@@ -93,8 +133,8 @@
 }
 
 @layer utilities {
-  .animate-glow-blue {
-    animation: glow-blue 2s infinite;
+  .animate-pulse-blue {
+    animation: pulse-blue 2s infinite;
   }
 }
 
