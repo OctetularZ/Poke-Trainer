@@ -28,6 +28,7 @@ export interface PokemonInfo {
   }
   species: PokemonSpecies,
   evolution_chain: PokemonBasic[],
+  varieties: PokemonBasic[],
   height: number,
   weight: number,
   abilities: PokemonAbility[],

@@ -10,7 +10,7 @@ interface PokemonData {
 const EvolutionChain = ({ pokemonInfo }: PokemonData) => {
   return (
     <div className="flex flex-col justify-center items-center">
-      <h2 className="text-white text-center text-2xl ">Evolution Chain:</h2>
+      <h2 className="text-white text-center text-2xl ">Evolution Chain :</h2>
       <HiArrowLongRight color="white" size={40} className="mb-5" />
       <div className="flex flex-row flex-wrap justify-between items-center w-200">
         {pokemonInfo?.evolution_chain.map((pokemon) => (

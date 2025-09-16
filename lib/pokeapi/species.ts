@@ -16,7 +16,10 @@ export async function getPokemonSpecies(id: string): Promise<PokemonSpecies> {
   );
 
   return {
+    id: data.id,
+    name: data.name,
     evolution_chain: data.evolution_chain,
-    flavor_text_entries: englishFlavorTexts
+    flavor_text_entries: englishFlavorTexts,
+    varieties: data.varieties
   } as PokemonSpecies;
 }
