@@ -11,10 +11,16 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 
 ## Preview
 
-### Pokèdex (In progress)
+### Pokèdex (Complete)
 
 <p align="center">
-  <img src="/public/preview/Pokedex MK1.gif" />
+  <img src="/public/preview/Pokedex Complete.gif" />
+</p>
+
+### Pokemon Pages (In progress)
+
+<p align="center">
+  <img src="/public/preview/PokemonPages MK1.gif" />
 </p>
 
 ---
