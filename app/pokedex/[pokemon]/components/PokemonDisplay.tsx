@@ -154,8 +154,8 @@ const PokemonDisplay = ({
         )}
       </div>
       {!loading && (
-        <div className="relative max-h-full">
-          <div className="flex flex-col gap-5 items-center ml-5 max-h-full overflow-y-scroll">
+        <div className="relative ml-5 max-h-full">
+          <div className="flex flex-col gap-5 items-center max-h-full overflow-y-scroll">
             <div className="flex flex-row gap-2 justify-center items-center -mb-3">
               <h2 className="text-white text-xl text-center">Forms</h2>
               <motion.div
@@ -187,7 +187,9 @@ const PokemonDisplay = ({
               />
             ))}
           </div>
-          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent" />
+          {pokemonInfo.varieties.length > 1 && (
+            <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent" />
+          )}
         </div>
       )}
     </div>
