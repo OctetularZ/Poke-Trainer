@@ -5,6 +5,7 @@ import { PokemonInfo } from "@/types/pokemonFull"
 import { PokemonType } from "@/types/pokemonBasic"
 import { typeColours, typeColoursHex } from "../../components/typeColours"
 import PokeCard from "../../components/PokeCard"
+import { FaChevronDown } from "react-icons/fa"
 
 interface PokemonDisplayProps {
   loading: boolean
@@ -153,21 +154,40 @@ const PokemonDisplay = ({
         )}
       </div>
       {!loading && (
-        <div className="flex flex-col gap-5 items-center ml-5 max-h-full overflow-y-scroll">
-          <h2 className="text-white text-xl text-center">Forms :</h2>
-          {pokemonInfo.varieties.map((pokemon) => (
-            <PokeCard
-              key={pokemon.id}
-              id={pokemon.id}
-              name={pokemon.name}
-              sprite={
-                pokemon.showdown.front_default ||
-                pokemon.sprites.front_default ||
-                "/placeholder.png"
-              }
-              types={pokemon.types}
-            />
-          ))}
+        <div className="relative max-h-full">
+          <div className="flex flex-col gap-5 items-center ml-5 max-h-full overflow-y-scroll">
+            <div className="flex flex-row gap-2 justify-center items-center -mb-3">
+              <h2 className="text-white text-xl text-center">Forms</h2>
+              <motion.div
+                initial={{ y: 0 }}
+                animate={{ y: 5 }}
+                transition={{
+                  type: "spring",
+                  bounce: 1,
+                  stiffness: 30,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  delay: 0.5,
+                }}
+              >
+                <FaChevronDown color="white" />
+              </motion.div>
+            </div>
+            {pokemonInfo.varieties.map((pokemon) => (
+              <PokeCard
+                key={pokemon.id}
+                id={pokemon.id}
+                name={pokemon.name}
+                sprite={
+                  pokemon.showdown.front_default ||
+                  pokemon.sprites.front_default ||
+                  "/placeholder.png"
+                }
+                types={pokemon.types}
+              />
+            ))}
+          </div>
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent" />
         </div>
       )}
     </div>
