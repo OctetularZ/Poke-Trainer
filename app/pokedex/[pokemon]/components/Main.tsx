@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react"
 import { PokemonInfo } from "@/types/pokemonFull"
 import EvolutionChain from "./EvolutionChain"
 import PokemonDisplay from "./PokemonDisplay"
+import PokemonStats from "./PokemonStats"
 
 interface Props {
   pokemon: string
@@ -55,6 +56,7 @@ const Main = ({ pokemon }: Props) => {
         sprites={sprites!}
         shinySprites={shinySprites!}
       />
+      <PokemonStats loading={loading} stats={pokemonInfo?.stats!} />
       <EvolutionChain pokemonInfo={pokemonInfo!} />
     </div>
   )

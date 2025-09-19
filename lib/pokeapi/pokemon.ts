@@ -192,6 +192,7 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
     species: species,
     evolution_chain: evolutionSpeciesList,
     varieties: varieties,
+    stats: pokemon.stats,
     height: pokemon.height,
     weight: pokemon.weight,
     abilities: pokemon.abilities,
