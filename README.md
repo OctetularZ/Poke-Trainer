@@ -66,5 +66,5 @@ Expect frequent updates as features are added.
 - [ ] Connect AWS S3 for cloud storage
 - [ ] Implement "Guess the Pokémon" mini-game
 - [ ] Add Pokémon battle simulator with AI logic
-- [ ] Polish UI with Tailwind CSS
+- [x] Polish UI with Tailwind CSS
 - [ ] Deploy to Vercel
