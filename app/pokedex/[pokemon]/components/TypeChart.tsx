@@ -31,13 +31,18 @@ function calculateTypeEffectiveness(types: TypeInfo[]) {
 
 const TypeChart = ({ typeInfo, loading }: TypeChartProps) => {
   if (!loading) {
-    const types = [...typeInfo]
-    console.log(calculateTypeEffectiveness(types))
-  }
+    const types = calculateTypeEffectiveness(typeInfo)
 
-  return (
-    <div className="flex flex-row max-w-100">{/* {typeInfo.map(())} */}</div>
-  )
+    return (
+      <div className="flex flex-row max-w-100">
+        {Object.entries(types).map(([key, val]) => (
+          <h1 className="text-white">
+            {key}: {val}
+          </h1>
+        ))}
+      </div>
+    )
+  }
 }
 
 export default TypeChart
