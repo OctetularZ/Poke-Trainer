@@ -44,6 +44,7 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 - **Authentication:** Zod and [Better Auth](https://www.better-auth.com/)
 - **Database & ORM:** [PostgreSQL](https://www.postgresql.org/) + [Prisma](https://www.prisma.io/)
 - **Cloud Storage:** [AWS S3](https://aws.amazon.com/s3/) (might change)
+- **AI/ML:** Node.js (might change to Python)
 - **Styling:** Tailwind CSS
 - **Hosting:** Vercel
 
@@ -65,5 +66,5 @@ Expect frequent updates as features are added.
 - [ ] Connect AWS S3 for cloud storage
 - [ ] Implement "Guess the Pokémon" mini-game
 - [ ] Add Pokémon battle simulator with AI logic
-- [ ] Polish UI with Tailwind CSS
+- [x] Polish UI with Tailwind CSS
 - [ ] Deploy to Vercel
