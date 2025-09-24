@@ -4,6 +4,7 @@ import { PokemonInfo } from "@/types/pokemonFull"
 import EvolutionChain from "./EvolutionChain"
 import PokemonDisplay from "./PokemonDisplay"
 import PokemonStats from "./PokemonStats"
+import TypeChart from "./TypeChart"
 
 interface Props {
   pokemon: string
@@ -57,7 +58,8 @@ const Main = ({ pokemon }: Props) => {
         shinySprites={shinySprites!}
       />
       <PokemonStats loading={loading} stats={pokemonInfo?.stats!} />
-      <EvolutionChain pokemonInfo={pokemonInfo!} />
+      <TypeChart loading={loading} typeInfo={pokemonInfo?.types_info!} />
+      <EvolutionChain loading={loading} pokemonInfo={pokemonInfo!} />
     </div>
   )
 }

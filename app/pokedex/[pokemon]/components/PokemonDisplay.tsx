@@ -156,8 +156,8 @@ const PokemonDisplay = ({
       {!loading && (
         <div className="relative ml-5 max-h-full">
           <div className="flex flex-col gap-5 items-center max-h-full overflow-y-scroll">
-            <div className="flex flex-row gap-2 justify-center items-center mb-2">
-              <h2 className="text-white text-xl text-center">Forms</h2>
+            <div className="flex flex-row gap-2 justify-center items-center">
+              <h2 className="text-white text-xl text-center mt-2">Forms</h2>
               <motion.div
                 initial={{ y: 0 }}
                 animate={{ y: 5 }}

@@ -1,6 +1,7 @@
 import { PokemonBasic, PokemonType } from "./pokemonBasic";
 import { PokemonSpecies } from "./species";
 import { PokemonStat } from "./stats";
+import { TypeInfo } from "./type";
 
 export interface PokemonInfo {
   id: number,
@@ -29,6 +30,7 @@ export interface PokemonInfo {
   species: PokemonSpecies,
   evolution_chain: PokemonBasic[],
   varieties: PokemonBasic[],
+  types_info: TypeInfo[],
   stats: PokemonStat[],
   height: number,
   weight: number,

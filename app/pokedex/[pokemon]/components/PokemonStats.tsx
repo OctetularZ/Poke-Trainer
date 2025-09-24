@@ -11,7 +11,9 @@ const PokemonStats = ({ loading, stats }: PokemonStatsProps) => {
   return (
     !loading && (
       <div className="flex flex-col gap-5 justify-center items-end mb-20">
-        <h1 className="text-white text-2xl self-start mb-5">Base Stats</h1>
+        <h1 className="text-white text-2xl self-start mb-5 border-b-2">
+          Base Stats
+        </h1>
         {stats.map((stat) => (
           <StatBar
             key={stat.stat.name}
