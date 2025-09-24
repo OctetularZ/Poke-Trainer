@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import { motion, Variants } from "motion/react"
-import { PokemonInfo } from "@/app/api/pokemon/[name]/route"
+import { PokemonInfo } from "@/types/pokemonFull"
 import PokeCard from "@/app/pokedex/components/PokeCard"
 import PokeCardSkeleton from "../skeletons/PokeCardSkeleton"
 import { FaArrowRight } from "react-icons/fa6"

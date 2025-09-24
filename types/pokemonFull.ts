@@ -1,4 +1,3 @@
-import { EvolutionChain } from "./evolution";
 import { PokemonBasic, PokemonType } from "./pokemonBasic";
 import { PokemonSpecies } from "./species";
 import { PokemonStat } from "./stats";
