@@ -30,7 +30,7 @@ const StatBar = ({ statName, baseStat }: StatBarProps) => {
         {statName.charAt(0).toUpperCase()}
         {statName.slice(1).replace("-", " ")}
       </h2>
-      <div className={`bg-gray-300 w-100 rounded-lg`}>
+      <div className={`bg-amber-50 w-100 rounded-lg`}>
         <div
           className={`rounded-lg text-white p-1 ${colorClass}`}
           style={{ width: `${barPercentage}%` }}
