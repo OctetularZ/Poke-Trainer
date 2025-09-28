@@ -44,6 +44,7 @@ const valBgColour = {
 }
 
 function toFraction(num: number) {
+  if (num === 1) return ""
   if (num === 0.5) return "½"
   if (num === 0.25) return "¼"
   return num.toString()

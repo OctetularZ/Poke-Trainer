@@ -16,7 +16,7 @@ export interface Move {
   damage_class: {name: string, url: string},
   effect_entries: VerboseEffect[],
   flavor_text_entries: MoveFlavorText[],
-  stat_changes: 
+  stat_changes: MoveStatChange[]
 }
 
 export interface MoveStatChange {

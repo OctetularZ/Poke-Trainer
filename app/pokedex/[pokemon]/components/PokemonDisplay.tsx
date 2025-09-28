@@ -155,24 +155,24 @@ const PokemonDisplay = ({
       </div>
       {!loading && (
         <div className="relative ml-5 max-h-full">
+          <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex flex-row gap-2 justify-center items-center">
+            <h2 className="text-white text-xl text-center">Forms</h2>
+            <motion.div
+              initial={{ y: 0 }}
+              animate={{ y: 5 }}
+              transition={{
+                type: "spring",
+                bounce: 1,
+                stiffness: 30,
+                repeat: Infinity,
+                repeatType: "reverse",
+                delay: 0.5,
+              }}
+            >
+              <FaChevronDown color="white" />
+            </motion.div>
+          </div>
           <div className="flex flex-col gap-5 items-center max-h-full overflow-y-scroll">
-            <div className="flex flex-row gap-2 justify-center items-center">
-              <h2 className="text-white text-xl text-center mt-2">Forms</h2>
-              <motion.div
-                initial={{ y: 0 }}
-                animate={{ y: 5 }}
-                transition={{
-                  type: "spring",
-                  bounce: 1,
-                  stiffness: 30,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  delay: 0.5,
-                }}
-              >
-                <FaChevronDown color="white" />
-              </motion.div>
-            </div>
             {pokemonInfo.varieties.map((pokemon) => (
               <PokeCard
                 key={pokemon.id}

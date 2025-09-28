@@ -1,3 +1,4 @@
+import { PokemonMove } from "./moves";
 import { PokemonBasic, PokemonType } from "./pokemonBasic";
 import { PokemonSpecies } from "./species";
 import { PokemonStat } from "./stats";
@@ -26,7 +27,7 @@ export interface PokemonInfo {
         front_shiny: string;
       }
     }
-  }
+  },
   species: PokemonSpecies,
   evolution_chain: PokemonBasic[],
   varieties: PokemonBasic[],
@@ -42,25 +43,4 @@ export interface PokemonAbility {
   is_hidden: boolean,
   slot: number,
   ability: {name: string, url: string}
-}
-
-export interface PokemonMove {
-  move: Move
-}
-
-export interface Move {
-  id: number,
-  name: string,
-  accuracy: number,
-  effect_chance: number,
-  pp: number,
-  priority: number
-  power: number,
-  damage_class: MoveDamageClass
-}
-
-export interface MoveDamageClass {
-  id: number,
-  name: string,
-  descriptions: {description: string}[]
 }

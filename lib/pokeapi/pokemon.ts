@@ -7,6 +7,7 @@ import { ChainLink, EvolutionChain } from "@/types/evolution";
 import { pokemonNameFetchHandle } from "./helpers/pokemonNameFetchHandle";
 import { getPokemonVarieties } from "./varieties";
 import { getPokemonTypesInformation } from "./types";
+import { getPokemonMoves } from "./moves";
 
 const getPokemonBasic = async (name: string): Promise<PokemonBasic> => {
   if (name in pokemonNameFetchHandle) name = pokemonNameFetchHandle[name]
@@ -168,6 +169,8 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
   const evolutionSpeciesList = await getEvolutionSpeciesData(evolution_chain.chain)
 
   const typesInfo = await getPokemonTypesInformation(pokemon.types)
+
+  const moves = await getPokemonMoves(pokemon.moves)
 
   return {
     id: pokemon.id,
