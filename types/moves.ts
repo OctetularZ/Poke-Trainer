@@ -1,7 +1,7 @@
 import { Stat } from "./stats"
 
 export interface PokemonMove {
-  move: {name: string, url: string},
+  move: { name: string, url: string },
   version_group_details: PokemonMoveVersion
 }
 
@@ -13,7 +13,7 @@ export interface Move {
   pp: number,
   priority: number,
   power: number,
-  damage_class: {name: string, url: string},
+  damage_class: { name: string, url: string },
   effect_entries: VerboseEffect[],
   flavor_text_entries: MoveFlavorText[],
   stat_changes: MoveStatChange[]
@@ -26,30 +26,30 @@ export interface MoveStatChange {
 
 export interface MoveFlavorText {
   flavor_text: string,
-  language: {name: string, url: string}
+  language: { name: string, url: string }
 }
 
 export interface VerboseEffect {
   effect: string,
   short_effect: string,
-  language: {name: string, url: string}
+  language: { name: string, url: string }
 }
 
 export interface MoveDamageClass {
   id: number,
   name: string,
   descriptions: Description,
-  names: {name: string, url: string}
+  names: { name: string, url: string }
 }
 
 export interface Description {
   description: string,
-  language: {name: string, url: string}
+  language: { name: string, url: string }
 }
 
 export interface PokemonMoveVersion {
-  move_learn_method: {name: string, url: string},
-  version_group: {name: string, url: string},
+  move_learn_method: { name: string, url: string },
+  version_group: { name: string, url: string },
   level_learned_at: number,
   order: number
 }

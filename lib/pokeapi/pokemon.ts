@@ -199,10 +199,10 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
     evolution_chain: evolutionSpeciesList,
     varieties: varieties,
     types_info: typesInfo,
+    moves: moves,
     stats: pokemon.stats,
     height: pokemon.height,
     weight: pokemon.weight,
     abilities: pokemon.abilities,
-    moves: pokemon.moves,
   } as PokemonInfo
 }

@@ -1,4 +1,4 @@
-import { PokemonMove } from "./moves";
+import { Move } from "./moves";
 import { PokemonBasic, PokemonType } from "./pokemonBasic";
 import { PokemonSpecies } from "./species";
 import { PokemonStat } from "./stats";
@@ -32,11 +32,11 @@ export interface PokemonInfo {
   evolution_chain: PokemonBasic[],
   varieties: PokemonBasic[],
   types_info: TypeInfo[],
+  moves: Move[],
   stats: PokemonStat[],
   height: number,
   weight: number,
   abilities: PokemonAbility[],
-  moves: PokemonMove[]
 }
 
 export interface PokemonAbility {

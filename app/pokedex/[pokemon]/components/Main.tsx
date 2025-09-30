@@ -5,6 +5,7 @@ import EvolutionChain from "./EvolutionChain"
 import PokemonDisplay from "./PokemonDisplay"
 import PokemonStats from "./PokemonStats"
 import TypeChart from "./TypeChart"
+import Moves from "./Moves"
 
 interface Props {
   pokemon: string
@@ -62,6 +63,7 @@ const Main = ({ pokemon }: Props) => {
         <TypeChart loading={loading} typeInfo={pokemonInfo?.types_info!} />
       </div>
       <EvolutionChain loading={loading} pokemonInfo={pokemonInfo!} />
+      <Moves loading={loading} pokemonMoves={pokemonInfo?.moves!} />
     </div>
   )
 }
