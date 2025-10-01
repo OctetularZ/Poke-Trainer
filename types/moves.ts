@@ -2,7 +2,7 @@ import { Stat } from "./stats"
 
 export interface PokemonMove {
   move: { name: string, url: string },
-  version_group_details: PokemonMoveVersion
+  version_group_details: PokemonMoveVersion[]
 }
 
 export interface Move {
@@ -16,7 +16,8 @@ export interface Move {
   damage_class: { name: string, url: string },
   effect_entries: VerboseEffect[],
   flavor_text_entries: MoveFlavorText[],
-  stat_changes: MoveStatChange[]
+  stat_changes: MoveStatChange[],
+  type: { name: string, url: string }
 }
 
 export interface MoveStatChange {

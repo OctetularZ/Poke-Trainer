@@ -11,7 +11,7 @@ interface PokemonData {
 const EvolutionChain = ({ pokemonInfo, loading }: PokemonData) => {
   return (
     !loading && (
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center mb-20">
         <h2 className="text-white text-center text-2xl ">Evolution Chain :</h2>
         <HiArrowLongRight color="white" size={40} className="mb-5" />
         <div className="flex flex-row flex-wrap justify-center items-center w-250">
