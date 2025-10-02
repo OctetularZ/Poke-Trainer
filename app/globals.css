@@ -33,7 +33,7 @@
   h1, h2, li, button, input {
     font-family: 'Pixelify Sans', serif;
   }
-  h4 {
+  h4, th, td {
     font-family: 'Jersey 15', sans-serif;
   }
   p {
