@@ -1,3 +1,4 @@
+import { Machine } from "./machine"
 import { Stat } from "./stats"
 
 export interface PokemonMove {
@@ -18,7 +19,8 @@ export interface Move {
   flavor_text_entries: MoveFlavorText[],
   stat_changes: MoveStatChange[],
   type: { name: string, url: string },
-  move_learn_method: PokemonMoveVersion[]
+  move_learn_method: PokemonMoveVersion[],
+  machines: Machine[]
 }
 
 export interface MoveStatChange {

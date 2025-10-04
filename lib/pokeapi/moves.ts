@@ -1,4 +1,5 @@
 import { Move, PokemonMove } from "@/types/moves";
+import { getMoveMachines } from "./machines";
 
 export async function getPokemonMoves(pokemonMoves: PokemonMove[]): Promise<Move[]> {
   const scarletVioletMoves = pokemonMoves.filter((move) =>
@@ -15,6 +16,9 @@ export async function getPokemonMoves(pokemonMoves: PokemonMove[]): Promise<Move
       }
       
       const data = await res.json();
+
+      const machines = await getMoveMachines(data.machines)
+
       return {
         id: data.id,
         name: data.name,
@@ -28,7 +32,8 @@ export async function getPokemonMoves(pokemonMoves: PokemonMove[]): Promise<Move
         flavor_text_entries: data.flavor_text_entries,
         stat_changes: data.stat_changes,
         type: data.type,
-        move_learn_method: move.version_group_details
+        move_learn_method: move.version_group_details,
+        machines: machines
       } as Move;
     });
   
