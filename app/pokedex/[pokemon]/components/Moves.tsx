@@ -50,23 +50,29 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
         <table className="w-full text-white text-center text-2xl">
           <thead>
             <tr className="divide-x">
+              {selectedMoveFilter === "level-up" && (
+                <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
+                  Level
+                </th>
+              )}
+              {selectedMoveFilter === "machine" && (
+                <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
+                  Machine
+                </th>
+              )}
               <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
-                {selectedMoveFilter.charAt(0).toUpperCase() +
-                  selectedMoveFilter.slice(1).replace("-", " ")}
-              </th>
-              <th className="bg-charmander-dull-200 border-t-1 border-b-1">
                 Move
               </th>
-              <th className="bg-charmander-dull-200 border-t-1 border-b-1">
+              <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
                 Type
               </th>
-              <th className="bg-charmander-dull-200 border-t-1 border-b-1">
+              <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
                 Category
               </th>
-              <th className="bg-charmander-dull-200 border-t-1 border-b-1">
+              <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
                 Power
               </th>
-              <th className="bg-charmander-dull-200 border-t-1 border-b-1">
+              <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
                 Accuracy
               </th>
             </tr>
@@ -77,18 +83,21 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
                 move.move_learn_method.at(-1)?.move_learn_method.name ===
                   selectedMoveFilter && (
                   <tr key={move.id} className="border-b-white border-b-1">
+                    {selectedMoveFilter === "level-up" && (
+                      <td className="py-5">
+                        {move.move_learn_method.at(-1)?.level_learned_at}
+                      </td>
+                    )}
+                    {selectedMoveFilter === "machine" && (
+                      <td className="py-5">
+                        {move.machines.at(-1)?.item.name.toUpperCase()}
+                      </td>
+                    )}
                     <td className="py-5">
-                      {selectedMoveFilter === "level-up"
-                        ? move.move_learn_method.at(-1)?.level_learned_at
-                        : (selectedMoveFilter === "machine" &&
-                            move.machines.at(0)?.item.name) ||
-                          ""}
-                    </td>
-                    <td>
                       {move.name.charAt(0).toUpperCase() +
                         move.name.slice(1).replace("-", " ")}
                     </td>
-                    <td>
+                    <td className="py-5">
                       <h4
                         key={move.type.name}
                         className={`text-white text-2xl ${
@@ -109,9 +118,9 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
                           .toUpperCase()}${move.type.name.slice(1)}`}
                       </h4>
                     </td>
-                    <td>{move.damage_class.name}</td>
-                    <td>{move.power || "-"}</td>
-                    <td>{move.accuracy || "-"}</td>
+                    <td className="py-5">{move.damage_class.name}</td>
+                    <td className="py-5">{move.power || "-"}</td>
+                    <td className="py-5">{move.accuracy || "-"}</td>
                   </tr>
                 )
             )}
