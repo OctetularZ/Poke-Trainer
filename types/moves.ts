@@ -17,7 +17,8 @@ export interface Move {
   effect_entries: VerboseEffect[],
   flavor_text_entries: MoveFlavorText[],
   stat_changes: MoveStatChange[],
-  type: { name: string, url: string }
+  type: { name: string, url: string },
+  move_learn_method: PokemonMoveVersion[]
 }
 
 export interface MoveStatChange {

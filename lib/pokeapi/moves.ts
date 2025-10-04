@@ -27,7 +27,8 @@ export async function getPokemonMoves(pokemonMoves: PokemonMove[]): Promise<Move
         effect_entries: data.effect_entries,
         flavor_text_entries: data.flavor_text_entries,
         stat_changes: data.stat_changes,
-        type: data.type
+        type: data.type,
+        move_learn_method: move.version_group_details
       } as Move;
     });
   

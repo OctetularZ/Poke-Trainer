@@ -63,7 +63,7 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
           <thead>
             <tr className="divide-x">
               <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
-                Level
+                {selectedMoveFilter}
               </th>
               <th className="bg-charmander-dull-200 border-t-1 border-b-1">
                 Move
@@ -85,7 +85,12 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
           <tbody>
             {pokemonMoves.map((move) => (
               <tr key={move.id} className="border-b-white border-b-1">
-                <td className="py-5">1</td>
+                <td className="py-5">
+                  {move.move_learn_method.at(-1)?.move_learn_method.name ===
+                  "level-up"
+                    ? move.move_learn_method.at(-1)?.level_learned_at
+                    : "M"}
+                </td>
                 <td>
                   {move.name.charAt(0).toUpperCase() +
                     move.name.slice(1).replace("-", " ")}
