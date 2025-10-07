@@ -29,7 +29,14 @@ export async function scrapePokemonDetails(url) {
   const details = {};
 
   $(".vitals-table tbody tr").each((index, row) => {
-    const header = $(row).find("th").text().trim();
+    let header = "";
+    const head = $(row).find("th")
+    if ($(head).find("span").length) {
+      header = $(head).find("span").map((_, element) => $(element).text().trim()).get().join(",");
+    }
+    else {
+      header = $(head).text().trim();
+    }
     if (header === "Local №") return;
 
     const td = $(row).find("td")
@@ -37,17 +44,26 @@ export async function scrapePokemonDetails(url) {
     let values = [];
 
     if (td.find("a").length) {
-      values = td.find("a").map((_, element) => $(element).text().trim()).get();
+      values = td.find("a").map((_, element) => $(element).text().replace(/\s+/g, " ").trim()).get();
     } else if (td.find("strong").length) {
-      values = td.find("strong").map((_, element) => $(element).text().trim()).get();
-    } else {
-      values = td.text().trim();
+      values = td.find("strong").map((_, element) => $(element).text().replace(/\s+/g, " ").trim()).get();
+    } else if (td.length > 1) {
+      td.each((i, element) => {
+        if ($(element).hasClass("cell-barchart")) return;
+        values.push($(element).text().replace(/\s+/g, " ").trim());
+      });
+    }
+    else if (td.find("span").length > 1) {
+      values = td.find("span").map((_, element) => $(element).text().replace(/\s+/g, " ").trim()).get();
+    }
+     else {
+      values = td.text().replace(/\s+/g, " ").trim();
     }
 
     details[header] = values.length > 1 ? values : values[0] || "";
     });
 
-    return details;
+    return details
 }
 
 (async () => {
