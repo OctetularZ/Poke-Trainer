@@ -11,8 +11,12 @@ export async function getPokemonList() {
   const pokemon = [];
 
   $("table#pokedex tbody tr").each((index, element) => {
-    const name = $(element).find("td.cell-name a").text();
+    const baseName = $(element).find("td.cell-name a").text().trim();
+    const formName = $(element).find("td.cell-name small").text().trim();
     const link = $(element).find("td.cell-name a").attr("href");
+
+    const name = formName ? formName : baseName
+
     pokemon.push({
       name,
       link: "https://pokemondb.net" + link
@@ -63,12 +67,55 @@ export async function scrapePokemonDetails(url) {
     details[header] = values.length > 1 ? values : values[0] || "";
     });
 
+    let forms = []
+    const formTabs = $(".tabset-basics .sv-tabs-tab-list a")
+    if (formTabs.length) {
+      formTabs.each((_, element) => {
+        forms.push($(element).text().trim())
+      })
+      details["forms"] = forms
+    }
+
     return details
 }
 
+
+async function batchProcess(items, batchSize, fn) {
+  const results = [];
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
+    const batchResults = await Promise.allSettled(batch.map(fn));
+    results.push(...batchResults);
+    console.log(`✅ Processed batch ${i / batchSize + 1} of ${Math.ceil(items.length / batchSize)}`);
+  }
+  return results;
+}
+
 (async () => {
-  const details = await scrapePokemonDetails(
-    "https://pokemondb.net/pokedex/bulbasaur"
-  );
-  console.log(details);
+  console.log("Fetching Pokémon list...");
+  const pokemonList = await getPokemonList();
+  console.log(`Found ${pokemonList.length} Pokémon.`);
+
+  const batchSize = 15;
+
+  console.log(`Scraping Pokémon details in batches of ${batchSize}...`);
+  const results = await batchProcess(pokemonList, batchSize, async (pokemon) => {
+    try {
+      const details = await scrapePokemonDetails(pokemon.link);
+      return { name: pokemon.name, ...details };
+    } catch (err) {
+      console.error(`❌ Failed to scrape ${pokemon.name}: ${err.message}`);
+      return null;
+    }
+  });
+
+  // Filter out failed results
+  const successful = results
+    .filter((r) => r.status === "fulfilled" && r.value)
+    .map((r) => r.value);
+
+  console.log(`🎉 Scraped ${successful.length} Pokémon successfully!`);
+  console.log(successful.slice(0, 4)); // show first 4 examples
+
+  // TODO: save to your PostgreSQL DB using Prisma here
 })();
