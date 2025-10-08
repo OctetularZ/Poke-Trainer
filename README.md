@@ -44,6 +44,7 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 - **Authentication:** Zod and [Better Auth](https://www.better-auth.com/)
 - **Database & ORM:** [PostgreSQL](https://www.postgresql.org/) + [Prisma](https://www.prisma.io/)
 - **Cloud Storage:** [AWS S3](https://aws.amazon.com/s3/) (might change)
+- **Web Scraping:** Node.js, Cheerio, Axios
 - **AI/ML:** Node.js (might change to Python)
 - **Styling:** Tailwind CSS
 - **Hosting:** Vercel
