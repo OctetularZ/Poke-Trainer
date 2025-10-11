@@ -1,7 +1,6 @@
 import axios from "./axiosInstance.js"
 import * as cheerio from "cheerio";
 
-
 const url = "https://pokemondb.net/pokedex/all"
 
 export async function getPokemonList() {
@@ -61,6 +60,7 @@ export async function scrapePokemonDetails(name, url) {
     learnMethods.each((_, h3) => {
       const categoryName = $(h3).text().trim()
        // Need to check if the .next().next() of h3 has a div with class of .resp-scroll, if so, then a move table exists so there is moves in that category.
+       // Table always comes after a short description of the move list
       if ($(h3).next().next().hasClass('resp-scroll')) { // There are moves for this learn method available
         let table = $(h3).next().next().find('.data-table')
         
@@ -184,7 +184,7 @@ export async function scrapePokemonDetails(name, url) {
 
 async function batchProcess(items, batchSize, fn) {
   const results = [];
-  for (let i = 0; i < 50; i += batchSize) {
+  for (let i = 0; i < items.length; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
     const batchResults = await Promise.allSettled(batch.map(fn));
     results.push(...batchResults);
@@ -204,7 +204,7 @@ async function batchProcess(items, batchSize, fn) {
   const results = await batchProcess(pokemonList, batchSize, async (pokemon) => {
     try {
       const details = await scrapePokemonDetails(pokemon.name ,pokemon.link);
-      return { name: pokemon.name, ...details };
+      return { Name: pokemon.name, ...details };
     } catch (err) {
       console.error(`❌ Failed to scrape ${pokemon.name}: ${err.message}`);
       return null;
@@ -217,8 +217,8 @@ async function batchProcess(items, batchSize, fn) {
     .map((r) => r.value);
 
   console.log(`🎉 Scraped ${successful.length} Pokémon successfully!`);
-  console.log(successful[0]); // show first 10 examples
-  console.log(JSON.stringify(successful[0].Moves, null, 2));
+  console.log(successful.slice(0, 10)); // show first 10 examples
+  // console.log(JSON.stringify(successful[2].Moves, null, 2));
 
   // TODO: save to your PostgreSQL DB using Prisma here
 })();
