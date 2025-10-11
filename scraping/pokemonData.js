@@ -193,7 +193,7 @@ async function batchProcess(items, batchSize, fn) {
   return results;
 }
 
-(async () => {
+export async function getPokemonDetails () {
   console.log("Fetching Pokémon list...");
   const pokemonList = await getPokemonList();
   console.log(`Found ${pokemonList.length} Pokémon.`);
@@ -220,5 +220,7 @@ async function batchProcess(items, batchSize, fn) {
   console.log(successful.slice(0, 10)); // show first 10 examples
   // console.log(JSON.stringify(successful[2].Moves, null, 2));
 
+  return successful
+
   // TODO: save to your PostgreSQL DB using Prisma here
-})();
+};
