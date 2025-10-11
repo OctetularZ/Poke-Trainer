@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Users
 model User {
   id            String    @id
   name          String
@@ -65,4 +66,135 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+// -----------------------------
+// Pokemon
+model Pokemon {
+  id             Int     @id @default(autoincrement())
+  nationalNumber String
+  name           String
+  species        String?
+  height         String?
+  weight         String?
+  evYield        String?
+  catchRate      String?
+  baseFriendship String?
+  baseExp        String?
+  growthRate     String?
+  gender         String?
+  eggCycles      String?
+
+  // Base stats
+  hpMin      Int?
+  hpMax      Int?
+  attackMin  Int?
+  attackMax  Int?
+  defenseMin Int?
+  defenseMax Int?
+  spAtkMin   Int?
+  spAtkMax   Int?
+  spDefMin   Int?
+  spDefMax   Int?
+  speedMin   Int?
+  speedMax   Int?
+
+  // Relations
+  types        PokemonType[]
+  abilities    PokemonAbility[]
+  forms        PokemonForm[]
+  descriptions GameDescription[]
+  typeChart    TypeEffectiveness[]
+  gameMoves    GameMove[]
+  eggGroups    EggGroup[]
+  translations PokemonTranslation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Good
+model PokemonType {
+  id      Int       @id @default(autoincrement())
+  name    String
+  pokemon Pokemon[]
+}
+
+// Good
+model PokemonAbility {
+  id      Int       @id @default(autoincrement())
+  name    String
+  pokemon Pokemon[]
+}
+
+// Good
+model PokemonForm {
+  id        Int     @id @default(autoincrement())
+  name      String
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemonId Int
+}
+
+// Good
+model EggGroup {
+  id      Int       @id @default(autoincrement())
+  name    String
+  pokemon Pokemon[]
+}
+
+// Good
+model TypeEffectiveness {
+  id         Int     @id @default(autoincrement())
+  pokemon    Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemonId  Int
+  attackType String
+  multiplier String?
+}
+
+// Good
+model GameMove {
+  id        Int     @id @default(autoincrement())
+  game      String
+  gameId    Int
+  move      Move    @relation(fields: [moveId], references: [id])
+  moveId    Int
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemonId Int
+  method    String // e.g. "Level up", "TM", "Egg move"
+  level     String? // e.g. "15", or null for TM
+  tmNumber  String? // optional
+}
+
+// Good
+model Move {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  type      String
+  category  String
+  power     String?
+  accuracy  String?
+  pp        String?
+  gameMoves GameMove[]
+}
+
+// Good - Might add more game info later
+model Game {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
+
+model GameDescription {
+  id          Int     @id @default(autoincrement())
+  pokemon     Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemonId   Int
+  game        String
+  description String
+}
+
+model PokemonTranslation {
+  id             Int     @id @default(autoincrement())
+  pokemon        Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemonId      Int
+  language       String
+  translatedName String
 }
