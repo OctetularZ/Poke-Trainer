@@ -154,7 +154,7 @@ model TypeEffectiveness {
 // Good
 model GameMove {
   id        Int     @id @default(autoincrement())
-  game      String
+  game      Game    @relation(fields: [gameId], references: [id])
   gameId    Int
   move      Move    @relation(fields: [moveId], references: [id])
   moveId    Int
@@ -167,22 +167,28 @@ model GameMove {
 
 // Good
 model Move {
-  id        Int        @id @default(autoincrement())
-  name      String     @unique
-  type      String
-  category  String
-  power     String?
-  accuracy  String?
-  pp        String?
-  gameMoves GameMove[]
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  type        String
+  category    String
+  power       String?
+  accuracy    String?
+  pp          String?
+  description String?
+  priority    String?
+  effect      String?
+  target      String?
+  gameMoves   GameMove[]
 }
 
 // Good - Might add more game info later
 model Game {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id       Int        @id @default(autoincrement())
+  name     String     @unique
+  GameMove GameMove[]
 }
 
+// Good
 model GameDescription {
   id          Int     @id @default(autoincrement())
   pokemon     Pokemon @relation(fields: [pokemonId], references: [id])
@@ -191,6 +197,7 @@ model GameDescription {
   description String
 }
 
+// Good
 model PokemonTranslation {
   id             Int     @id @default(autoincrement())
   pokemon        Pokemon @relation(fields: [pokemonId], references: [id])
