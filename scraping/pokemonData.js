@@ -193,7 +193,7 @@ async function batchProcess(items, batchSize, fn) {
   return results;
 }
 
-export async function getPokemonDetails () {
+export async function getPokemonDetails() {
   console.log("Fetching Pokémon list...");
   const pokemonList = await getPokemonList();
   console.log(`Found ${pokemonList.length} Pokémon.`);
