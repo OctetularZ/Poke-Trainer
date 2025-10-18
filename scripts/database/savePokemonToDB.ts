@@ -24,25 +24,31 @@ async function main() {
         gender: p.Gender,
         eggCycles: p["Egg cycles"],
 
-        // Base stats
-        hpMin: p.stats?.hp?.min ?? null,
-        hpMax: p.stats?.hp?.max ?? null,
-        attackMin: p.stats?.attack?.min ?? null,
-        attackMax: p.stats?.attack?.max ?? null,
-        defenseMin: p.stats?.defense?.min ?? null,
-        defenseMax: p.stats?.defense?.max ?? null,
-        spAtkMin: p.stats?.spAtk?.min ?? null,
-        spAtkMax: p.stats?.spAtk?.max ?? null,
-        spDefMin: p.stats?.spDef?.min ?? null,
-        spDefMax: p.stats?.spDef?.max ?? null,
-        speedMin: p.stats?.speed?.min ?? null,
-        speedMax: p.stats?.speed?.max ?? null,
+        // Stats
+        hpBase: parseInt(p.HP[0]) ?? null,
+        hpMin: parseInt(p.HP[1]) ?? null,
+        hpMax: parseInt(p.HP[2]) ?? null,
+        attackBase: parseInt(p.Attack[0]) ?? null,
+        attackMin: parseInt(p.Attack[1]) ?? null,
+        attackMax: parseInt(p.Attack[2]) ?? null,
+        defenseBase: parseInt(p.Defense[0]) ?? null,
+        defenseMin: parseInt(p.Defense[1]) ?? null,
+        defenseMax: parseInt(p.Defense[2]) ?? null,
+        spAtkBase: parseInt(p["Sp. Atk"][0]) ?? null,
+        spAtkMin: parseInt(p["Sp. Atk"][1]) ?? null,
+        spAtkMax: parseInt(p["Sp. Atk"][2]) ?? null,
+        spDefBase: parseInt(p["Sp. Def"][0]) ?? null,
+        spDefMin: parseInt(p["Sp. Def"][1]) ?? null,
+        spDefMax: parseInt(p["Sp. Def"][2]) ?? null,
+        speedBase: parseInt(p.Speed[0]) ?? null,
+        speedMin: parseInt(p.Speed[1]) ?? null,
+        speedMax: parseInt(p.Speed[2]) ?? null,
       },
     })
 
     // Connect or create types
-    if (p.types && p.types.length) {
-      for (const type of p.types) {
+    if (p.Type && p.Type.length) {
+      for (const type of p.Type) {
         await prisma.pokemonType.upsert({
           where: { name: type },
           update: {},
@@ -55,7 +61,7 @@ async function main() {
         data: {
           types: {
             set: [],
-            connect: p.types.map((t: string) => ({ name: t })),
+            connect: p.Type.map((type: string) => ({ name: type })),
           },
         },
       })

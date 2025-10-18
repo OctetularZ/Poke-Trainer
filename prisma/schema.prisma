@@ -73,7 +73,7 @@ model Verification {
 model Pokemon {
   id             Int     @id @default(autoincrement())
   nationalNumber String
-  name           String
+  name           String  @unique
   species        String?
   height         String?
   weight         String?
@@ -86,18 +86,24 @@ model Pokemon {
   eggCycles      String?
 
   // Base stats
-  hpMin      Int?
-  hpMax      Int?
-  attackMin  Int?
-  attackMax  Int?
-  defenseMin Int?
-  defenseMax Int?
-  spAtkMin   Int?
-  spAtkMax   Int?
-  spDefMin   Int?
-  spDefMax   Int?
-  speedMin   Int?
-  speedMax   Int?
+  hpBase      Int?
+  hpMin       Int?
+  hpMax       Int?
+  attackBase  Int?
+  attackMin   Int?
+  attackMax   Int?
+  defenseBase Int?
+  defenseMin  Int?
+  defenseMax  Int?
+  spAtkBase   Int?
+  spAtkMin    Int?
+  spAtkMax    Int?
+  spDefBase   Int?
+  spDefMin    Int?
+  spDefMax    Int?
+  speedBase   Int?
+  speedMin    Int?
+  speedMax    Int?
 
   // Relations
   types        PokemonType[]
@@ -116,7 +122,7 @@ model Pokemon {
 // Good
 model PokemonType {
   id      Int       @id @default(autoincrement())
-  name    String
+  name    String    @unique
   pokemon Pokemon[]
 }
 
