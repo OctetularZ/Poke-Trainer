@@ -68,8 +68,8 @@ async function main() {
     }
 
     // Abilities
-    if (p.abilities && p.abilities.length) {
-      for (const ability of p.abilities) {
+    if (p.Abilties && p.Abilties.length) {
+      for (const ability of p.Abilties) {
         await prisma.pokemonAbility.upsert({
           where: { name: ability },
           update: {},
@@ -81,15 +81,19 @@ async function main() {
         data: {
           abilities: {
             set: [],
-            connect: p.abilities.map((a: string) => ({ name: a })),
+            connect: p.Abilties.map((ability: string) => ({ name: ability })),
           },
         },
       })
     }
 
+    // if (p.SoulSilver) {
+    //   await prisma.
+    // }
+
     // Moves
-    if (p.moves) {
-      for (const [method, moves] of Object.entries(p.moves)) {
+    if (p.Moves) {
+      for (const [method, moves] of Object.entries(p.Moves)) {
         for (const move of moves as any[]) {
           const moveRecord = await prisma.move.upsert({
             where: { name: move.Move },
@@ -98,8 +102,8 @@ async function main() {
               name: move.Move,
               type: move.Type,
               category: move['Cat.'],
-              power: move.Power === '—' ? null : move.Power,
-              accuracy: move.Acc === '—' ? null : move.Acc,
+              power: move.Power === '-' ? null : move.Power,
+              accuracy: move.Acc === '-' ? null : move.Acc,
             },
           })
 

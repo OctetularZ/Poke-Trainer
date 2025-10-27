@@ -129,7 +129,7 @@ model PokemonType {
 // Good
 model PokemonAbility {
   id      Int       @id @default(autoincrement())
-  name    String
+  name    String    @unique
   pokemon Pokemon[]
 }
 
