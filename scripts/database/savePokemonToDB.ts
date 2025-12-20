@@ -1,4 +1,4 @@
-import { ScrapedPokemon } from "@/scraping/types/pokemon.js";
+import { Movesets, ScrapedPokemon } from "@/scraping/types/pokemon.js";
 import prisma from "../../lib/prisma.js";
 import { getPokemonDetails } from '../../scraping/pokemonData.js'
 
@@ -91,16 +91,14 @@ async function main() {
     //   await prisma.
     // }
 
-    if (p.Moves) {
+    const moveSets = p.Moves as Movesets
+
+    if (moveSets) {
     // p.Moves is: { [gameName: string]: { [method: string]: Move[] } }
 
-    for (const gameName of Object.keys(p.Moves)) {
-      const moveCategories = p.Moves[gameName];
+    for (const [gameName, moveCategories] of Object.entries(moveSets)) {
 
-      // Just in case something weird got scraped
-      if (!moveCategories || typeof moveCategories !== "object") continue;
-
-      for (const method of Object.keys(moveCategories)) {
+      for (const [method, moves] of Object.entries(moveCategories)) {
         const moves = moveCategories[method];
 
         // Some methods might be missing or malformed
@@ -115,7 +113,7 @@ async function main() {
               type: move.Type,
               category: move["Cat."],
               power: move.Power === "—" ? null : move.Power,
-              accuracy: move.Acc === "—" ? null : move.Acc,
+              accuracy: move["Acc."] === "—" ? null : move["Acc."],
             },
           });
 

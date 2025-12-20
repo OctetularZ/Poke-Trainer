@@ -63,34 +63,22 @@ export interface ScrapedPokemon {
 }
 
 export interface Movesets {
-  [gameVersion: string]: MoveCategories[];
+  [gameVersion: string]: MoveCategories;
 }
 
 export interface MoveCategories {
-  "Moves learnt by level up"?: LevelUpMove[];
-  "Moves learnt on evolution"?: BaseMove[];
-  "Moves learnt by TM"?: TMMove[];
-  "Egg moves"?: BaseMove[];
-  "Move Tutor moves"?: BaseMove[];
-
-  // in case other categories exist (i.e. "TR moves", "Special moves")
-  [category: string]: BaseMove[] | undefined;
+  // e.g. "Moves learnt by TM": RawMove[]
+  [method: string]: BaseMove[];
 }
 
 export interface BaseMove {
+  'Lv.'?: string,
+  'TM'?: string,
   'Move': string,
   'Type': string,
   'Cat.': string,
   'Power': string,
   'Acc.': string
-}
-
-export interface LevelUpMove extends BaseMove {
-  "Lv.": string;
-}
-
-export interface TMMove extends BaseMove {
-  'TM': string;
 }
 
 export interface TypeChart {
