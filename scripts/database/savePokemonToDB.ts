@@ -48,6 +48,24 @@ async function main() {
 
     // Connect or create types
     if (p.Type && p.Type.length) {
+      if (!Array.isArray(p.Type)) {
+        await prisma.pokemonType.upsert({
+          where: { name: p.Type },
+          update: {},
+          create: { name: p.Type },
+        })
+
+        await prisma.pokemon.update({
+        where: { id: pokemon.id },
+        data: {
+          types: {
+            set: [],
+            connect: {name: p.Type},
+          },
+        },
+      })
+      }
+      else {
       for (const type of p.Type) {
         await prisma.pokemonType.upsert({
           where: { name: type },
@@ -65,7 +83,7 @@ async function main() {
           },
         },
       })
-    }
+    }}
 
     // Abilities
     if (p.Abilties && p.Abilties.length) {
@@ -139,7 +157,7 @@ async function main() {
 
 
 
-    console.log(`✅ Seeded ${p.name}`)
+    console.log(`✅ Seeded ${p.Name}`)
   }
 }
 

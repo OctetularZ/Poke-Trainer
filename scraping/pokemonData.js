@@ -217,8 +217,8 @@ export async function getPokemonDetails() {
     .map((r) => r.value);
 
   console.log(`🎉 Scraped ${successful.length} Pokémon successfully!`);
-  // console.log(successful.slice(0, 10)); // show first 10 examples
-  console.log(JSON.stringify(successful[2].Moves, null, 2));
+  console.log(successful.slice(0, 10)); // show first 10 examples
+  // console.log(JSON.stringify(successful[2].Moves, null, 2));
 
   return successful
 

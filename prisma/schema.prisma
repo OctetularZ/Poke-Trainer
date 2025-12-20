@@ -82,7 +82,10 @@ model Pokemon {
   baseFriendship String?
   baseExp        String?
   growthRate     String?
-  gender         String?
+  gender         Json?
+  // genderMalePercent   Float?
+  // genderFemalePercent Float?
+  // genderless          Boolean @default(false)
   eggCycles      String?
 
   // Base stats
