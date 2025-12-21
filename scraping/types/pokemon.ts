@@ -37,7 +37,7 @@ export interface ScrapedPokemon {
   Species: string,
   Height: string,
   Weight: string,
-  Abilties: string[],
+  Abilities: string[],
   'EV yield': string,
   'Catch Rate': string,
   'Base Friendship': string,

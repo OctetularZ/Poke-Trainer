@@ -86,24 +86,42 @@ async function main() {
       }}
 
     // Abilities
-    if (p.Abilties && p.Abilties.length) {
-      for (const ability of p.Abilties) {
+    if (p.Abilities && p.Abilities.length) {
+      if (!Array.isArray(p.Abilities)) {
         await prisma.pokemonAbility.upsert({
-          where: { name: ability },
+          where: { name: p.Abilities },
           update: {},
-          create: { name: ability },
+          create: { name: p.Abilities },
+        })
+
+        await prisma.pokemon.update({
+          where: { id: pokemon.id },
+          data: {
+            abilities: {
+              set: [],
+              connect: {name: p.Abilities},
+            },
+          },
         })
       }
-      await prisma.pokemon.update({
-        where: { id: pokemon.id },
-        data: {
-          abilities: {
-            set: [],
-            connect: p.Abilties.map((ability: string) => ({ name: ability })),
+      else {
+        for (const ability of p.Abilities) {
+          await prisma.pokemonAbility.upsert({
+            where: { name: ability },
+            update: {},
+            create: { name: ability },
+          })
+        }
+        await prisma.pokemon.update({
+          where: { id: pokemon.id },
+          data: {
+            abilities: {
+              set: [],
+              connect: p.Abilities.map((ability: string) => ({ name: ability })),
+            },
           },
-        },
-      })
-    }
+        })
+    }}
 
     // if (p.SoulSilver) {
     //   await prisma.
