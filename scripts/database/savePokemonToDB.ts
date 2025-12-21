@@ -119,7 +119,7 @@ async function main() {
       for (const [method, moves] of Object.entries(moveCategories)) {
         const moves = moveCategories[method];
 
-        // Some methods might be missing or malformed
+        // Skip incorrect move formats, it should always be a list
         if (!Array.isArray(moves)) continue;
 
         for (const move of moves) {
