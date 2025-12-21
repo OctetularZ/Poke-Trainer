@@ -66,24 +66,24 @@ async function main() {
       })
       }
       else {
-      for (const type of p.Type) {
-        await prisma.pokemonType.upsert({
-          where: { name: type },
-          update: {},
-          create: { name: type },
-        })
-      }
-      // Connect them
-      await prisma.pokemon.update({
-        where: { id: pokemon.id },
-        data: {
-          types: {
-            set: [],
-            connect: p.Type.map((type: string) => ({ name: type })),
+        for (const type of p.Type) {
+          await prisma.pokemonType.upsert({
+            where: { name: type },
+            update: {},
+            create: { name: type },
+          })
+        }
+        // Connect them
+        await prisma.pokemon.update({
+          where: { id: pokemon.id },
+          data: {
+            types: {
+              set: [],
+              connect: p.Type.map((type: string) => ({ name: type })),
+            },
           },
-        },
-      })
-    }}
+        })
+      }}
 
     // Abilities
     if (p.Abilties && p.Abilties.length) {
