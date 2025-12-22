@@ -4,6 +4,15 @@ import { getPokemonDetails } from '../../scraping/pokemonData.js'
 
 const pokemonData: ScrapedPokemon[] = await getPokemonDetails();
 
+const knownKeys = new Set([
+    'Name', 'Forms', 'Moves', 'Type Chart', 'National №', 'Type', 'Species',
+    'Height', 'Weight', 'Abilities', 'EV yield', 'Catch rate', 'Base Friendship',
+    'Base Exp.', 'Growth Rate', 'Egg Groups', 'Gender', 'Egg cycles',
+    'HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed',
+    'English', 'Japanese', 'German', 'French', 'Italian', 'Spanish', 'Korean',
+    'Chinese (Simplified)', 'Chinese (Traditional)'
+  ]);
+
 async function main() {
   for (const p of pokemonData) {
     // Upsert base Pokémon info
@@ -11,6 +20,8 @@ async function main() {
       where: { name: p.Name },
       update: {},
       create: {
+
+        // General info
         nationalNumber: p['National №'],
         name: p.Name,
         species: p.Species,
@@ -127,57 +138,109 @@ async function main() {
       });
     }
 
-    // if (p.SoulSilver) {
-    //   await prisma.
-    // }
-
+    // Moves
     const moveSets = p.Moves as Movesets
 
     if (moveSets) {
     // p.Moves is: { [gameName: string]: { [method: string]: Move[] } }
 
-    for (const [gameName, moveCategories] of Object.entries(moveSets)) {
+      for (const [gameName, moveCategories] of Object.entries(moveSets)) {
 
-      for (const [method, moves] of Object.entries(moveCategories)) {
-        const moves = moveCategories[method];
+        for (const [method, moves] of Object.entries(moveCategories)) {
+          const moves = moveCategories[method];
 
-        // Skip incorrect move formats, it should always be a list
-        if (!Array.isArray(moves)) continue;
+          // Skip incorrect move formats, it should always be a list
+          if (!Array.isArray(moves)) continue;
 
-        for (const move of moves) {
-          const moveRecord = await prisma.move.upsert({
-            where: { name: move.Move },
-            update: {},
-            create: {
-              name: move.Move,
-              type: move.Type,
-              category: move["Cat."],
-              power: move.Power === "—" ? null : move.Power,
-              accuracy: move["Acc."] === "—" ? null : move["Acc."],
-            },
-          });
+          for (const move of moves) {
+            const moveRecord = await prisma.move.upsert({
+              where: { name: move.Move },
+              update: {},
+              create: {
+                name: move.Move,
+                type: move.Type,
+                category: move["Cat."],
+                power: move.Power === "—" ? null : move.Power,
+                accuracy: move["Acc."] === "—" ? null : move["Acc."],
+              },
+            });
 
-          await prisma.gameMove.create({
-            data: {
-              method, // e.g. "Moves learnt by TM"
-              level: move["Lv."]?.toString() ?? null,
-              tmNumber: move.TM ?? null,
-              pokemon: { connect: { id: pokemon.id } },
-              move: { connect: { id: moveRecord.id } },
-              game: {
-                connectOrCreate: {
-                  where: { name: gameName },
-                  create: { name: gameName },
+            await prisma.gameMove.create({
+              data: {
+                method, // e.g. "Moves learnt by TM"
+                level: move["Lv."]?.toString() ?? null,
+                tmNumber: move.TM ?? null,
+                pokemon: { connect: { id: pokemon.id } },
+                move: { connect: { id: moveRecord.id } },
+                game: {
+                  connectOrCreate: {
+                    where: { name: gameName },
+                    create: { name: gameName },
+                  },
                 },
               },
-            },
-          });
+            });
+          }
         }
       }
     }
-  }
 
+    // Game Decriptions
+    const gameDescriptions = Object.entries(p)
+    .filter(([key, value]) => 
+      !knownKeys.has(key) && 
+      typeof value === 'string' &&
+      value.length > 0
+    );
 
+    if (gameDescriptions.length > 0) {
+      await Promise.all(
+        gameDescriptions.map(([game, description]) =>
+          prisma.gameDescription.upsert({
+            where: { 
+              pokemonId_game: { pokemonId: pokemon.id, game } 
+            },
+            update: { description: description as string },
+            create: { 
+              game, 
+              description: description as string,
+              pokemon: { connect: { id: pokemon.id } }
+            },
+          })
+        )
+      );
+    }
+
+    // Translations
+    const translationData = [
+      { language: 'English', translatedName: p.English },
+      { language: 'Japanese', translatedName: p.Japanese },
+      { language: 'German', translatedName: p.German },
+      { language: 'French', translatedName: p.French },
+      { language: 'Italian', translatedName: p.Italian },
+      { language: 'Spanish', translatedName: p.Spanish },
+      { language: 'Korean', translatedName: p.Korean },
+      { language: 'Chinese (Simplified)', translatedName: p['Chinese (Simplified)'] },
+      { language: 'Chinese (Traditional)', translatedName: p['Chinese (Traditional)'] },
+    ].filter(t => t.translatedName && typeof t.translatedName === 'string');
+
+    if (translationData.length > 0) {
+      await Promise.all(
+        translationData.map(({ language, translatedName }) =>
+          prisma.pokemonTranslation.upsert({
+            where: {
+              pokemonId_language: { pokemonId: pokemon.id, language }
+            },
+            update: { translatedName },
+            create: {
+              language,
+              translatedName,
+              pokemon: { connect: { id: pokemon.id } }
+            },
+          })
+        )
+      );
+    }
 
     console.log(`✅ Seeded ${p.Name}`)
   }
@@ -193,3 +256,20 @@ main()
     await prisma.$disconnect()
     process.exit(1)
   })
+
+
+// Adding Pokemon in parralel logic - will add when finished with main adding Pokemon to DB logic
+
+// async function main() {
+//   const batchSize = 3; // Conservative for free tier
+  
+//   for (let i = 0; i < pokemonData.length; i += batchSize) {
+//     const batch = pokemonData.slice(i, i + batchSize);
+    
+//     await Promise.all(batch.map(async (p) => {
+//       // Your entire Pokemon processing logic
+//       const pokemon = await prisma.pokemon.upsert({...});
+//       // ... rest of logic
+//       console.log(`✅ Seeded ${p.Name}`);
+//     }));
+//   }

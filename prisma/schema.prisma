@@ -204,6 +204,8 @@ model GameDescription {
   pokemonId   Int
   game        String
   description String
+
+  @@unique([pokemonId, game])
 }
 
 // Good
@@ -213,4 +215,6 @@ model PokemonTranslation {
   pokemonId      Int
   language       String
   translatedName String
+
+  @@unique([pokemonId, language])
 }
