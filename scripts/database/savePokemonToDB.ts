@@ -242,6 +242,48 @@ async function main() {
       );
     }
 
+    // Forms
+    if (p.Forms && p.Forms.length) {
+      await Promise.all(
+        p.Forms.map(form =>
+          prisma.pokemonForm.upsert({
+            where: {
+              pokemonId_name: { pokemonId: pokemon.id, name: form }
+            },
+            update: {},
+            create: {
+              name: form,
+              pokemon: { connect: { id: pokemon.id } }
+            },
+          })
+        )
+      );
+    }
+
+    // Type Effectiveness
+    if (p['Type Chart']) {
+      const typeChart = Object.entries(p['Type Chart'])
+        .filter(([type, multiplier]) => multiplier && multiplier.length > 0);
+
+      if (typeChart.length > 0) {
+        await Promise.all(
+          typeChart.map(([attackType, multiplier]) =>
+            prisma.typeEffectiveness.upsert({
+              where: {
+                pokemonId_attackType: { pokemonId: pokemon.id, attackType }
+              },
+              update: { multiplier: multiplier as string },
+              create: {
+                attackType,
+                multiplier: multiplier as string,
+                pokemon: { connect: { id: pokemon.id } }
+              },
+            })
+          )
+        );
+      }
+    }
+
     console.log(`✅ Seeded ${p.Name}`)
   }
 }

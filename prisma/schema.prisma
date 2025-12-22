@@ -139,9 +139,11 @@ model PokemonAbility {
 // Good
 model PokemonForm {
   id        Int     @id @default(autoincrement())
-  name      String  @unique
+  name      String
   pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
   pokemonId Int
+
+  @@unique([pokemonId, name])
 }
 
 // Good
@@ -158,6 +160,8 @@ model TypeEffectiveness {
   pokemonId  Int
   attackType String
   multiplier String?
+
+  @@unique([pokemonId, attackType])
 }
 
 // Good
