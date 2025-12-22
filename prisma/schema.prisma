@@ -139,7 +139,7 @@ model PokemonAbility {
 // Good
 model PokemonForm {
   id        Int     @id @default(autoincrement())
-  name      String
+  name      String  @unique
   pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
   pokemonId Int
 }
