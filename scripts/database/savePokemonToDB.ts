@@ -46,82 +46,86 @@ async function main() {
       },
     })
 
-    // Connect or create types
+    // Types
     if (p.Type && p.Type.length) {
-      if (!Array.isArray(p.Type)) {
-        await prisma.pokemonType.upsert({
-          where: { name: p.Type },
-          update: {},
-          create: { name: p.Type },
-        })
-
-        await prisma.pokemon.update({
-        where: { id: pokemon.id },
-        data: {
-          types: {
-            set: [],
-            connect: {name: p.Type},
-          },
-        },
-      })
-      }
-      else {
-        for (const type of p.Type) {
-          await prisma.pokemonType.upsert({
+      const types = Array.isArray(p.Type) ? p.Type : [p.Type];
+      
+      // Parallel upserts - faster than linear
+      await Promise.all(
+        types.map(type =>
+          prisma.pokemonType.upsert({
             where: { name: type },
             update: {},
             create: { name: type },
           })
-        }
-        // Connect them
-        await prisma.pokemon.update({
-          where: { id: pokemon.id },
-          data: {
-            types: {
-              set: [],
-              connect: p.Type.map((type: string) => ({ name: type })),
-            },
+        )
+      );
+      
+      // Connect - Create link between type table and pokemon table
+      await prisma.pokemon.update({
+        where: { id: pokemon.id },
+        data: {
+          types: {
+            set: [],
+            connect: types.map(type => ({ name: type })),
           },
-        })
-      }}
+        },
+      });
+    }
 
     // Abilities
     if (p.Abilities && p.Abilities.length) {
-      if (!Array.isArray(p.Abilities)) {
-        await prisma.pokemonAbility.upsert({
-          where: { name: p.Abilities },
-          update: {},
-          create: { name: p.Abilities },
-        })
-
-        await prisma.pokemon.update({
-          where: { id: pokemon.id },
-          data: {
-            abilities: {
-              set: [],
-              connect: {name: p.Abilities},
-            },
-          },
-        })
-      }
-      else {
-        for (const ability of p.Abilities) {
-          await prisma.pokemonAbility.upsert({
+      const abilities = Array.isArray(p.Abilities) ? p.Abilities : [p.Abilities];
+      
+      // Parallel upserts
+      await Promise.all(
+        abilities.map(ability =>
+          prisma.pokemonAbility.upsert({
             where: { name: ability },
             update: {},
             create: { name: ability },
           })
-        }
-        await prisma.pokemon.update({
-          where: { id: pokemon.id },
-          data: {
-            abilities: {
-              set: [],
-              connect: p.Abilities.map((ability: string) => ({ name: ability })),
-            },
+        )
+      );
+      
+      // Connect
+      await prisma.pokemon.update({
+        where: { id: pokemon.id },
+        data: {
+          abilities: {
+            set: [],
+            connect: abilities.map(ability => ({ name: ability })),
           },
-        })
-    }}
+        },
+      });
+    }
+
+    // Egg Groups
+    if (p["Egg Groups"] && p["Egg Groups"].length) {
+      const eggGroups = Array.isArray(p["Egg Groups"]) ? p["Egg Groups"] : [p["Egg Groups"]];
+      
+      // Parallel upserts
+      await Promise.all(
+        eggGroups.map(eggGroup =>
+          prisma.eggGroup.upsert({
+            where: { name: eggGroup },
+            update: {},
+            create: { name: eggGroup },
+          })
+        )
+      );
+      
+      // Connect
+      await prisma.pokemon.update({
+        where: { id: pokemon.id },
+        data: {
+          eggGroups: {
+            set: [],
+            connect: eggGroups.map(eggGroup => ({ name: eggGroup })),
+          },
+        },
+      });
+    }
 
     // if (p.SoulSilver) {
     //   await prisma.

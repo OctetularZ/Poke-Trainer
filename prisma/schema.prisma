@@ -147,7 +147,7 @@ model PokemonForm {
 // Good
 model EggGroup {
   id      Int       @id @default(autoincrement())
-  name    String
+  name    String    @unique
   pokemon Pokemon[]
 }
 
