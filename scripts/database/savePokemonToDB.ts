@@ -17,6 +17,7 @@ const knownKeys = new Set([
 async function main() {
   for (const p of pokemonData) {
     // Skip already existing Pokemon
+    //
     const existing = await prisma.pokemon.findUnique({
       where: { name: p.Name }
     });
