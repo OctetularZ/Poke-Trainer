@@ -14,7 +14,7 @@ export async function getPokemonList() {
     const formName = $(element).find("td.cell-name small").text().trim();
     const link = $(element).find("td.cell-name a").attr("href");
 
-    const name = formName ? formName : baseName
+    const name = formName ? `${baseName} (${formName})` : baseName
 
     pokemon.push({
       name,

@@ -16,6 +16,16 @@ const knownKeys = new Set([
 
 async function main() {
   for (const p of pokemonData) {
+    // Skip already existing Pokemon
+    const existing = await prisma.pokemon.findUnique({
+      where: { name: p.Name }
+    });
+    
+    if (existing) {
+      console.log(`⏭️  Skipping ${p.Name} (already seeded)`);
+      continue;
+    }
+
     // Upsert base Pokémon info
     const pokemon = await prisma.pokemon.upsert({
       where: { name: p.Name },
