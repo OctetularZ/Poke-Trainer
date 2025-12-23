@@ -1,5 +1,6 @@
+import 'dotenv/config'
 import { Movesets, ScrapedPokemon } from "@/scraping/types/pokemon.js";
-import prisma from "../../lib/prisma.js";
+import { directPrisma as prisma } from "../../lib/prisma.js";
 import { getPokemonDetails } from '../../scraping/pokemonData.js'
 
 const pokemonData: ScrapedPokemon[] = await getPokemonDetails();
