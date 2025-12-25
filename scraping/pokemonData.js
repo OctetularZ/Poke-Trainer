@@ -143,13 +143,42 @@ export async function scrapePokemonDetails(name, url) {
 
     // Evolution Chain
     let evolutionChain = []
-    $(".infocard-list-evo div.infocard ").each((index, row) => {
-      let pokemonName = $(row).find(".ent-name").text().trim();
-      let evolutionMethod = $(row).next().find("small").text().trim();
-      let evolutionObj = {pokemonName, evolutionMethod}
-      evolutionChain.push(evolutionObj)
-    })
-    console.log(evolutionChain);
+
+    $(".infocard-list-evo div.infocard").each((index, row) => {
+      let fromPokemon = $(row).find(".ent-name").text().trim();
+
+      let formName = $(row).find(".ent-name").nextAll("small").first();
+
+      if (!($(formName).find("a").length > 0)) {
+        fromPokemon = `${fromPokemon} (${formName.text().trim()})`
+      }
+
+      let nextElement = $(row).next();
+      
+      // Check if it's a split evolution
+      if (nextElement.hasClass("infocard-evo-split")) {
+        // Handle multiple branches
+        nextElement.find(".infocard-evo-split-path").each((i, path) => {
+          let method = $(path).find(".infocard-arrow small").text().trim().replace(/[()]/g, '');
+          let toPokemon = $(path).find(".infocard .ent-name").text().trim();
+          
+          if (toPokemon) {
+            evolutionChain.push({ from: fromPokemon, to: toPokemon, method });
+          }
+        });
+      } 
+      // Check if it's a linear evolution
+      else if (nextElement.hasClass("infocard-arrow")) {
+        let method = nextElement.find("small").text().trim().replace(/[()]/g, '');
+        let toPokemon = nextElement.next(".infocard").find(".ent-name").text().trim();
+        
+        if (toPokemon) {
+          evolutionChain.push({ from: fromPokemon, to: toPokemon, method });
+        }
+      }
+    });
+
+    evolutionChain.length && console.log(evolutionChain);
 
     // General Pokemon Data
     $(".vitals-table tbody tr").each((index, row) => {
@@ -194,7 +223,7 @@ export async function scrapePokemonDetails(name, url) {
 
 async function batchProcess(items, batchSize, fn) {
   const results = [];
-  for (let i = 0; i < 15; i += batchSize) {
+  for (let i = 0; i < 300; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
     const batchResults = await Promise.allSettled(batch.map(fn));
     results.push(...batchResults);
