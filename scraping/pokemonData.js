@@ -178,7 +178,7 @@ export async function scrapePokemonDetails(name, url) {
       }
     });
 
-    evolutionChain.length && console.log(evolutionChain);
+    details["Evolution Chain"] = evolutionChain
 
     // General Pokemon Data
     $(".vitals-table tbody tr").each((index, row) => {
@@ -223,7 +223,7 @@ export async function scrapePokemonDetails(name, url) {
 
 async function batchProcess(items, batchSize, fn) {
   const results = [];
-  for (let i = 0; i < 300; i += batchSize) {
+  for (let i = 0; i < 50; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
     const batchResults = await Promise.allSettled(batch.map(fn));
     results.push(...batchResults);
@@ -255,9 +255,9 @@ export async function getPokemonDetails() {
     .filter((r) => r.status === "fulfilled" && r.value)
     .map((r) => r.value);
 
-  // console.log(`🎉 Scraped ${successful.length} Pokémon successfully!`);
-  // console.log(successful.slice(0, 10)); // show first 10 examples
-  // // console.log(JSON.stringify(successful[2].Moves, null, 2));
+  console.log(`🎉 Scraped ${successful.length} Pokémon successfully!`);
+  console.log(successful.slice(0, 10)); // show first 10 examples
+  // console.log(JSON.stringify(successful[2]["Evolution Chain"], null, 2));
 
   return successful
 };
