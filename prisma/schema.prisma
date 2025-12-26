@@ -155,6 +155,7 @@ model PokemonAbility {
 model PokemonForm {
   id        Int     @id @default(autoincrement())
   name      String
+  pokeapiId Int?
   pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
   pokemonId Int
 

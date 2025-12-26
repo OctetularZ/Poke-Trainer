@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { Movesets, ScrapedPokemon } from "@/scraping/types/pokemon.js";
 import { directPrisma as prisma } from "../../lib/prisma.js";
 import { getPokemonDetails } from '../../scraping/pokemonData.js'
+import { getPokeApiId } from './helperFunctions.js';
 
 const pokemonData: ScrapedPokemon[] = await getPokemonDetails();
 
@@ -274,17 +275,19 @@ async function main() {
 
     // Forms
     if (p.Forms && p.Forms.length) {
+      const formData = await Promise.all(
+        p.Forms.map(async (form) => ({
+          name: form,
+          pokeapiId: await getPokeApiId(p.Name, form)
+        }))
+      );
+
       await Promise.all(
-        p.Forms.map(form =>
+        formData.map(({ name, pokeapiId }) =>
           prisma.pokemonForm.upsert({
-            where: {
-              pokemonId_name: { pokemonId: pokemon.id, name: form }
-            },
-            update: {},
-            create: {
-              name: form,
-              pokemon: { connect: { id: pokemon.id } }
-            },
+            where: { pokemonId_name: { pokemonId: pokemon.id, name } },
+            update: { pokeapiId },
+            create: { name, pokeapiId, pokemon: { connect: { id: pokemon.id } } },
           })
         )
       );
