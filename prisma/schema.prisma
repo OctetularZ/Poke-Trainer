@@ -74,6 +74,7 @@ model Pokemon {
   id             Int     @id @default(autoincrement())
   nationalNumber String
   name           String  @unique
+  pokeapiId      Int?
   species        String?
   height         String?
   weight         String?
@@ -155,7 +156,6 @@ model PokemonAbility {
 model PokemonForm {
   id        Int     @id @default(autoincrement())
   name      String
-  pokeapiId Int?
   pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
   pokemonId Int
 

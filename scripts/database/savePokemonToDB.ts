@@ -31,6 +31,21 @@ async function main() {
       continue;
     }
 
+    // Fetch PokeAPI ID
+    let pokeapiId: number | null = null;
+    if (p.Name.includes('(') && p.Name.includes(')')) {
+      const match = p.Name.match(/^(.+?)\s*\((.+?)\)$/);
+      if (match) {
+        const baseName = match[1].trim();   // "Venusaur"
+        const formName = match[2].trim();   // "Mega Venusaur"
+        pokeapiId = await getPokeApiId(baseName, formName);
+      }
+    }
+    else {
+      pokeapiId = await getPokeApiId(p.Name);
+    }
+    console.log(`🔍 ${p.Name} -> PokeAPI ID: ${pokeapiId}`);
+
     // Upsert base Pokémon info
     const pokemon = await prisma.pokemon.upsert({
       where: { name: p.Name },
@@ -40,6 +55,7 @@ async function main() {
         // General info
         nationalNumber: p['National №'],
         name: p.Name,
+        pokeapiId,
         species: p.Species,
         height: p.Height,
         weight: p.Weight,
@@ -275,19 +291,12 @@ async function main() {
 
     // Forms
     if (p.Forms && p.Forms.length) {
-      const formData = await Promise.all(
-        p.Forms.map(async (form) => ({
-          name: form,
-          pokeapiId: await getPokeApiId(p.Name, form)
-        }))
-      );
-
       await Promise.all(
-        formData.map(({ name, pokeapiId }) =>
+        p.Forms.map((form) =>
           prisma.pokemonForm.upsert({
-            where: { pokemonId_name: { pokemonId: pokemon.id, name } },
-            update: { pokeapiId },
-            create: { name, pokeapiId, pokemon: { connect: { id: pokemon.id } } },
+            where: { pokemonId_name: { pokemonId: pokemon.id, name: form } },
+            update: {},
+            create: { name: form, pokemon: { connect: { id: pokemon.id } } },
           })
         )
       );
