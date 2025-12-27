@@ -291,8 +291,12 @@ async function main() {
 
     // Forms - Creates entries for forms themselves as well - leads to duplicate data but isn't that bad
     if (p.Forms && p.Forms.length) {
+      console.log(`📋 ${p.Name} forms:`, p.Forms, `(unique: ${[...new Set(p.Forms)].length})`);
+      // Deduplicate form names to avoid unique constraint violations
+      const uniqueForms = [...new Set(p.Forms)];
+      
       await Promise.all(
-        p.Forms.map((form) =>
+        uniqueForms.map((form) =>
           prisma.pokemonForm.upsert({
             where: { pokemonId_name: { pokemonId: pokemon.id, name: form } },
             update: {},

@@ -33,14 +33,19 @@ export async function scrapePokemonDetails(name, url) {
   let formId;
 
   let forms = []
-  const formTabs = $(".tabset-basics .sv-tabs-tab-list a")
-  formTabs.each((_, element) => {
-    let formName = $(element).text().trim();
-    if (formName === name) {
-      formId = $(element).attr("href").slice(1)
-    }
-    forms.push(formName)
-  })
+
+  const firstTabsetBasics = $(".tabset-basics").first();
+  if (firstTabsetBasics.find(".tabset-typedefcol").length === 0) {
+    const formTabs = firstTabsetBasics.find(".sv-tabs-tab-list a")
+    formTabs.each((_, element) => {
+      let formName = $(element).text().trim();
+      if (formName === name) {
+        formId = $(element).attr("href").slice(1)
+      }
+      forms.push(formName)
+    })
+  }
+
   details["Forms"] = forms
 
   let moveVersionIds = [];
@@ -223,7 +228,7 @@ export async function scrapePokemonDetails(name, url) {
 
 async function batchProcess(items, batchSize, fn) {
   const results = [];
-  for (let i = 0; i < 15; i += batchSize) {
+  for (let i = 0; i < items.length; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
     const batchResults = await Promise.allSettled(batch.map(fn));
     results.push(...batchResults);
@@ -256,7 +261,7 @@ export async function getPokemonDetails() {
     .map((r) => r.value);
 
   console.log(`🎉 Scraped ${successful.length} Pokémon successfully!`);
-  console.log(successful.slice(0, 10)); // show first 10 examples
+  // console.log(successful.slice(0, 10)); // show first 10 examples
   // console.log(JSON.stringify(successful[2]["Evolution Chain"], null, 2));
 
   return successful
