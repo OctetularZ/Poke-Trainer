@@ -19,7 +19,7 @@ const knownKeys = new Set([
   ]);
 
 async function main() {
-  const pokemonSubset = pokemonData.slice(900, 920);
+  const pokemonSubset = pokemonData.slice(50, 60);
   console.log(`Processing ${pokemonSubset.length} Pokemon (from ${pokemonData[850]?.Name} to ${pokemonData[900]?.Name})`);
   
   for (const p of pokemonSubset) {
