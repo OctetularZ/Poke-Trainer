@@ -356,14 +356,14 @@ async function main() {
     await prisma.evolution.upsert({
       where: {
         fromPokemonId_toPokemonId: {
-          fromPokemonId: to.id,
-          toPokemonId: from.id,
+          fromPokemonId: from.id,
+          toPokemonId: to.id,
         },
       },
       update: { method: evo.method },
       create: {
-        fromPokemon: { connect: { id: to.id } },
-        toPokemon: { connect: { id: from.id } },
+        fromPokemon: { connect: { id: from.id } },
+        toPokemon: { connect: { id: to.id } },
         method: evo.method,
       },
     });

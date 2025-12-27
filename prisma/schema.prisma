@@ -110,8 +110,8 @@ model Pokemon {
   speedMax    Int?
 
   // Relations
-  evolvesFrom  Evolution[]          @relation("EvolvesTo")
-  evolvesTo    Evolution[]          @relation("EvolvesFrom")
+  evolvesFrom  Evolution[]          @relation("EvolvesFrom")
+  evolvesTo    Evolution[]          @relation("EvolvesTo")
   types        PokemonType[]
   abilities    PokemonAbility[]
   forms        PokemonForm[]
