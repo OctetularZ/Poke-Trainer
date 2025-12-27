@@ -289,7 +289,7 @@ async function main() {
       );
     }
 
-    // Forms
+    // Forms - Creates entries for forms themselves as well - leads to duplicate data but isn't that bad
     if (p.Forms && p.Forms.length) {
       await Promise.all(
         p.Forms.map((form) =>
