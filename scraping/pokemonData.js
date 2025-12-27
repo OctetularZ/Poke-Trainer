@@ -34,9 +34,9 @@ export async function scrapePokemonDetails(name, url) {
 
   let forms = []
 
-  const firstTabsetBasics = $(".tabset-basics").first();
-  if (firstTabsetBasics.find(".tabset-typedefcol").length === 0) {
-    const formTabs = firstTabsetBasics.find(".sv-tabs-tab-list a")
+  const firstTabsList = $(".tabset-basics .sv-tabs-tab-list").first();
+  if (!firstTabsList.hasClass("sv-tabs-grow")) {
+    const formTabs = firstTabsList.find("a")
     formTabs.each((_, element) => {
       let formName = $(element).text().trim();
       if (formName === name) {
