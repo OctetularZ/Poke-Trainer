@@ -19,12 +19,9 @@ const knownKeys = new Set([
   ]);
 
 async function main() {
-  const pokemonSubset = pokemonData.slice(50, 60);
-  console.log(`Processing ${pokemonSubset.length} Pokemon (from ${pokemonData[850]?.Name} to ${pokemonData[900]?.Name})`);
-  
-  for (const p of pokemonSubset) {
+  for (const p of pokemonData) {
     // Skip already existing Pokemon
-    //
+
     const existing = await prisma.pokemon.findUnique({
       where: { name: p.Name }
     });
@@ -95,9 +92,6 @@ async function main() {
     // Evolution chains (store and process after all Pokemon are created)
     const evolutionChain = Array.isArray(p["Evolution Chain"]) ? p["Evolution Chain"] : [];
     if (evolutionChain.length) {
-      if (p.Name.includes('Rockruff')) {
-        console.log(`🔍 ${p.Name} evolution chain:`, evolutionChain);
-      }
       for (const evo of evolutionChain) {
         if (evo?.from && evo?.to) {
           pendingEvolutions.push({
@@ -297,7 +291,6 @@ async function main() {
 
     // Forms - Creates entries for forms themselves as well - leads to duplicate data but isn't that bad
     if (p.Forms && p.Forms.length) {
-      console.log(`📋 ${p.Name} forms:`, p.Forms, `(unique: ${[...new Set(p.Forms)].length})`);
       // Deduplicate form names to avoid unique constraint violations
       const uniqueForms = [...new Set(p.Forms)];
       
