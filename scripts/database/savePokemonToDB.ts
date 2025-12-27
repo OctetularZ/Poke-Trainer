@@ -335,8 +335,18 @@ async function main() {
 
   // Insert evolutions now that all Pokemon records exist
   for (const evo of pendingEvolutions) {
-    const from = await prisma.pokemon.findUnique({ where: { name: evo.from } });
-    const to = await prisma.pokemon.findUnique({ where: { name: evo.to } });
+    let from = await prisma.pokemon.findUnique({ where: { name: evo.from } });
+    let to = await prisma.pokemon.findUnique({ where: { name: evo.to } });
+
+    // If 'to' not found, find a form variant (e.g., "Palafin" -> "Palafin (Zero Form)")
+    if (!to) {
+      const formVariants = await prisma.pokemon.findMany({
+        where: { name: { startsWith: `${evo.to} (` } }
+      });
+      if (formVariants.length > 0) {
+        to = formVariants[0]; // Use the first form variant
+      }
+    }
 
     if (!from || !to) {
       console.warn(`⚠️ Skipping evolution ${evo.from} -> ${evo.to} (missing record)`);
