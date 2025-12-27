@@ -149,12 +149,18 @@ export async function scrapePokemonDetails(name, url) {
     // Evolution Chain
     let evolutionChain = []
 
-    $(".infocard-list-evo div.infocard").each((index, row) => {
+    $(".infocard-list-evo").each((index, evoList) => {
+      if ($(evoList).parent().hasClass("infocard-evo-split")) return;
+
+      let row = $(evoList).children("div.infocard").first();
+      if (!row.length) return;
+
       let fromPokemon = $(row).find(".ent-name").text().trim();
 
-      let formName = $(row).find(".ent-name").nextAll("small").first();
+      // Check for form name on 'from' Pokemon
+      let formName = $(row).find(".ent-name").next().next("small");
 
-      if (!($(formName).find("a").length > 0)) {
+      if (formName.length && !($(formName).find("a").length > 0)) {
         fromPokemon = `${fromPokemon} (${formName.text().trim()})`
       }
 
@@ -162,10 +168,18 @@ export async function scrapePokemonDetails(name, url) {
       
       // Check if it's a split evolution
       if (nextElement.hasClass("infocard-evo-split")) {
-        // Handle multiple branches
-        nextElement.find(".infocard-evo-split-path").each((i, path) => {
-          let method = $(path).find(".infocard-arrow small").text().trim().replace(/[()]/g, '');
-          let toPokemon = $(path).find(".infocard .ent-name").text().trim();
+        // Handle multiple branches - each branch is a nested .infocard-list-evo
+        nextElement.find(".infocard-list-evo").each((i, branch) => {
+          let arrow = $(branch).find(".infocard-arrow");
+          let method = arrow.find("small").text().trim().replace(/[()]/g, '');
+          let toCard = $(branch).find("div.infocard");
+          let toPokemon = toCard.find(".ent-name").text().trim();
+          
+          // Check for form name on 'to' Pokemon
+          let toFormName = toCard.find(".ent-name").next().next("small");
+          if (toFormName.length && !($(toFormName).find("a").length > 0)) {
+            toPokemon = `${toPokemon} (${toFormName.text().trim()})`;
+          }
           
           if (toPokemon) {
             evolutionChain.push({ from: fromPokemon, to: toPokemon, method });
@@ -175,15 +189,24 @@ export async function scrapePokemonDetails(name, url) {
       // Check if it's a linear evolution
       else if (nextElement.hasClass("infocard-arrow")) {
         let method = nextElement.find("small").text().trim().replace(/[()]/g, '');
-        let toPokemon = nextElement.next(".infocard").find(".ent-name").text().trim();
+        let toCard = nextElement.next(".infocard");
+        let toPokemon = toCard.find(".ent-name").text().trim();
+        
+        // Check for form name on 'to' Pokemon
+        let toFormName = toCard.find(".ent-name").next().next("small");
+        if (toFormName.length && !($(toFormName).find("a").length > 0)) {
+          toPokemon = `${toPokemon} (${toFormName.text().trim()})`;
+        }
         
         if (toPokemon) {
           evolutionChain.push({ from: fromPokemon, to: toPokemon, method });
         }
       }
-    });
+    })
 
-    details["Evolution Chain"] = evolutionChain
+    // Filter to only include evolutions for the current Pokemon
+    const filteredEvolutionChain = evolutionChain.filter(evo => evo.from === name);
+    details["Evolution Chain"] = filteredEvolutionChain
 
     // General Pokemon Data
     $(".vitals-table tbody tr").each((index, row) => {
@@ -228,7 +251,7 @@ export async function scrapePokemonDetails(name, url) {
 
 async function batchProcess(items, batchSize, fn) {
   const results = [];
-  for (let i = 0; i < 15; i += batchSize) {
+  for (let i = 0; i < items.length; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
     const batchResults = await Promise.allSettled(batch.map(fn));
     results.push(...batchResults);

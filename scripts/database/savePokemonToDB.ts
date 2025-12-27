@@ -19,7 +19,10 @@ const knownKeys = new Set([
   ]);
 
 async function main() {
-  for (const p of pokemonData) {
+  const pokemonSubset = pokemonData.slice(900, 920);
+  console.log(`Processing ${pokemonSubset.length} Pokemon (from ${pokemonData[850]?.Name} to ${pokemonData[900]?.Name})`);
+  
+  for (const p of pokemonSubset) {
     // Skip already existing Pokemon
     //
     const existing = await prisma.pokemon.findUnique({
@@ -92,6 +95,9 @@ async function main() {
     // Evolution chains (store and process after all Pokemon are created)
     const evolutionChain = Array.isArray(p["Evolution Chain"]) ? p["Evolution Chain"] : [];
     if (evolutionChain.length) {
+      if (p.Name.includes('Rockruff')) {
+        console.log(`🔍 ${p.Name} evolution chain:`, evolutionChain);
+      }
       for (const evo of evolutionChain) {
         if (evo?.from && evo?.to) {
           pendingEvolutions.push({
@@ -335,6 +341,51 @@ async function main() {
 
   // Insert evolutions now that all Pokemon records exist
   for (const evo of pendingEvolutions) {
+    // Handle "(All forms)" - create evolutions for all form variants
+    if (evo.from.includes('(All forms)')) {
+      const baseName = evo.from.replace(' (All forms)', '').trim();
+      const allForms = await prisma.pokemon.findMany({
+        where: { 
+          OR: [
+            { name: baseName },
+            { name: { startsWith: `${baseName} (` } }
+          ]
+        }
+      });
+
+      let to = await prisma.pokemon.findUnique({ where: { name: evo.to } });
+      if (!to) {
+        const formVariants = await prisma.pokemon.findMany({
+          where: { name: { startsWith: `${evo.to} (` } }
+        });
+        if (formVariants.length > 0) to = formVariants[0];
+      }
+
+      if (!to) {
+        console.warn(`⚠️ Skipping evolution ${evo.from} -> ${evo.to} (missing to record)`);
+        continue;
+      }
+
+      // Create evolution for each form
+      for (const form of allForms) {
+        await prisma.evolution.upsert({
+          where: {
+            fromPokemonId_toPokemonId: {
+              fromPokemonId: form.id,
+              toPokemonId: to.id,
+            },
+          },
+          update: { method: evo.method },
+          create: {
+            fromPokemon: { connect: { id: form.id } },
+            toPokemon: { connect: { id: to.id } },
+            method: evo.method,
+          },
+        });
+      }
+      continue;
+    }
+
     let from = await prisma.pokemon.findUnique({ where: { name: evo.from } });
     let to = await prisma.pokemon.findUnique({ where: { name: evo.to } });
 
