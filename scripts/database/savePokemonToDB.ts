@@ -347,15 +347,9 @@ async function main() {
       });
 
       let to = await prisma.pokemon.findUnique({ where: { name: evo.to } });
-      if (!to) {
-        const formVariants = await prisma.pokemon.findMany({
-          where: { name: { startsWith: `${evo.to} (` } }
-        });
-        if (formVariants.length > 0) to = formVariants[0];
-      }
 
       if (!to) {
-        console.warn(`⚠️ Skipping evolution ${evo.from} -> ${evo.to} (missing to record)`);
+        console.warn(`⚠️ To missing - Skipping evolution ${evo.from} -> ${evo.to} (missing to record)`);
         continue;
       }
 
@@ -379,21 +373,49 @@ async function main() {
       continue;
     }
 
+    // Handle Aegislash special case - Doublade -> Aegislash points to both forms
+    if (evo.to === 'Aegislash') {
+      let from = await prisma.pokemon.findUnique({ where: { name: evo.from } });
+      
+      const aegislashForms = await prisma.pokemon.findMany({
+        where: {
+          OR: [
+            { name: 'Aegislash' },
+            { name: { startsWith: 'Aegislash (' } }
+          ]
+        }
+      });
+
+      if (!from) {
+        console.warn(`⚠️ From missing - Skipping evolution ${evo.from} -> ${evo.to} (missing from record)`);
+        continue;
+      }
+
+      // Create evolution for each Aegislash form
+      for (const form of aegislashForms) {
+        await prisma.evolution.upsert({
+          where: {
+            fromPokemonId_toPokemonId: {
+              fromPokemonId: from.id,
+              toPokemonId: form.id,
+            },
+          },
+          update: { method: evo.method },
+          create: {
+            fromPokemon: { connect: { id: from.id } },
+            toPokemon: { connect: { id: form.id } },
+            method: evo.method,
+          },
+        });
+      }
+      continue;
+    }
+
     let from = await prisma.pokemon.findUnique({ where: { name: evo.from } });
     let to = await prisma.pokemon.findUnique({ where: { name: evo.to } });
 
-    // If 'to' not found, find a form variant (e.g., "Palafin" -> "Palafin (Zero Form)")
-    if (!to) {
-      const formVariants = await prisma.pokemon.findMany({
-        where: { name: { startsWith: `${evo.to} (` } }
-      });
-      if (formVariants.length > 0) {
-        to = formVariants[0]; // Use the first form variant
-      }
-    }
-
     if (!from || !to) {
-      console.warn(`⚠️ Skipping evolution ${evo.from} -> ${evo.to} (missing record)`);
+      console.warn(`⚠️ To or From missing - Skipping evolution ${evo.from} -> ${evo.to} (missing record)`);
       continue;
     }
 
