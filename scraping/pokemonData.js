@@ -220,7 +220,10 @@ export async function scrapePokemonDetails(name, url) {
     })
 
     // Filter to only include evolutions for the current Pokemon
-    const filteredEvolutionChain = evolutionChain.filter(evo => evo.from === name);
+    // Keep "(All forms)" evolutions to be expanded in seeding script - only exception
+    const filteredEvolutionChain = evolutionChain.filter(evo => 
+      evo.from === name || evo.from.includes('(All forms)')
+    );
     details["Evolution Chain"] = filteredEvolutionChain
 
     // General Pokemon Data
