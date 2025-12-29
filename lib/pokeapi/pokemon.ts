@@ -1,7 +1,5 @@
 import { urlData, PokemonBasic, TypeOfPokemon } from "@/types/pokemonBasic";
 import { PokemonInfo } from "@/types/pokemonFull";
-import { PokemonSpecies } from "@/types/species";
-import { getPokemonSpecies } from "@/lib/pokeapi/species";
 import { getPokemonEvolution } from "./evolution";
 import { ChainLink, EvolutionChain } from "@/types/evolution";
 import { pokemonNameFetchHandle } from "./helpers/pokemonNameFetchHandle";
@@ -160,13 +158,11 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
 
   const pokemon = await pokemonRes.json()
 
-  const species: PokemonSpecies = await getPokemonSpecies(pokemon.species.url);
+  const evolution_chain = 3;
 
-  const evolution_chain: EvolutionChain = await getPokemonEvolution(species.evolution_chain.url);
+  const varieties = 3;
 
-  const varieties: PokemonBasic[] = await getPokemonVarieties(species.varieties)
-
-  const evolutionSpeciesList = await getEvolutionSpeciesData(evolution_chain.chain)
+  const evolutionSpeciesList = 3;
 
   const typesInfo = await getPokemonTypesInformation(pokemon.types)
 

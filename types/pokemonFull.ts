@@ -1,15 +1,14 @@
 import { Move } from "./moves";
 import { PokemonBasic, PokemonType } from "./pokemonBasic";
-import { PokemonSpecies } from "./species";
-import { PokemonStat } from "./stats";
+import { PokemonStats } from "./stats";
 import { TypeInfo } from "./type";
 
 export interface PokemonInfo {
   id: number,
+  nationalNumber: string,
   name: string,
-  base_experience: number,
+  base_experience: string,
   types: PokemonType[],
-  is_default: boolean,
   sprites: { 
     front_default: string; 
     back_default: string;
@@ -28,14 +27,14 @@ export interface PokemonInfo {
       }
     }
   },
-  species: PokemonSpecies,
+  stats: PokemonStats[],
+  height: string,
+  weight: string,
+
   evolution_chain: PokemonBasic[],
   varieties: PokemonBasic[],
   types_info: TypeInfo[],
   moves: Move[],
-  stats: PokemonStat[],
-  height: number,
-  weight: number,
   abilities: PokemonAbility[],
 }
 
