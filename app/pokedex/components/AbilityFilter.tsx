@@ -7,14 +7,10 @@ import {
   ListboxOptions,
 } from "@headlessui/react"
 import { FaChevronCircleDown } from "react-icons/fa"
-
-interface Ability {
-  name: string
-  url: string
-}
+import { PokemonAbility } from "@/types/ability"
 
 interface AbilityFilterProps {
-  abilities: Ability[]
+  abilities: PokemonAbility[]
   selectedAbility: string
   setSelectedAbility: (ability: string) => void
 }
@@ -28,6 +24,10 @@ const AbilityFilter = ({
 
   const filteredAbilities = abilities.filter((a) =>
     a.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const sortedAbilities = [...filteredAbilities].sort((a, b) =>
+    a.name.localeCompare(b.name)
   )
 
   return (
@@ -73,7 +73,7 @@ const AbilityFilter = ({
               All
             </ListboxOption>
 
-            {filteredAbilities.map((ability) => (
+            {sortedAbilities.map((ability) => (
               <ListboxOption
                 key={ability.name}
                 value={ability.name}
@@ -88,7 +88,7 @@ const AbilityFilter = ({
               </ListboxOption>
             ))}
 
-            {filteredAbilities.length === 0 && (
+            {sortedAbilities.length === 0 && (
               <div className="px-4 py-2 text-gray-400">No matches</div>
             )}
           </ListboxOptions>

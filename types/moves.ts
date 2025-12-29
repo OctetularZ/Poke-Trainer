@@ -1,5 +1,5 @@
 // import { Machine } from "./machine"
-import { PokemonStats } from "./stats"
+// import { PokemonStats } from "./stats"
 import { Game } from "./game"
 
 export interface GameMove {

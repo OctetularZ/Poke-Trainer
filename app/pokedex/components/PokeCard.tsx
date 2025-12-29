@@ -1,17 +1,18 @@
 import Image from "next/image"
 import Link from "next/link"
 import React from "react"
-import { PokemonType } from "@/types/pokemonBasic"
+import { PokemonType } from "@/types/type"
 import { typeColours, typeColoursHex } from "./typeColours"
 
 interface Pokemon {
   id: number
+  nationalNumber: string
   name: string
   sprite: string
   types: PokemonType[]
 }
 
-const PokeCard = ({ id, name, sprite, types }: Pokemon) => {
+const PokeCard = ({ id, nationalNumber, name, sprite, types }: Pokemon) => {
   return (
     <Link href={`/pokedex/${name.charAt(0).toUpperCase()}${name.slice(1)}`}>
       <div className="flex flex-col justify-center items-center w-55 bg-charmander-dull-200 rounded-2xl pt-10 pb-8 px-5">
@@ -24,7 +25,9 @@ const PokeCard = ({ id, name, sprite, types }: Pokemon) => {
             unoptimized={true}
           />
         </div>
-        <p className="text-gray-400">#{id.toString().padStart(4, "0")}</p>
+        <p className="text-gray-400">
+          #{nationalNumber.toString().padStart(4, "0")}
+        </p>
         <h1 className="text-white text-2xl pb-3 text-wrap text-center">
           {`${name
             .split("-")
@@ -36,17 +39,17 @@ const PokeCard = ({ id, name, sprite, types }: Pokemon) => {
             <h4
               key={index}
               className={`text-white text-xl ${
-                typeColours[type.type.name as keyof typeof typeColours]
+                typeColours[type.name.toLowerCase() as keyof typeof typeColours]
               } rounded-lg px-3 shadow-md`}
               style={{
                 filter: `drop-shadow(0 0 8px ${
-                  typeColoursHex[type.type.name as keyof typeof typeColoursHex]
+                  typeColoursHex[
+                    type.name.toLowerCase() as keyof typeof typeColoursHex
+                  ]
                 })`,
               }}
             >
-              {`${type.type.name.charAt(0).toUpperCase()}${type.type.name.slice(
-                1
-              )}`}
+              {`${type.name.charAt(0).toUpperCase()}${type.name.slice(1)}`}
             </h4>
           ))}
         </div>

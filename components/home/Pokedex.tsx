@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import { motion, Variants } from "motion/react"
-import { PokemonInfo } from "@/types/pokemonFull"
+import { Pokemon } from "@/types/pokemon"
 import PokeCard from "@/app/pokedex/components/PokeCard"
 import PokeCardSkeleton from "../skeletons/PokeCardSkeleton"
 import { FaArrowRight } from "react-icons/fa6"
@@ -10,7 +10,7 @@ import allPokemonNames from "@/data/pokemon-names.json"
 import SearchFilter from "@/app/pokedex/components/SearchFilter"
 
 const Pokedex = () => {
-  const [showcasePokemon, setShowcasePokemon] = useState<PokemonInfo>()
+  const [showcasePokemon, setShowcasePokemon] = useState<Pokemon>()
   const [loading, setLoading] = useState(true)
   const [hovered, setHovered] = useState(false)
   const [error, setError] = useState("")
@@ -27,7 +27,7 @@ const Pokedex = () => {
         return
       }
 
-      const data: PokemonInfo = await res.json()
+      const data: Pokemon = await res.json()
 
       setShowcasePokemon(data)
       setLoading(false)
@@ -87,6 +87,7 @@ const Pokedex = () => {
           ) : (
             <PokeCard
               id={showcasePokemon!.id}
+              nationalNumber={showcasePokemon!.nationalNumber}
               name={showcasePokemon!.name}
               sprite={
                 showcasePokemon?.sprites.other.showdown.front_default ||

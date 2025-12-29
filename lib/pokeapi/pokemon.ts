@@ -187,22 +187,31 @@ export async function getPokemonList(
   const typeNames = typesParam?.split(",");
   const abilityNames = abilitiesParam?.split(",");
   
+  // Fetch Pokemon from DB who have all selected types/abilities
   const pokemonList = await prisma.pokemon.findMany({
     where: {
-      ...(typeNames && {
-        types: {
-          some: {
-            name: { in: typeNames }
+      AND: [
+        ...(typeNames ? typeNames.map(typeName => ({
+          types: {
+            some: {
+              name: { 
+                equals: typeName,
+                mode: 'insensitive' as const
+              }
+            }
           }
-        }
-      }),
-      ...(abilityNames && {
-        abilities: {
-          some: {
-            name: { in: abilityNames }
+        })) : []),
+        ...(abilityNames ? abilityNames.map(abilityName => ({
+          abilities: {
+            some: {
+              name: { 
+                equals: abilityName,
+                mode: 'insensitive' as const
+              }
+            }
           }
-        }
-      })
+        })) : [])
+      ]
     },
     take: limit,
     skip: offset,

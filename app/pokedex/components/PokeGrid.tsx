@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import PokeCard from "./PokeCard"
-import { PokemonBasic } from "@/types/pokemonBasic"
+import { Pokemon } from "@/types/pokemon"
 import Image from "next/image"
 import { motion, AnimatePresence } from "motion/react"
 import { typeColours } from "./typeColours"
@@ -10,24 +10,20 @@ import AbilityFilter from "./AbilityFilter"
 import SearchFilter from "./SearchFilter"
 import allPokemonNames from "@/data/pokemon-names.json"
 import { FaChevronCircleDown } from "react-icons/fa"
-
-interface Ability {
-  name: string
-  url: string
-}
+import { PokemonAbility } from "@/types/ability"
 
 const fetchSize = 12
 const types = Object.keys(typeColours)
 
 const PokeGrid = () => {
-  const [pokemon, setPokemon] = useState<PokemonBasic[]>([])
+  const [pokemon, setPokemon] = useState<Pokemon[]>([])
   const [loading, setLoading] = useState(true)
   const [offset, setOffset] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [allLoaded, setAllLoaded] = useState(false)
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [selectedAbility, setSelectedAbility] = useState<string>("")
-  const [abilities, setAbilities] = useState<Ability[]>([])
+  const [abilities, setAbilities] = useState<PokemonAbility[]>([])
   const [filteredPokemonNames, setFilteredPokemonNames] =
     useState<string[]>(allPokemonNames)
 
@@ -55,7 +51,7 @@ const PokeGrid = () => {
         setError("Could not fetch Pokémon")
         return
       }
-      const data: PokemonBasic[] = await res.json()
+      const data: Pokemon[] = await res.json()
 
       if (data.length < fetchSize) setAllLoaded(true)
       setPokemon((prev) => (reset ? data : [...prev, ...data]))
@@ -68,15 +64,19 @@ const PokeGrid = () => {
   }
 
   const fetchAbilities = async () => {
-    const res = await fetch("https://pokeapi.co/api/v2/ability/?limit=500")
-    if (!res.ok) {
+    try {
+      const res = await fetch("/api/abilities")
+      if (!res.ok) {
+        setError("Failed to fetch pokemon abilities! Please refresh")
+        return
+      }
+      const abilities = await res.json()
+      return abilities
+    } catch (error) {
+      console.error("Error fetching abilities:", error)
       setError("Failed to fetch pokemon abilities! Please refresh")
-      setLoading(false)
       return
     }
-    const data = await res.json()
-
-    return data.results
   }
 
   useEffect(() => {
@@ -86,7 +86,9 @@ const PokeGrid = () => {
   useEffect(() => {
     const loadAbilities = async () => {
       const abilitiesData = await fetchAbilities()
-      setAbilities(abilitiesData)
+      if (abilitiesData) {
+        setAbilities(abilitiesData)
+      }
     }
     loadAbilities()
   }, [])
@@ -163,10 +165,11 @@ const PokeGrid = () => {
         {pokemon?.map((poke) => (
           <PokeCard
             key={poke.id}
+            nationalNumber={poke.nationalNumber}
             id={poke.id}
             name={poke.name}
             sprite={
-              poke.showdown.front_default ||
+              poke.sprites.other.showdown.front_default ||
               poke.sprites.front_default ||
               "/placeholder.png"
             }
