@@ -1,29 +1,27 @@
-import { PokemonStat } from "@/types/stats"
+import { PokemonStats } from "@/types/stats"
 import React from "react"
 import StatBar from "./StatBar"
 
 interface PokemonStatsProps {
   loading: boolean
-  stats: PokemonStat[]
+  stats: PokemonStats
 }
 
-const PokemonStats = ({ loading, stats }: PokemonStatsProps) => {
+const PokemonStatsSection = ({ loading, stats }: PokemonStatsProps) => {
   return (
     !loading && (
       <div className="flex flex-col gap-5 justify-center items-end mb-20">
         <h1 className="text-white text-2xl self-start mb-5 border-b-2">
           Base Stats
         </h1>
-        {stats.map((stat) => (
-          <StatBar
-            key={stat.stat.name}
-            statName={stat.stat.name}
-            baseStat={stat.base_stat}
-          />
-        ))}
+        {Object.entries(stats)
+          .filter(([key]) => key.includes("Base"))
+          .map(([key, value]) => (
+            <StatBar key={key} statName={key} baseStat={value} />
+          ))}
       </div>
     )
   )
 }
 
-export default PokemonStats
+export default PokemonStatsSection

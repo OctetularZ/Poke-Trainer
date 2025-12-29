@@ -1,9 +1,9 @@
 "use client"
 import React, { useEffect, useState } from "react"
-import { PokemonInfo } from "@/types/pokemonFull"
+import { Pokemon } from "@/types/pokemon"
 import EvolutionChain from "./EvolutionChain"
 import PokemonDisplay from "./PokemonDisplay"
-import PokemonStats from "./PokemonStats"
+import PokemonStatsSection from "./PokemonStats"
 import TypeChart from "./TypeChart"
 import Moves from "./Moves"
 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const Main = ({ pokemon }: Props) => {
-  const [pokemonInfo, setPokemonInfo] = useState<PokemonInfo>()
+  const [pokemonInfo, setPokemonInfo] = useState<Pokemon>()
   const [sprites, setSprites] = useState<string[]>()
   const [shinySprites, setShinySprites] = useState<string[]>()
   const [loading, setLoading] = useState(true)
@@ -54,13 +54,13 @@ const Main = ({ pokemon }: Props) => {
       <PokemonDisplay
         loading={loading}
         pokemon={pokemon}
-        pokemonInfo={pokemonInfo!}
+        pokemonInfo={pokemonInfo}
         sprites={sprites!}
         shinySprites={shinySprites!}
       />
       <div className="flex flex-row flex-wrap justify-center items-start gap-30">
-        <PokemonStats loading={loading} stats={pokemonInfo?.stats!} />
-        <TypeChart loading={loading} typeInfo={pokemonInfo?.types_info!} />
+        <PokemonStatsSection loading={loading} stats={pokemonInfo?.stats!} />
+        <TypeChart loading={loading} typeInfo={pokemonInfo?.typeChart!} />
       </div>
       <EvolutionChain loading={loading} pokemonInfo={pokemonInfo!} />
       <Moves loading={loading} pokemonMoves={pokemonInfo?.moves!} />

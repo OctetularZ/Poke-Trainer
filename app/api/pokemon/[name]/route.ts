@@ -7,6 +7,8 @@ interface PokemonRouteProps {
 
 export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
   const { name } = await params
+  const {searchParams} = new URL(request.url)
+  const form = searchParams.get('form')
 
   try {
     const pokemonData = await getPokemonInfo(name)

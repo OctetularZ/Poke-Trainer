@@ -5,6 +5,15 @@ interface StatBarProps {
   baseStat: number
 }
 
+const statNameMap: Record<string, string> = {
+  hpBase: "Hp",
+  attackBase: "Attack",
+  defenseBase: "Defense",
+  spAtkBase: "Sp Atk",
+  spDefBase: "Sp Def",
+  speedBase: "Speed",
+}
+
 const maxStat = 180
 
 const StatBar = ({ statName, baseStat }: StatBarProps) => {
@@ -26,10 +35,7 @@ const StatBar = ({ statName, baseStat }: StatBarProps) => {
 
   return (
     <div className="flex flex-row gap-5">
-      <h2 className="text-lg text-white">
-        {statName.charAt(0).toUpperCase()}
-        {statName.slice(1).replace("-", " ")}
-      </h2>
+      <h2 className="text-lg text-white">{statNameMap[statName]}</h2>
       <div className={`bg-amber-50 w-100 rounded-lg`}>
         <div
           className={`rounded-lg text-white p-1 ${colorClass}`}
