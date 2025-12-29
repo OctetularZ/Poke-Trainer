@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Pokemon } from "@/types/pokemon";
+import { getFullEvolutionChain } from "./evolution";
 
 export async function getPokemonInfo(name: string): Promise<Pokemon> {
   const pokemon = await prisma.pokemon.findUnique({
@@ -54,10 +55,12 @@ export async function getPokemonInfo(name: string): Promise<Pokemon> {
       // Pokemon's Forms
       forms: {
         select: {
+          id: true,
           name: true,
           pokemon: {
             select: {
-              name: true
+              id: true,
+              name: true,
             }
           }
         }
@@ -65,38 +68,34 @@ export async function getPokemonInfo(name: string): Promise<Pokemon> {
     }
   })
 
+  if (!pokemon) throw new Error(`Could not find ${name}`);
+
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`)
   if (!res.ok) throw new Error(`Could not find ${name}`)
   const pokeApiData = await res.json()
 
   const stats = {
-    hpBase: pokemon?.hpBase, 
-    hpMin: pokemon?.hpMin, 
-    hpMax: pokemon?.hpMax,
-    attackBase: pokemon?.attackBase,
-    attackMin: pokemon?.attackMin,
-    attackMax: pokemon?.attackMax,
-    defenseBase: pokemon?.defenseBase,
-    defenseMin: pokemon?.defenseMin,
-    defenseMax: pokemon?.defenseMax,
-    spAtkBase: pokemon?.spAtkBase,
-    spAtkMin: pokemon?.spAtkMin,
-    spAtkMax: pokemon?.spAtkMax,
-    spDefBase: pokemon?.spDefBase,
-    spDefMin: pokemon?.spDefMin,
-    spDefMax: pokemon?.spDefMax,
-    speedBase: pokemon?.speedBase,
-    speedMin: pokemon?.speedMin,
-    speedMax: pokemon?.speedMax,
+    hpBase: pokemon.hpBase, 
+    hpMin: pokemon.hpMin, 
+    hpMax: pokemon.hpMax,
+    attackBase: pokemon.attackBase,
+    attackMin: pokemon.attackMin,
+    attackMax: pokemon.attackMax,
+    defenseBase: pokemon.defenseBase,
+    defenseMin: pokemon.defenseMin,
+    defenseMax: pokemon.defenseMax,
+    spAtkBase: pokemon.spAtkBase,
+    spAtkMin: pokemon.spAtkMin,
+    spAtkMax: pokemon.spAtkMax,
+    spDefBase: pokemon.spDefBase,
+    spDefMin: pokemon.spDefMin,
+    spDefMax: pokemon.spDefMax,
+    speedBase: pokemon.speedBase,
+    speedMin: pokemon.speedMin,
+    speedMax: pokemon.speedMax,
   }
 
-  // const evolution_chain: EvolutionChain = await getPokemonEvolution(species.evolution_chain.url);
-
-  // const evolutionSpeciesList = await getEvolutionSpeciesData(evolution_chain.chain)
-
-  // const typesInfo = await getPokemonTypesInformation(pokemon.types)
-
-  // const moves = await getPokemonMoves(pokemon.moves)
+  const evolution_chain = await getFullEvolutionChain(pokemon.id);
 
   return {
     id: pokemon.id,
@@ -129,8 +128,6 @@ export async function getPokemonInfo(name: string): Promise<Pokemon> {
     moves: pokemon.gameMoves,
     typeChart: pokemon.typeChart,
     forms: pokemon.forms,
-
-    // evolution_chain: evolutionSpeciesList,
-    // varieties: varieties,
+    evolution_chain: evolution_chain,
   } as Pokemon
 }

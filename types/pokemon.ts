@@ -4,14 +4,14 @@ import { PokemonAbility } from "./ability";
 import { PokemonStats } from "./stats";
 import { TypeEffectiveness } from "./type";
 import { PokemonForm } from "./form";
+import { EvolutionTree } from "./evolution";
 
 export interface Pokemon {
   id: number,
   nationalNumber: string,
   name: string,
-  base_experience: string,
   types: PokemonType[],
-  sprites?: { 
+  sprites: { 
     front_default: string; 
     back_default: string;
     front_shiny: string;
@@ -29,13 +29,13 @@ export interface Pokemon {
       }
     }
   },
-  stats: PokemonStats[],
-  height: string,
-  weight: string,
-  abilities: PokemonAbility[],
-  moves: GameMove[],
-  typeChart: TypeEffectiveness[],
-  forms: PokemonForm[],
-
-  // evolution_chain: PokemonBasic[],
+  base_experience?: string,
+  stats?: PokemonStats,
+  height?: string,
+  weight?: string,
+  abilities?: PokemonAbility[],
+  moves?: GameMove[],
+  typeChart?: TypeEffectiveness[],
+  forms?: PokemonForm[],
+  evolution_chain: EvolutionTree,
 }
