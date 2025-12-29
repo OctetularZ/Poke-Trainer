@@ -9,7 +9,7 @@ export async function getFullEvolutionChain(pokemonId: number): Promise<Evolutio
       id: true,
       name: true,
       evolvesFrom: {
-        include: { 
+        include: {
           fromPokemon: {
             select: {
               id: true,
@@ -17,14 +17,14 @@ export async function getFullEvolutionChain(pokemonId: number): Promise<Evolutio
             }
           }
         }
-      } 
+      }
     }
   });
-  
+
   if (!base) {
     throw new Error(`Pokemon with id ${pokemonId} not found`);
   }
-  
+
   // Keep going back until no more evolvesFrom
   while (base && base.evolvesFrom.length > 0) {
     const fromPokemon = base.evolvesFrom[0].fromPokemon;
@@ -34,7 +34,7 @@ export async function getFullEvolutionChain(pokemonId: number): Promise<Evolutio
         id: true,
         name: true,
         evolvesFrom: {
-          include: { 
+          include: {
             fromPokemon: {
               select: {
                 id: true,
@@ -45,16 +45,16 @@ export async function getFullEvolutionChain(pokemonId: number): Promise<Evolutio
         }
       }
     });
-    
+
     if (!newBase) break;
     base = newBase;
   }
-  
-  // 2. Build the tree recursively from base
+
+  // Build tree recursively from base
   async function buildTree(pokemon: any): Promise<EvolutionTree> {
     const evolutions = await prisma.evolution.findMany({
       where: { fromPokemonId: pokemon.id },
-      include: { 
+      include: {
         toPokemon: {
           select: {
             id: true,
@@ -63,7 +63,7 @@ export async function getFullEvolutionChain(pokemonId: number): Promise<Evolutio
         }
       }
     });
-    
+
     return {
       ...pokemon,
       evolutions: await Promise.all(
@@ -74,6 +74,6 @@ export async function getFullEvolutionChain(pokemonId: number): Promise<Evolutio
       )
     };
   }
-  
+
   return buildTree(base);
 }

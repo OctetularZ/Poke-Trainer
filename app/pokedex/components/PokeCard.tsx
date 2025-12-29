@@ -13,9 +13,14 @@ interface Pokemon {
 }
 
 const PokeCard = ({ id, nationalNumber, name, sprite, types }: Pokemon) => {
+  const baseName = name.split("(")[0].trim()
+  const formName = name.includes("(")
+    ? name.split("(")[1].replace(")", "").trim()
+    : ""
+
   return (
     <Link href={`/pokedex/${name.charAt(0).toUpperCase()}${name.slice(1)}`}>
-      <div className="flex flex-col justify-center items-center w-55 bg-charmander-dull-200 rounded-2xl pt-10 pb-8 px-5">
+      <div className="flex flex-col justify-center items-center w-55 h-full bg-charmander-dull-200 rounded-2xl pt-10 pb-8 px-5">
         <div className="relative mb-5 w-[100px] h-[100px] items-center">
           <Image
             className="object-contain"
@@ -28,11 +33,11 @@ const PokeCard = ({ id, nationalNumber, name, sprite, types }: Pokemon) => {
         <p className="text-gray-400">
           #{nationalNumber.toString().padStart(4, "0")}
         </p>
-        <h1 className="text-white text-2xl pb-3 text-wrap text-center">
-          {`${name
-            .split("-")
-            .map((name) => name.charAt(0).toUpperCase() + name.slice(1))
-            .join("-")}`}
+        <h1 className="text-white text-2xl text-wrap text-center">
+          {baseName.charAt(0).toUpperCase() + baseName.slice(1)}
+        </h1>
+        <h1 className="text-gray-400 text-xl pb-3 text-wrap text-center">
+          {formName.replace(/\b\w/g, (char) => char.toUpperCase())}
         </h1>
         <div className="flex flex-row gap-5">
           {types.map((type: PokemonType, index) => (
