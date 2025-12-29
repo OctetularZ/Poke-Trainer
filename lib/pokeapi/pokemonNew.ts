@@ -1,13 +1,65 @@
 import prisma from "@/lib/prisma";
-import { PokemonInfo } from "@/types/pokemonFull";
+import { Pokemon } from "@/types/pokemon";
 
-export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
+export async function getPokemonInfo(name: string): Promise<Pokemon> {
   const pokemon = await prisma.pokemon.findUnique({
     where: { name: name },
     include: {
+
+      // Pokemon's Types
       types: {
         select: {
           name: true
+        }
+      },
+
+      // Pokemon's Abilities
+      abilities: {
+        select: {
+          name: true
+        }
+      },
+
+      // Pokemon's Moves
+      gameMoves: {
+        select: {
+          method: true,
+          level: true,
+          tmNumber: true,
+          move: {
+            select: {
+              name: true,
+              type: true,
+              category: true,
+              power: true,
+              accuracy: true
+            }
+          },
+          game: {
+            select: {
+              name: true
+            }
+          }
+        }
+      },
+
+      // Pokemon's Type Chart
+      typeChart: {
+        select: {
+          attackType: true,
+          multiplier: true
+        }
+      },
+
+      // Pokemon's Forms
+      forms: {
+        select: {
+          name: true,
+          pokemon: {
+            select: {
+              name: true
+            }
+          }
         }
       }
     }
@@ -39,8 +91,6 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
   }
 
   // const evolution_chain: EvolutionChain = await getPokemonEvolution(species.evolution_chain.url);
-
-  // const varieties: PokemonBasic[] = await getPokemonVarieties(species.varieties)
 
   // const evolutionSpeciesList = await getEvolutionSpeciesData(evolution_chain.chain)
 
@@ -75,12 +125,12 @@ export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
     stats: stats,
     height: pokemon.height,
     weight: pokemon.weight,
+    abilities: pokemon.abilities,
+    moves: pokemon.gameMoves,
+    typeChart: pokemon.typeChart,
+    forms: pokemon.forms,
 
-    // species: species,
     // evolution_chain: evolutionSpeciesList,
     // varieties: varieties,
-    // types_info: typesInfo,
-    // moves: moves,
-    abilities: pokemon.abilities,
-  } as PokemonInfo
+  } as Pokemon
 }

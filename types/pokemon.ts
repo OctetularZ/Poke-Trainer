@@ -1,15 +1,17 @@
-import { Move } from "./moves";
-import { PokemonBasic, PokemonType } from "./pokemonBasic";
+import { GameMove } from "./moves";
+import { PokemonType } from "./type";
+import { PokemonAbility } from "./ability";
 import { PokemonStats } from "./stats";
-import { TypeInfo } from "./type";
+import { TypeEffectiveness } from "./type";
+import { PokemonForm } from "./form";
 
-export interface PokemonInfo {
+export interface Pokemon {
   id: number,
   nationalNumber: string,
   name: string,
   base_experience: string,
   types: PokemonType[],
-  sprites: { 
+  sprites?: { 
     front_default: string; 
     back_default: string;
     front_shiny: string;
@@ -30,16 +32,10 @@ export interface PokemonInfo {
   stats: PokemonStats[],
   height: string,
   weight: string,
-
-  evolution_chain: PokemonBasic[],
-  varieties: PokemonBasic[],
-  types_info: TypeInfo[],
-  moves: Move[],
   abilities: PokemonAbility[],
-}
+  moves: GameMove[],
+  typeChart: TypeEffectiveness[],
+  forms: PokemonForm[],
 
-export interface PokemonAbility {
-  is_hidden: boolean,
-  slot: number,
-  ability: {name: string, url: string}
+  // evolution_chain: PokemonBasic[],
 }
