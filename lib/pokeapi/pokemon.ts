@@ -1,204 +1,274 @@
-import { urlData, PokemonBasic, TypeOfPokemon } from "@/types/pokemonBasic";
-import { PokemonInfo } from "@/types/pokemonFull";
-import { getPokemonEvolution } from "./evolution";
-import { ChainLink, EvolutionChain } from "@/types/evolution";
-import { pokemonNameFetchHandle } from "./helpers/pokemonNameFetchHandle";
-import { getPokemonVarieties } from "./varieties";
-import { getPokemonTypesInformation } from "./types";
-import { getPokemonMoves } from "./moves";
+import prisma from "@/lib/prisma";
+import { Pokemon } from "@/types/pokemon";
+import { getFullEvolutionChain } from "./evolution";
 
-const getPokemonBasic = async (name: string): Promise<PokemonBasic> => {
-  if (name in pokemonNameFetchHandle) name = pokemonNameFetchHandle[name]
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`)
+const getPokemonBasic = async (name: string): Promise<Pokemon> => {
+  const pokemon = await prisma.pokemon.findUnique({
+    where: { name: name },
+    include: {
+      // Pokemon's Types
+      types: {
+        select: {
+          name: true
+        }
+      }
+    }
+  })
+
+  if (!pokemon) throw new Error(`Could not find ${name}`);
+
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`)
   if (!res.ok) throw new Error(`Could not find ${name}`)
-  const data = await res.json()
+  const pokeApiData = await res.json()
+
   return {
-    id: data.id,
-    name: data.name,
-    is_default: data.is_default,
-    types: data.types,
+    id: pokemon.id,
+    nationalNumber: pokemon.nationalNumber,
+    name: pokemon.name,
+    types: pokemon.types,
     sprites: {
-      front_default: data.sprites.front_default ?? "",
-      back_default: data.sprites.back_default ?? "",
-    },
-    showdown: {
-      front_default: data.sprites.other?.showdown?.front_default ?? "",
-      back_default: data.sprites.other?.showdown?.back_default ?? "",
-    },
-    officialArtwork: {
-      front_default: data.sprites.other?.["official-artwork"]?.front_default ?? "",
-    },
+      front_default: pokeApiData.sprites.front_default ?? "",
+      back_default: pokeApiData.sprites.back_default ?? "",
+      front_shiny: pokeApiData.sprites.front_shiny ?? "",
+      back_shiny: pokeApiData.sprites.back_shiny ?? "",
+      other: {
+        showdown: {
+          front_default: pokeApiData.sprites.other.showdown.front_default ?? "",
+          back_default: pokeApiData.sprites.other.showdown.back_default ?? "",
+          front_shiny: pokeApiData.sprites.other.showdown.front_shiny ?? "",
+          back_shiny: pokeApiData.sprites.other.showdown.back_shiny ?? "",
+        },
+        "official-artwork": {
+          front_default: pokeApiData.sprites.other["official-artwork"].front_default ?? "",
+          front_shiny: pokeApiData.sprites.other["official-artwork"].front_shiny ?? "",
+        },
+      },
+    }
+  } as Pokemon
+}
+
+export async function getPokemonInfo(name: string): Promise<Pokemon> {
+  const pokemon = await prisma.pokemon.findUnique({
+    where: { name: name },
+    include: {
+
+      // Pokemon's Types
+      types: {
+        select: {
+          name: true
+        }
+      },
+
+      // Pokemon's Abilities
+      abilities: {
+        select: {
+          name: true
+        }
+      },
+
+      // Pokemon's Moves
+      gameMoves: {
+        select: {
+          method: true,
+          level: true,
+          tmNumber: true,
+          move: {
+            select: {
+              name: true,
+              type: true,
+              category: true,
+              power: true,
+              accuracy: true
+            }
+          },
+          game: {
+            select: {
+              name: true
+            }
+          }
+        }
+      },
+
+      // Pokemon's Type Chart
+      typeChart: {
+        select: {
+          attackType: true,
+          multiplier: true
+        }
+      },
+
+      // Pokemon's Forms
+      forms: {
+        select: {
+          id: true,
+          name: true,
+          pokemon: {
+            select: {
+              id: true,
+              name: true,
+            }
+          }
+        }
+      }
+    }
+  })
+
+  if (!pokemon) throw new Error(`Could not find ${name}`);
+
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`)
+  if (!res.ok) throw new Error(`Could not find ${name}`)
+  const pokeApiData = await res.json()
+
+  const stats = {
+    hpBase: pokemon.hpBase, 
+    hpMin: pokemon.hpMin, 
+    hpMax: pokemon.hpMax,
+    attackBase: pokemon.attackBase,
+    attackMin: pokemon.attackMin,
+    attackMax: pokemon.attackMax,
+    defenseBase: pokemon.defenseBase,
+    defenseMin: pokemon.defenseMin,
+    defenseMax: pokemon.defenseMax,
+    spAtkBase: pokemon.spAtkBase,
+    spAtkMin: pokemon.spAtkMin,
+    spAtkMax: pokemon.spAtkMax,
+    spDefBase: pokemon.spDefBase,
+    spDefMin: pokemon.spDefMin,
+    spDefMax: pokemon.spDefMax,
+    speedBase: pokemon.speedBase,
+    speedMin: pokemon.speedMin,
+    speedMax: pokemon.speedMax,
   }
+
+  const evolution_chain = await getFullEvolutionChain(pokemon.id);
+
+  return {
+    id: pokemon.id,
+    nationalNumber: pokemon.nationalNumber,
+    name: pokemon.name,
+    base_experience: pokemon.baseExp,
+    types: pokemon.types,
+    sprites: {
+      front_default: pokeApiData.sprites.front_default ?? "",
+      back_default: pokeApiData.sprites.back_default ?? "",
+      front_shiny: pokeApiData.sprites.front_shiny ?? "",
+      back_shiny: pokeApiData.sprites.back_shiny ?? "",
+      other: {
+        showdown: {
+          front_default: pokeApiData.sprites.other.showdown.front_default ?? "",
+          back_default: pokeApiData.sprites.other.showdown.back_default ?? "",
+          front_shiny: pokeApiData.sprites.other.showdown.front_shiny ?? "",
+          back_shiny: pokeApiData.sprites.other.showdown.back_shiny ?? "",
+        },
+        "official-artwork": {
+          front_default: pokeApiData.sprites.other["official-artwork"].front_default ?? "",
+          front_shiny: pokeApiData.sprites.other["official-artwork"].front_shiny ?? "",
+        },
+      },
+    },
+    stats: stats,
+    height: pokemon.height,
+    weight: pokemon.weight,
+    abilities: pokemon.abilities,
+    moves: pokemon.gameMoves,
+    typeChart: pokemon.typeChart,
+    forms: pokemon.forms,
+    evolution_chain: evolution_chain,
+  } as Pokemon
 }
-
-export const getEvolutionSpeciesData = async (
-  evolutionChain: ChainLink
-): Promise<PokemonBasic[]> => {
-  const currentPokemon = await getPokemonBasic(evolutionChain.species.name)
-
-  const evolvedPokemonLists = await Promise.all(
-    evolutionChain.evolves_to.map(evolution =>
-      getEvolutionSpeciesData(evolution)
-    )
-  )
-
-  return [currentPokemon, ...evolvedPokemonLists.flat()]
-}
-
 
 export async function getPokemonList(
   limit: number,
   offset: number,
   typesParam?: string,
   abilitiesParam?: string
-): Promise<PokemonBasic[]> {
-  let pokemonList: urlData[] = []
-
-  if (typesParam || abilitiesParam) {
-    let typeFiltered: Record<string, urlData> = {}
-    let typeCounts: Record<string, number> = {}
-    let abilityFiltered: Record<string, urlData> = {}
-    let abilityCounts: Record<string, number> = {}
-
-    // Type filtering
-    if (typesParam) {
-      const typeNames = typesParam.split(",")
-      for (let type of typeNames) {
-        const typeRes = await fetch(`https://pokeapi.co/api/v2/type/${type}`)
-        const typeData = await typeRes.json()
-        typeData.pokemon.forEach((p: TypeOfPokemon) => {
-          if (!typeFiltered[p.pokemon.name]) {
-            typeFiltered[p.pokemon.name] = p.pokemon
+): Promise<Pokemon[]> {
+  
+  const typeNames = typesParam?.split(",");
+  const abilityNames = abilitiesParam?.split(",");
+  
+  const pokemonList = await prisma.pokemon.findMany({
+    where: {
+      ...(typeNames && {
+        types: {
+          some: {
+            name: { in: typeNames }
           }
-          typeCounts[p.pokemon.name] = (typeCounts[p.pokemon.name] || 0) + 1
-        })
-      }
-    }
-
-    // Ability filtering
-    if (abilitiesParam) {
-      const abilityNames = abilitiesParam.split(",")
-      for (let ability of abilityNames) {
-        const abilityRes = await fetch(`https://pokeapi.co/api/v2/ability/${ability}`)
-        const abilityData = await abilityRes.json()
-        abilityData.pokemon.forEach((p: any) => {
-          const poke = p.pokemon
-          if (!abilityFiltered[poke.name]) {
-            abilityFiltered[poke.name] = poke
+        }
+      }),
+      ...(abilityNames && {
+        abilities: {
+          some: {
+            name: { in: abilityNames }
           }
-          abilityCounts[poke.name] = (abilityCounts[poke.name] || 0) + 1
-        })
-      }
-    }
-
-    // Combine filters (intersection)
-    if (typesParam && abilitiesParam) {
-      const typeNames = typesParam.split(",")
-      const abilityNames = abilitiesParam.split(",")
-      pokemonList = Object.keys(typeFiltered)
-        .filter(
-          (name) =>
-            typeCounts[name] === typeNames.length &&
-            abilityCounts[name] === abilityNames.length
-        )
-        .map((name) => typeFiltered[name])
-    } else if (typesParam) {
-      const typeNames = typesParam.split(",")
-      pokemonList = Object.entries(typeCounts)
-        .filter(([_, count]) => count === typeNames.length)
-        .map(([name]) => typeFiltered[name])
-    } else if (abilitiesParam) {
-      const abilityNames = abilitiesParam.split(",")
-      pokemonList = Object.entries(abilityCounts)
-        .filter(([_, count]) => count === abilityNames.length)
-        .map(([name]) => abilityFiltered[name])
-    }
-  } else {
-    // Normal fetch if no filter selected
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`)
-    const data = await res.json()
-    pokemonList = data.results
-  }
-
-  const paginated =
-    typesParam || abilitiesParam
-      ? pokemonList.slice(offset, offset + limit)
-      : pokemonList
-
-  const detailedPromises = paginated.map(async (p: urlData) => {
-    const res = await fetch(p.url)
-    const data = await res.json()
-
-    return {
-      id: data.id,
-      name: data.name,
-      is_default: data.is_default,
-      types: data.types,
-      sprites: {
-        front_default: data.sprites.front_default ?? "",
-        back_default: data.sprites.back_default ?? "",
-      },
-      showdown: {
-        front_default: data.sprites.other?.showdown?.front_default ?? "",
-        back_default: data.sprites.other?.showdown?.back_default ?? "",
-      },
-      officialArtwork: data.sprites.other?.["official-artwork"]?.front_default ?? "",
-    } as PokemonBasic
-  })
-
-  const pokemonData = await Promise.all(detailedPromises)
-  return pokemonData.filter((p) => p.is_default)
-}
-
-export async function getPokemonInfo(name: string): Promise<PokemonInfo> {
-  const pokemonRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`)
-  if (!pokemonRes.ok) {
-    throw new Error("Could not find pokémon!")
-  }
-
-  const pokemon = await pokemonRes.json()
-
-  const evolution_chain = 3;
-
-  const varieties = 3;
-
-  const evolutionSpeciesList = 3;
-
-  const typesInfo = await getPokemonTypesInformation(pokemon.types)
-
-  const moves = await getPokemonMoves(pokemon.moves)
-
-  return {
-    id: pokemon.id,
-    name: pokemon.name,
-    base_experience: pokemon.base_experience,
-    types: pokemon.types,
-    sprites: {
-      front_default: pokemon.sprites.front_default ?? "",
-      back_default: pokemon.sprites.back_default ?? "",
-      front_shiny: pokemon.sprites.front_shiny ?? "",
-      back_shiny: pokemon.sprites.back_shiny ?? "",
-      other: {
-        showdown: {
-          front_default: pokemon.sprites.other.showdown.front_default ?? "",
-          back_default: pokemon.sprites.other.showdown.back_default ?? "",
-          front_shiny: pokemon.sprites.other.showdown.front_shiny ?? "",
-          back_shiny: pokemon.sprites.other.showdown.back_shiny ?? "",
-        },
-        "official-artwork": {
-          front_default: pokemon.sprites.other["official-artwork"].front_default ?? "",
-          front_shiny: pokemon.sprites.other["official-artwork"].front_shiny ?? "",
-        },
-      },
+        }
+      })
     },
-    species: species,
-    evolution_chain: evolutionSpeciesList,
-    varieties: varieties,
-    types_info: typesInfo,
-    moves: moves,
-    stats: pokemon.stats,
-    height: pokemon.height,
-    weight: pokemon.weight,
-    abilities: pokemon.abilities,
-  } as PokemonInfo
+    take: limit,
+    skip: offset,
+    select: {
+      id: true,
+      nationalNumber: true,
+      name: true,
+      pokeapiId: true,
+      types: { select: { name: true } }
+    }
+  });
+
+  // Fetch sprites for all Pokemon in parallel
+  const pokemonListWithSprites = await Promise.all(
+    pokemonList.map(async (pokemon) => {
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`);
+      if (!res.ok) {
+        console.error(`Could not fetch sprites for ${pokemon.name}`);
+        return {
+          ...pokemon,
+          sprites: {
+            front_default: "",
+            back_default: "",
+            front_shiny: "",
+            back_shiny: "",
+            other: {
+              showdown: {
+                front_default: "",
+                back_default: "",
+                front_shiny: "",
+                back_shiny: "",
+              },
+              "official-artwork": {
+                front_default: "",
+                front_shiny: "",
+              },
+            },
+          }
+        } as Pokemon;
+      }
+      const pokeApiData = await res.json();
+      
+      return {
+        ...pokemon,
+        sprites: {
+          front_default: pokeApiData.sprites.front_default ?? "",
+          back_default: pokeApiData.sprites.back_default ?? "",
+          front_shiny: pokeApiData.sprites.front_shiny ?? "",
+          back_shiny: pokeApiData.sprites.back_shiny ?? "",
+          other: {
+            showdown: {
+              front_default: pokeApiData.sprites.other.showdown.front_default ?? "",
+              back_default: pokeApiData.sprites.other.showdown.back_default ?? "",
+              front_shiny: pokeApiData.sprites.other.showdown.front_shiny ?? "",
+              back_shiny: pokeApiData.sprites.other.showdown.back_shiny ?? "",
+            },
+            "official-artwork": {
+              front_default: pokeApiData.sprites.other["official-artwork"].front_default ?? "",
+              front_shiny: pokeApiData.sprites.other["official-artwork"].front_shiny ?? "",
+            },
+          },
+        }
+      } as Pokemon;
+    })
+  );
+
+  return pokemonListWithSprites;
+
 }
