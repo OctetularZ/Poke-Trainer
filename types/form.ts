@@ -1,4 +1,7 @@
 export interface PokemonForm {
   id: number,
-  name: string
+  name: string,
+  pokemon: {
+    id: number,
+    name: string }
 }

@@ -47,7 +47,7 @@ const Main = ({ pokemon }: Props) => {
 
   useEffect(() => {
     fetchPokemonInfo()
-  }, [])
+  }, [pokemon])
 
   return (
     <div className="flex flex-col justify-center items-center my-20">
@@ -62,7 +62,8 @@ const Main = ({ pokemon }: Props) => {
         <PokemonStatsSection loading={loading} stats={pokemonInfo?.stats!} />
         <TypeChart loading={loading} typeChart={pokemonInfo?.typeChart!} />
       </div>
-      <EvolutionChain loading={loading} pokemonInfo={pokemonInfo!} />
+      {/* <EvolutionChain loading={loading} pokemonInfo={pokemonInfo!} />
+      <Moves loading={loading} pokemonMoves={pokemonInfo?.moves!} /> */}
     </div>
   )
 }

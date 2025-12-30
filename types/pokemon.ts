@@ -36,7 +36,7 @@ export interface Pokemon {
   abilities?: PokemonAbility[],
   moves?: GameMove[],
   typeChart?: TypeEffectiveness[],
-  forms?: PokemonForm[],
+  forms?: Pokemon[],
   evolution_chain?: EvolutionTree,
   gameDescriptions?: GameDescription[]
 }

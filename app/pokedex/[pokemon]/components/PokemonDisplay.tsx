@@ -6,7 +6,6 @@ import { PokemonType } from "@/types/type"
 import { typeColours, typeColoursHex } from "../../components/typeColours"
 import PokeCard from "../../components/PokeCard"
 import { FaChevronDown } from "react-icons/fa"
-import { PokemonForm } from "@/types/form"
 
 interface PokemonDisplayProps {
   loading: boolean
@@ -24,29 +23,6 @@ const PokemonDisplay = ({
   shinySprites,
 }: PokemonDisplayProps) => {
   const [shiny, setShiny] = useState(false)
-  const [forms, setForms] = useState<Pokemon[]>([])
-
-  const fetchPokemonForms = async (pokemonForms: PokemonForm[]) => {
-    try {
-      const pokemonFormPromises = pokemonForms.map((form) =>
-        fetch(`/api/pokemon/${form.id}`).then((res) => {
-          if (!res.ok) throw new Error(`Failed to fetch form ${form.name}`)
-          return res.json()
-        })
-      )
-
-      const pokemonFormsData = await Promise.all(pokemonFormPromises)
-      setForms(pokemonFormsData)
-    } catch (error) {
-      console.error("Error fetching pokemon forms:", error)
-    }
-  }
-
-  useEffect(() => {
-    if (pokemonInfo?.forms) {
-      fetchPokemonForms(pokemonInfo.forms)
-    }
-  }, [pokemonInfo])
 
   return (
     <div className="flex flex-row h-160 mb-20">
@@ -192,7 +168,7 @@ const PokemonDisplay = ({
             </motion.div>
           </div>
           <div className="flex flex-col gap-5 items-center max-h-full overflow-y-scroll">
-            {forms.map((pokemon) => (
+            {pokemonInfo.forms?.map((pokemon) => (
               <PokeCard
                 key={pokemon.id}
                 nationalNumber={pokemon.nationalNumber}
@@ -207,7 +183,7 @@ const PokemonDisplay = ({
               />
             ))}
           </div>
-          {forms.length > 1 && (
+          {pokemonInfo.forms && pokemonInfo.forms.length > 1 && (
             <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent" />
           )}
         </div>
