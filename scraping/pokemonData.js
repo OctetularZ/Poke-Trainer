@@ -14,10 +14,9 @@ export async function getPokemonList() {
     const formName = $(element).find("td.cell-name small").text().trim();
     const link = $(element).find("td.cell-name a").attr("href");
 
-    const name = formName ? `${baseName} (${formName})` : baseName
-
     pokemon.push({
-      name,
+      baseName,
+      formName,
       link: "https://pokemondb.net" + link
     });
   });
@@ -25,7 +24,7 @@ export async function getPokemonList() {
   return pokemon;
 }
 
-export async function scrapePokemonDetails(name, url) {
+export async function scrapePokemonDetails(baseName, fName, url) {
   const { data } = await axios.get(url);
   const $ = cheerio.load(data);
 
@@ -39,10 +38,13 @@ export async function scrapePokemonDetails(name, url) {
     const formTabs = firstTabsList.find("a")
     formTabs.each((_, element) => {
       let formName = $(element).text().trim();
-      if (formName === name) {
+      if (formName === baseName) {
         formId = $(element).attr("href").slice(1)
+        forms.push(baseName)
+        return;
       }
-      forms.push(formName)
+      const name = formName ? `${baseName} (${formName})` : baseName
+      forms.push(name)
     })
   }
 
@@ -221,6 +223,7 @@ export async function scrapePokemonDetails(name, url) {
 
     // Filter to only include evolutions for the current Pokemon
     // Keep "(All forms)" evolutions to be expanded in seeding script - only exception
+    const name = fName ? `${baseName} (${fName})` : baseName
     const filteredEvolutionChain = evolutionChain.filter(evo => 
       evo.from === name || evo.from.includes('(All forms)')
     );
@@ -288,8 +291,9 @@ export async function getPokemonDetails() {
   console.log(`Scraping Pokémon details in batches of ${batchSize}...`);
   const results = await batchProcess(pokemonList, batchSize, async (pokemon) => {
     try {
-      const details = await scrapePokemonDetails(pokemon.name ,pokemon.link);
-      return { Name: pokemon.name, ...details };
+      const details = await scrapePokemonDetails(pokemon.baseName, pokemon.formName ,pokemon.link);
+      const name = pokemon.formName ? `${pokemon.baseName} (${pokemon.formName})` : pokemon.baseName
+      return { Name: name, ...details };
     } catch (err) {
       console.error(`❌ Failed to scrape ${pokemon.name}: ${err.message}`);
       return null;

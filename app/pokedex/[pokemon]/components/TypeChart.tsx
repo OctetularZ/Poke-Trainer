@@ -1,6 +1,5 @@
 import { TypeEffectiveness } from "@/types/type"
 import React from "react"
-import { allPokemonTypes } from "@/data/pokemonTypes"
 import { typeColours } from "../../components/typeColours"
 
 interface TypeChartProps {

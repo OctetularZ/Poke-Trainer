@@ -103,13 +103,7 @@ export async function getPokemonInfo(name: string): Promise<Pokemon> {
       forms: {
         select: {
           id: true,
-          name: true,
-          pokemon: {
-            select: {
-              id: true,
-              name: true,
-            }
-          }
+          name: true
         }
       },
 
