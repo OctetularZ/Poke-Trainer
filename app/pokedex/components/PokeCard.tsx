@@ -34,7 +34,7 @@ const PokeCard = ({ id, nationalNumber, name, sprite, types }: Pokemon) => {
           #{nationalNumber.toString().padStart(4, "0")}
         </p>
         <h1 className="text-white text-2xl text-wrap text-center">
-          {baseName.charAt(0).toUpperCase() + baseName.slice(1)}
+          {baseName.replace(/\b\w/g, (char) => char.toUpperCase())}
         </h1>
         <h1 className="text-gray-400 text-xl pb-3 text-wrap text-center">
           {formName.replace(/\b\w/g, (char) => char.toUpperCase())}

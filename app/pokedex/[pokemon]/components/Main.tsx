@@ -63,7 +63,6 @@ const Main = ({ pokemon }: Props) => {
         <TypeChart loading={loading} typeChart={pokemonInfo?.typeChart!} />
       </div>
       <EvolutionChain loading={loading} pokemonInfo={pokemonInfo!} />
-      <Moves loading={loading} pokemonMoves={pokemonInfo?.moves!} />
     </div>
   )
 }

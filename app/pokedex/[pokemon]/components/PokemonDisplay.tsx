@@ -6,6 +6,7 @@ import { PokemonType } from "@/types/type"
 import { typeColours, typeColoursHex } from "../../components/typeColours"
 import PokeCard from "../../components/PokeCard"
 import { FaChevronDown } from "react-icons/fa"
+import { PokemonForm } from "@/types/form"
 
 interface PokemonDisplayProps {
   loading: boolean
@@ -23,25 +24,29 @@ const PokemonDisplay = ({
   shinySprites,
 }: PokemonDisplayProps) => {
   const [shiny, setShiny] = useState(false)
+  const [forms, setForms] = useState<Pokemon[]>([])
 
-  const fetchPokemonForms = async () => {
+  const fetchPokemonForms = async (pokemonForms: PokemonForm[]) => {
     try {
-      const res = await fetch(`/api/pokemon/${pokemon}`)
-      if (!res.ok) {
-        console.error("Failed to fetch pokemon forms")
-        return
-      }
-      const data = await res.json()
-      return data.varieties || []
+      const pokemonFormPromises = pokemonForms.map((form) =>
+        fetch(`/api/pokemon/${form.id}`).then((res) => {
+          if (!res.ok) throw new Error(`Failed to fetch form ${form.name}`)
+          return res.json()
+        })
+      )
+
+      const pokemonFormsData = await Promise.all(pokemonFormPromises)
+      setForms(pokemonFormsData)
     } catch (error) {
       console.error("Error fetching pokemon forms:", error)
-      return []
     }
   }
 
   useEffect(() => {
-    fetchPokemonForms()
-  }, [])
+    if (pokemonInfo?.forms) {
+      fetchPokemonForms(pokemonInfo.forms)
+    }
+  }, [pokemonInfo])
 
   return (
     <div className="flex flex-row h-160 mb-20">
@@ -65,7 +70,6 @@ const PokemonDisplay = ({
             />
           </motion.div>
         ) : (
-          // const randomItem = list[Math.floor(Math.random() * list.length)] - Might implement for random flavour texts
           <div>
             <div className="flex flex-col items-center">
               <button
@@ -80,16 +84,10 @@ const PokemonDisplay = ({
               </button>
               <div className="flex flex-row flex-wrap gap-3 max-w-9/12 justify-center text-center text-5xl mt-5 mb-3">
                 <h1 className=" text-white">
-                  {pokemon
-                    .split("-")
-                    .map(
-                      (pokemon) =>
-                        pokemon.charAt(0).toUpperCase() + pokemon.slice(1)
-                    )
-                    .join("-")}
+                  {pokemon.replace(/\b\w/g, (char) => char.toUpperCase())}
                 </h1>
                 <h1 className="text-white/50">
-                  #{pokemonInfo?.id.toString().padStart(4, "0")}
+                  #{pokemonInfo?.nationalNumber.toString().padStart(4, "0")}
                 </h1>
               </div>
               {/* <h2 className="text-white text-center tracking-wide text-lg text-wrap max-w-10/12">
@@ -194,13 +192,14 @@ const PokemonDisplay = ({
             </motion.div>
           </div>
           <div className="flex flex-col gap-5 items-center max-h-full overflow-y-scroll">
-            {pokemonInfo.varieties.map((pokemon) => (
+            {forms.map((pokemon) => (
               <PokeCard
                 key={pokemon.id}
+                nationalNumber={pokemon.nationalNumber}
                 id={pokemon.id}
                 name={pokemon.name}
                 sprite={
-                  pokemon.showdown.front_default ||
+                  pokemon.sprites.other.showdown.front_default ||
                   pokemon.sprites.front_default ||
                   "/placeholder.png"
                 }
@@ -208,7 +207,7 @@ const PokemonDisplay = ({
               />
             ))}
           </div>
-          {pokemonInfo.varieties.length > 1 && (
+          {forms.length > 1 && (
             <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent" />
           )}
         </div>
