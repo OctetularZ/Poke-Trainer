@@ -145,7 +145,7 @@ export async function getPokemonInfo(name: string): Promise<Pokemon> {
     speedMax: pokemon.speedMax,
   }
 
-  const evolutionChain = await getFullEvolutionChain(pokemon.id);
+  // const evolutionChain = await getFullEvolutionChain(pokemon.id);
   const pokemonForms = await fetchPokemonForms(pokemon.forms)
 
   return {
@@ -179,7 +179,7 @@ export async function getPokemonInfo(name: string): Promise<Pokemon> {
     moves: pokemon.gameMoves,
     typeChart: pokemon.typeChart,
     forms: pokemonForms,
-    evolution_chain: evolutionChain,
+    // evolution_chain: evolutionChain,
     gameDescriptions: pokemon.descriptions
   } as Pokemon
 }
