@@ -59,9 +59,7 @@ const PokemonDisplay = ({
                 Shiny
               </button>
               <div className="flex flex-row flex-wrap gap-3 max-w-9/12 justify-center text-center text-5xl mt-5 mb-3">
-                <h1 className=" text-white">
-                  {pokemon.replace(/\b\w/g, (char) => char.toUpperCase())}
-                </h1>
+                <h1 className=" text-white">{pokemonInfo.name}</h1>
                 <h1 className="text-white/50">
                   #{pokemonInfo?.nationalNumber.toString().padStart(4, "0")}
                 </h1>
@@ -183,9 +181,6 @@ const PokemonDisplay = ({
               />
             ))}
           </div>
-          {pokemonInfo.forms && pokemonInfo.forms.length > 1 && (
-            <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent" />
-          )}
         </div>
       )}
     </div>

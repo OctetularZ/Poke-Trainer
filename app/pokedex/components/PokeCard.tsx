@@ -3,6 +3,7 @@ import Link from "next/link"
 import React from "react"
 import { PokemonType } from "@/types/type"
 import { typeColours, typeColoursHex } from "./typeColours"
+import { getPokemonSlug } from "@/lib/pokeapi/helpers/getPokemonSlug"
 
 interface Pokemon {
   id: number
@@ -19,7 +20,7 @@ const PokeCard = ({ id, nationalNumber, name, sprite, types }: Pokemon) => {
     : ""
 
   return (
-    <Link href={`/pokedex/${name.charAt(0).toUpperCase()}${name.slice(1)}`}>
+    <Link href={`/pokedex/${getPokemonSlug(name)}`}>
       <div className="flex flex-col justify-center items-center w-55 h-full bg-charmander-dull-200 rounded-2xl pt-10 pb-8 px-5">
         <div className="relative mb-5 w-[100px] h-[100px] items-center">
           <Image

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPokemonInfo } from "@/lib/pokeapi/pokemon";
+import { getPokemonName } from "@/lib/pokeapi/helpers/getPokemonSlug";
 
 interface PokemonRouteProps {
   params: Promise<{ name: string }>
@@ -7,11 +8,10 @@ interface PokemonRouteProps {
 
 export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
   const { name } = await params
-  const {searchParams} = new URL(request.url)
-  const form = searchParams.get('form')
+  const searchName = getPokemonName(name)
 
   try {
-    const pokemonData = await getPokemonInfo(name)
+    const pokemonData = await getPokemonInfo(searchName)
     return NextResponse.json(pokemonData)
   } catch (err: any) {
     console.error(err)
