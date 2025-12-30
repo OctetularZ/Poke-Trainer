@@ -54,13 +54,13 @@ const Main = ({ pokemon }: Props) => {
       <PokemonDisplay
         loading={loading}
         pokemon={pokemon}
-        pokemonInfo={pokemonInfo}
+        pokemonInfo={pokemonInfo!}
         sprites={sprites!}
         shinySprites={shinySprites!}
       />
       <div className="flex flex-row flex-wrap justify-center items-start gap-30">
         <PokemonStatsSection loading={loading} stats={pokemonInfo?.stats!} />
-        <TypeChart loading={loading} typeInfo={pokemonInfo?.typeChart!} />
+        <TypeChart loading={loading} typeChart={pokemonInfo?.typeChart!} />
       </div>
       <EvolutionChain loading={loading} pokemonInfo={pokemonInfo!} />
       <Moves loading={loading} pokemonMoves={pokemonInfo?.moves!} />

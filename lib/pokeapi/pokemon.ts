@@ -2,54 +2,11 @@ import prisma from "@/lib/prisma";
 import { Pokemon } from "@/types/pokemon";
 import { getFullEvolutionChain } from "./evolution";
 
-const getPokemonBasic = async (name: string): Promise<Pokemon> => {
+export async function getPokemonInfo(identifier: string | number): Promise<Pokemon> {
+  const isNumeric = !isNaN(Number(identifier))
+
   const pokemon = await prisma.pokemon.findUnique({
-    where: { name: name },
-    include: {
-      // Pokemon's Types
-      types: {
-        select: {
-          name: true
-        }
-      }
-    }
-  })
-
-  if (!pokemon) throw new Error(`Could not find ${name}`);
-
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`)
-  if (!res.ok) throw new Error(`Could not find ${name}`)
-  const pokeApiData = await res.json()
-
-  return {
-    id: pokemon.id,
-    nationalNumber: pokemon.nationalNumber,
-    name: pokemon.name,
-    types: pokemon.types,
-    sprites: {
-      front_default: pokeApiData.sprites.front_default ?? "",
-      back_default: pokeApiData.sprites.back_default ?? "",
-      front_shiny: pokeApiData.sprites.front_shiny ?? "",
-      back_shiny: pokeApiData.sprites.back_shiny ?? "",
-      other: {
-        showdown: {
-          front_default: pokeApiData.sprites.other.showdown.front_default ?? "",
-          back_default: pokeApiData.sprites.other.showdown.back_default ?? "",
-          front_shiny: pokeApiData.sprites.other.showdown.front_shiny ?? "",
-          back_shiny: pokeApiData.sprites.other.showdown.back_shiny ?? "",
-        },
-        "official-artwork": {
-          front_default: pokeApiData.sprites.other["official-artwork"].front_default ?? "",
-          front_shiny: pokeApiData.sprites.other["official-artwork"].front_shiny ?? "",
-        },
-      },
-    }
-  } as Pokemon
-}
-
-export async function getPokemonInfo(name: string): Promise<Pokemon> {
-  const pokemon = await prisma.pokemon.findUnique({
-    where: { name: name },
+    where: isNumeric ? { id: Number(identifier) } : {name: identifier as string},
     include: {
 
       // Pokemon's Types
@@ -109,14 +66,23 @@ export async function getPokemonInfo(name: string): Promise<Pokemon> {
             }
           }
         }
+      },
+
+      // Game Descriptions
+      descriptions: {
+        select: {
+          id: true,
+          game: true,
+          description: true
+        }
       }
     }
   })
 
-  if (!pokemon) throw new Error(`Could not find ${name}`);
+  if (!pokemon) throw new Error(`Could not find Pokémon: ${identifier}`);
 
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`)
-  if (!res.ok) throw new Error(`Could not find ${name}`)
+  if (!res.ok) throw new Error(`Could not find Pokémon: ${identifier}`)
   const pokeApiData = await res.json()
 
   const stats = {
@@ -174,6 +140,7 @@ export async function getPokemonInfo(name: string): Promise<Pokemon> {
     typeChart: pokemon.typeChart,
     forms: pokemon.forms,
     evolution_chain: evolution_chain,
+    gameDescriptions: pokemon.descriptions
   } as Pokemon
 }
 

@@ -38,4 +38,11 @@ export interface Pokemon {
   typeChart?: TypeEffectiveness[],
   forms?: PokemonForm[],
   evolution_chain?: EvolutionTree,
+  gameDescriptions?: GameDescription[]
+}
+
+export interface GameDescription {
+  id: number,
+  game: string,
+  description: string
 }

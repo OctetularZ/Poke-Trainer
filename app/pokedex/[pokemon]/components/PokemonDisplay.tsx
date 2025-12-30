@@ -1,8 +1,8 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import { motion } from "motion/react"
-import { PokemonInfo } from "@/types/pokemonFull"
-import { PokemonType } from "@/types/pokemonBasic"
+import { Pokemon } from "@/types/pokemon"
+import { PokemonType } from "@/types/type"
 import { typeColours, typeColoursHex } from "../../components/typeColours"
 import PokeCard from "../../components/PokeCard"
 import { FaChevronDown } from "react-icons/fa"
@@ -10,7 +10,7 @@ import { FaChevronDown } from "react-icons/fa"
 interface PokemonDisplayProps {
   loading: boolean
   pokemon: string
-  pokemonInfo: PokemonInfo
+  pokemonInfo: Pokemon
   sprites: string[]
   shinySprites: string[]
 }
@@ -23,6 +23,25 @@ const PokemonDisplay = ({
   shinySprites,
 }: PokemonDisplayProps) => {
   const [shiny, setShiny] = useState(false)
+
+  const fetchPokemonForms = async () => {
+    try {
+      const res = await fetch(`/api/pokemon/${pokemon}`)
+      if (!res.ok) {
+        console.error("Failed to fetch pokemon forms")
+        return
+      }
+      const data = await res.json()
+      return data.varieties || []
+    } catch (error) {
+      console.error("Error fetching pokemon forms:", error)
+      return []
+    }
+  }
+
+  useEffect(() => {
+    fetchPokemonForms()
+  }, [])
 
   return (
     <div className="flex flex-row h-160 mb-20">
@@ -73,27 +92,29 @@ const PokemonDisplay = ({
                   #{pokemonInfo?.id.toString().padStart(4, "0")}
                 </h1>
               </div>
-              <h2 className="text-white text-center tracking-wide text-lg text-wrap max-w-10/12">
+              {/* <h2 className="text-white text-center tracking-wide text-lg text-wrap max-w-10/12">
                 {pokemonInfo?.species.flavor_text_entries[0].flavor_text}
-              </h2>
+              </h2> */}
               <div className="flex flex-row gap-5 mt-3">
                 {pokemonInfo?.types.map((type: PokemonType, index) => (
                   <h4
                     key={index}
                     className={`text-white text-2xl ${
-                      typeColours[type.type.name as keyof typeof typeColours]
+                      typeColours[
+                        type.name.toLowerCase() as keyof typeof typeColours
+                      ]
                     } rounded-lg px-3 shadow-md`}
                     style={{
                       filter: `drop-shadow(0 0 8px ${
                         typeColoursHex[
-                          type.type.name as keyof typeof typeColoursHex
+                          type.name.toLowerCase() as keyof typeof typeColoursHex
                         ]
                       })`,
                     }}
                   >
-                    {`${type.type.name
-                      .charAt(0)
-                      .toUpperCase()}${type.type.name.slice(1)}`}
+                    {`${type.name.charAt(0).toUpperCase()}${type.name.slice(
+                      1
+                    )}`}
                   </h4>
                 ))}
               </div>
