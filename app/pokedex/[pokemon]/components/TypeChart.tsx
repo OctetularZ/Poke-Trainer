@@ -7,6 +7,27 @@ interface TypeChartProps {
   loading: boolean
 }
 
+const allTypes = [
+  "Normal",
+  "Fire",
+  "Water",
+  "Electric",
+  "Grass",
+  "Ice",
+  "Fighting",
+  "Poison",
+  "Ground",
+  "Flying",
+  "Psychic",
+  "Bug",
+  "Rock",
+  "Ghost",
+  "Dragon",
+  "Dark",
+  "Steel",
+  "Fairy",
+]
+
 const valBgColour = {
   4: "bg-emerald-500",
   2: "bg-green-500",
@@ -17,19 +38,27 @@ const valBgColour = {
 }
 
 function toFraction(num: string) {
-  if (num === "") return 1
   if (num === "½") return 0.5
   if (num === "¼") return 0.25
   return parseInt(num)
 }
 
 const TypeChart = ({ typeChart, loading }: TypeChartProps) => {
+  const effectivenessMap = Object.fromEntries(
+    typeChart.map((te) => [te.attackType, te.multiplier])
+  )
+
+  const merged = allTypes.map((type) => ({
+    attackType: type,
+    multiplier: effectivenessMap[type] ?? 1,
+  }))
+
   if (!loading) {
     return (
       <div className="flex flex-col items-start">
         <h1 className="text-white text-2xl border-b-2 mb-10">Type Defenses</h1>
         <div className="flex flex-row flex-wrap max-w-115 gap-0.25">
-          {typeChart.map((typeEffectiveness) => (
+          {merged.map((typeEffectiveness) => (
             <div
               key={typeEffectiveness.attackType}
               className="flex flex-col justify-center items-center"
