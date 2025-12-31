@@ -44,16 +44,16 @@ function toFraction(num: string) {
 }
 
 const TypeChart = ({ typeChart, loading }: TypeChartProps) => {
-  const effectivenessMap = Object.fromEntries(
-    typeChart.map((te) => [te.attackType, te.multiplier])
-  )
-
-  const merged = allTypes.map((type) => ({
-    attackType: type,
-    multiplier: effectivenessMap[type] ?? 1,
-  }))
-
   if (!loading) {
+    const effectivenessMap = Object.fromEntries(
+      typeChart.map((te) => [te.attackType, te.multiplier])
+    )
+
+    const merged = allTypes.map((type) => ({
+      attackType: type,
+      multiplier: effectivenessMap[type] ?? 1,
+    }))
+
     return (
       <div className="flex flex-col items-start">
         <h1 className="text-white text-2xl border-b-2 mb-10">Type Defenses</h1>

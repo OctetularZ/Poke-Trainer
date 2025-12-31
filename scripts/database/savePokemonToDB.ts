@@ -3,6 +3,7 @@ import { Movesets, ScrapedPokemon } from "@/scraping/types/pokemon.js";
 import { directPrisma as prisma } from "../../lib/prisma.js";
 import { getPokemonDetails } from '../../scraping/pokemonData.js'
 import { getPokeApiId } from './helperFunctions.js';
+import { getPokemonSlug } from '@/lib/pokeapi/helpers/getPokemonSlug.js';
 
 const pokemonData: ScrapedPokemon[] = await getPokemonDetails();
 
@@ -55,6 +56,7 @@ async function main() {
         // General info
         nationalNumber: p['National №'],
         name: p.Name,
+        slug: getPokemonSlug(p.Name),
         pokeapiId,
         species: p.Species,
         height: p.Height,

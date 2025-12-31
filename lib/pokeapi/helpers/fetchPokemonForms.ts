@@ -8,7 +8,6 @@ export const fetchPokemonForms = async (pokemonForms: PokemonForm[]) => {
       });
 
       const pokemonFormsData = await Promise.all(pokemonFormPromises);
-      console.log(pokemonFormsData);
       return pokemonFormsData;
     } catch (error) {
       console.error("Error fetching pokemon forms:", error);

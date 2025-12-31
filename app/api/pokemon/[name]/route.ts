@@ -11,7 +11,7 @@ export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
   const searchName = getPokemonName(name)
 
   try {
-    const pokemonData = await getPokemonInfo(searchName)
+    const pokemonData = searchName.includes("-") ? await getPokemonInfo(undefined, searchName) : await getPokemonInfo(searchName)
     return NextResponse.json(pokemonData)
   } catch (err: any) {
     console.error(err)
