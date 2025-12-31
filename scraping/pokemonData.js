@@ -34,19 +34,17 @@ export async function scrapePokemonDetails(baseName, fName, url) {
   let forms = []
 
   const firstTabsList = $(".tabset-basics .sv-tabs-tab-list").first();
-  if (!firstTabsList.hasClass("sv-tabs-grow")) {
-    const formTabs = firstTabsList.find("a")
-    formTabs.each((_, element) => {
-      let formName = $(element).text().trim();
-      if (formName === baseName) {
-        formId = $(element).attr("href").slice(1)
-        forms.push(baseName)
-        return;
-      }
-      const name = formName ? `${baseName} (${formName})` : baseName
-      forms.push(name)
-    })
-  }
+  const formTabs = firstTabsList.find("a")
+  formTabs.each((_, element) => {
+    let formName = $(element).text().trim();
+    const name = formName ? `${baseName} (${formName})` : baseName
+    if (formName === fName) {
+      console.log(formName, fName);
+      formId = $(element).attr("href").match(/\d+$/)?.[0];
+      return;
+    }
+    forms.push(name)
+  })
 
   details["Forms"] = forms
 
@@ -66,9 +64,12 @@ export async function scrapePokemonDetails(baseName, fName, url) {
 
     learnMethods.each((_, h3) => {
       const categoryName = $(h3).text().trim()
-       // Need to check if the .next().next() of h3 has a div with class of .resp-scroll, if so, then a move table exists so there is moves in that category.
-       // Table always comes after a short description of the move list
-      if ($(h3).next().next().hasClass('resp-scroll')) { // There are moves for this learn method available
+      // Need to check if the .next().next() of h3 has a div with class of .resp-scroll, if so, then a move table exists so there is moves in that category.
+      // Table always comes after a short description of the move list
+      if ($(h3).next().next().hasClass('.tabset-moves-game-form')) {
+        
+      }
+      else if ($(h3).next().next().hasClass('resp-scroll')) { // There are moves for this learn method available
         let table = $(h3).next().next().find('.data-table')
         
         const headers = []
@@ -105,7 +106,7 @@ export async function scrapePokemonDetails(baseName, fName, url) {
   })
 
   let types = {}
-  $(`#${formId} .type-table tbody tr td`).each((_, element) => {
+  $(`#tab-basic-${formId} .type-table tbody tr td`).each((_, element) => {
     const title = $(element).attr("title").split(" ")[0]
     const effectiveness = $(element).text().trim()
     types[title] = effectiveness
@@ -113,7 +114,7 @@ export async function scrapePokemonDetails(baseName, fName, url) {
   details["Type Chart"] = types
 
   // Specific Pokemon form data
-  $(`#${formId} .vitals-table tbody tr`).each((index, row) => {
+  $(`#tab-basic-${formId} .vitals-table tbody tr`).each((index, row) => {
     let header = "";
     const head = $(row).find("th")
     if ($(head).find("span").length) {
