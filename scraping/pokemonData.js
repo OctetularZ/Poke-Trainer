@@ -37,11 +37,13 @@ export async function scrapePokemonDetails(baseName, fName, url) {
   const formTabs = firstTabsList.find("a")
   formTabs.each((_, element) => {
     let formName = $(element).text().trim();
-    const name = formName ? `${baseName} (${formName})` : baseName
+    const name = (formName && formName !== baseName) ? `${baseName} (${formName})` : baseName
     if (formName === fName) {
-      console.log(formName, fName);
       formId = $(element).attr("href").match(/\d+$/)?.[0];
-      return;
+    }
+    // If no fName provided, check if current tab matches baseName (it should)
+    if (!fName && formName === baseName) {
+      formId = $(element).attr("href").match(/\d+$/)?.[0];
     }
     forms.push(name)
   })
@@ -66,8 +68,40 @@ export async function scrapePokemonDetails(baseName, fName, url) {
       const categoryName = $(h3).text().trim()
       // Need to check if the .next().next() of h3 has a div with class of .resp-scroll, if so, then a move table exists so there is moves in that category.
       // Table always comes after a short description of the move list
-      if ($(h3).next().next().hasClass('.tabset-moves-game-form')) {
-        
+      if ($(h3).next().next().hasClass('tabset-moves-game-form')) {
+        const panel = $(h3).next().next().find(".sv-tabs-panel[id$='-" + formId + "']");
+
+        const respScroll = $(panel).find('.resp-scroll')
+
+        if (respScroll.length) {
+          let table = respScroll.find('.data-table')
+
+          const headers = []
+          $(table)
+            .find("thead th")
+            .each((_, th) => {
+              headers.push($(th).find("div").text().trim())
+            })
+          
+          const rows = $(table).find("tbody tr").map((_, tr) => {
+              const moveData = {}
+              $(tr).find("td").each((i, td) => {
+                  const key = headers[i]
+                  let value;
+                  if ($(td).find('img').length) {
+                    value = $(td).find('img').attr('title') || $(td).find('img').attr('alt');
+                  } else if ($(td).find('a').length) {
+                    value = $(td).find('a').text().trim();
+                  } else {
+                    value = $(td).text().trim();
+                  }
+                  moveData[key] = value
+                })
+              return moveData
+            }).get()
+
+            moves[categoryName] = rows
+          }
       }
       else if ($(h3).next().next().hasClass('resp-scroll')) { // There are moves for this learn method available
         let table = $(h3).next().next().find('.data-table')
@@ -109,7 +143,7 @@ export async function scrapePokemonDetails(baseName, fName, url) {
   $(`#tab-basic-${formId} .type-table tbody tr td`).each((_, element) => {
     const title = $(element).attr("title").split(" ")[0]
     const effectiveness = $(element).text().trim()
-    types[title] = effectiveness
+    types[title] = effectiveness === "" ? "1" : effectiveness
   })
   details["Type Chart"] = types
 
@@ -273,7 +307,7 @@ export async function scrapePokemonDetails(baseName, fName, url) {
 
 async function batchProcess(items, batchSize, fn) {
   const results = [];
-  for (let i = 0; i < items.length; i += batchSize) {
+  for (let i = 0; i < 15; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
     const batchResults = await Promise.allSettled(batch.map(fn));
     results.push(...batchResults);
@@ -307,8 +341,15 @@ export async function getPokemonDetails() {
     .map((r) => r.value);
 
   console.log(`🎉 Scraped ${successful.length} Pokémon successfully!`);
-  // console.log(successful.slice(0, 10)); // show first 10 examples
+  // Test Sample
+  console.log(successful.slice(0, 10)); // show first 10 examples
+
+  // Evolution Chain check
   // console.log(JSON.stringify(successful[2]["Evolution Chain"], null, 2));
+
+  // Moves check
+  // console.log(JSON.stringify(successful[36]["Moves"], null, 2));
+  // console.log(successful[36]["Name"]);
 
   return successful
 };
