@@ -264,41 +264,78 @@ export async function scrapePokemonDetails(baseName, fName, url) {
     );
     details["Evolution Chain"] = filteredEvolutionChain
 
-    // General Pokemon Data
-    $(".vitals-table tbody tr").each((index, row) => {
-    let header = "";
-    const head = $(row).find("th")
-    if ($(head).find("span").length) {
-      header = $(head).find("span").map((_, element) => $(element).text().trim()).get().join(",");
+    // Game Descriptions
+    let gameDescriptions = {};
+    let descriptionHeader = $('h3').filter((_, el) => $(el).text().trim() === fName);
+    if (!descriptionHeader.length) {
+      descriptionHeader = $('h2').filter((_, el) => $(el).text().trim() === "Pokédex entries");
+    }
+
+    if (descriptionHeader.length) {
+      $(descriptionHeader).next(".resp-scroll").find(".vitals-table tbody tr").each((index, row) => {
+        let header = "";
+        const head = $(row).find("th")
+        if ($(head).find("span").length) {
+          header = $(head).find("span").map((_, element) => $(element).text().trim()).get().join(",");
+        }
+        else {
+          header = $(head).text().trim();
+        }
+
+        const td = $(row).find("td")
+
+        const values = td.text().replace(/\s+/g, " ").trim();
+
+        if (gameDescriptions[header]) return; // Skip over any duplicate data.
+        gameDescriptions[header] = values || "";
+        details["Game Descriptions"] = gameDescriptions
+      })
     }
     else {
-      header = $(head).text().trim();
+      details["Game Descriptions"] = gameDescriptions
     }
-    if (header === "Local №") return;
 
-    const td = $(row).find("td")
+    // General Pokemon Data
+    $(".vitals-table").each((_, table) => {
+      // Skip the "Where to find (Pokemon)" and "Pokédex entries" tables
+      const prevH2 = $(table).closest('.resp-scroll').prev('h2').text();
+      if (prevH2 && (prevH2.includes("Where to find") || prevH2.includes("Pokédex entries"))) return;
+      
+      $(table).find("tbody tr").each((index, row) => {
+        let header = "";
+        const head = $(row).find("th")
+        if ($(head).find("span").length) {
+          header = $(head).find("span").map((_, element) => $(element).text().trim()).get().join(",");
+        }
+        else {
+          header = $(head).text().trim();
+        }
+        if (header === "Local №") return;
 
-    let values = [];
+      const td = $(row).find("td")
 
-    if (td.find("a").length) {
-      values = td.find("a").map((_, element) => $(element).text().replace(/\s+/g, " ").trim()).get();
-    } else if (td.find("strong").length) {
-      values = td.find("strong").map((_, element) => $(element).text().replace(/\s+/g, " ").trim()).get();
-    } else if (td.length > 1) {
-      td.each((i, element) => {
-        if ($(element).hasClass("cell-barchart")) return;
-        values.push($(element).text().replace(/\s+/g, " ").trim());
+      let values = [];
+
+      if (td.find("a").length) {
+        values = td.find("a").map((_, element) => $(element).text().replace(/\s+/g, " ").trim()).get();
+      } else if (td.find("strong").length) {
+        values = td.find("strong").map((_, element) => $(element).text().replace(/\s+/g, " ").trim()).get();
+      } else if (td.length > 1) {
+        td.each((i, element) => {
+          if ($(element).hasClass("cell-barchart")) return;
+          values.push($(element).text().replace(/\s+/g, " ").trim());
+        });
+      }
+      else if (td.find("span").length > 1) {
+        values = td.find("span").map((_, element) => $(element).text().replace(/\s+/g, " ").trim()).get();
+      }
+      else {
+        values = td.text().replace(/\s+/g, " ").trim();
+      }
+
+      if (details[header]) return; // Skip if form-specific data already added to ensure it's overwritten.
+      details[header] = values.length > 1 ? values : values[0] || "";
       });
-    }
-    else if (td.find("span").length > 1) {
-      values = td.find("span").map((_, element) => $(element).text().replace(/\s+/g, " ").trim()).get();
-    }
-     else {
-      values = td.text().replace(/\s+/g, " ").trim();
-    }
-
-    if (details[header]) return; // Skip if form-specific data already added to ensure it's overwritten.
-    details[header] = values.length > 1 ? values : values[0] || "";
     });
 
     return details

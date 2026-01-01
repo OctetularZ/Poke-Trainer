@@ -1,4 +1,4 @@
-// TO:DO - Make exceptions for Pokemon base names with spaces and dashes
+// TO:DO - Match Pokedex entries (descriptions) to Pokemon form (last thing - form based)
 // Fix infinite recursion on fetching Pokemon Evolutions
 // Add moves back to Pokemon Display
 

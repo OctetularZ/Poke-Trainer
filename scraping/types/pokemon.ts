@@ -55,6 +55,9 @@ export interface ScrapedPokemon {
   'Sp. Def': string[],
   Speed: string[],
 
+  // Game Descriptions
+  'Game Descriptions': Record<string, string>,
+
   // Translations
   English: string,
   Japanese: string,
