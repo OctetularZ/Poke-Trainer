@@ -12,6 +12,11 @@ export async function getPokemonWithEvolution(pokemonId: number): Promise<Pokemo
       slug: true,
       pokeapiId: true,
       nationalNumber: true,
+      types: {
+        select: {
+          name: true
+        }
+      },
       evolvesTo: {
         include: {
           fromPokemon: {
@@ -19,7 +24,7 @@ export async function getPokemonWithEvolution(pokemonId: number): Promise<Pokemo
               id: true,
               name: true,
             }
-          }
+          },
         }
       }
     }
@@ -35,6 +40,7 @@ export async function getPokemonWithEvolution(pokemonId: number): Promise<Pokemo
     slug: pokemon.slug,
     nationalNumber: pokemon.nationalNumber,
     name: pokemon.name,
+    types: pokemon.types,
     pokeapiId: pokemon.pokeapiId,
     evolvesTo: pokemon.evolvesTo,
     sprites
@@ -80,8 +86,10 @@ export async function getFullEvolutionChain(pokemonId: number): Promise<Evolutio
         id: pokemon.id,
         name: pokemon.name,
         slug: pokemon.slug,
+        nationalNumber: pokemon.nationalNumber,
         pokeapiId: pokemon.pokeapiId,
         sprites,
+        types: pokemon.types,
         evolutions: []
       };
     }
@@ -96,7 +104,13 @@ export async function getFullEvolutionChain(pokemonId: number): Promise<Evolutio
             id: true,
             name: true,
             slug: true,
-            pokeapiId: true
+            nationalNumber: true,
+            pokeapiId: true,
+            types: {
+              select: {
+                name: true
+              }
+            }
           }
         }
       }
@@ -109,8 +123,10 @@ export async function getFullEvolutionChain(pokemonId: number): Promise<Evolutio
       id: pokemon.id,
       name: pokemon.name,
       slug: pokemon.slug,
+      nationalNumber: pokemon.nationalNumber,
       pokeapiId: pokemon.pokeapiId,
       sprites,
+      types: pokemon.types,
       evolutions: await Promise.all(
         evolutions.map(async evo => ({
           method: evo.method,
