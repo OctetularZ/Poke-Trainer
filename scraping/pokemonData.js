@@ -266,7 +266,8 @@ export async function scrapePokemonDetails(baseName, fName, url) {
 
     // Game Descriptions
     let gameDescriptions = {};
-    let descriptionHeader = $('h3').filter((_, el) => $(el).text().trim() === fName);
+    const searchName = fName || baseName;
+    let descriptionHeader = $('h3').filter((_, el) => $(el).text().trim() === searchName);
     if (!descriptionHeader.length) {
       descriptionHeader = $('h2').filter((_, el) => $(el).text().trim() === "Pokédex entries");
     }
@@ -344,7 +345,7 @@ export async function scrapePokemonDetails(baseName, fName, url) {
 
 async function batchProcess(items, batchSize, fn) {
   const results = [];
-  for (let i = 0; i < 15; i += batchSize) {
+  for (let i = 0; i < items.length; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
     const batchResults = await Promise.allSettled(batch.map(fn));
     results.push(...batchResults);

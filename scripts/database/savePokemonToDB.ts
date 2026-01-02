@@ -21,8 +21,21 @@ const pendingEvolutions: { from: string; to: string; method: string }[] = [];
 
 async function main() {
   for (const p of pokemonData) {
-    // Skip already existing Pokemon
+    // Evolution chains (collect for all Pokemon, even if already seeded)
+    const evolutionChain = Array.isArray(p["Evolution Chain"]) ? p["Evolution Chain"] : [];
+    if (evolutionChain.length) {
+      for (const evo of evolutionChain) {
+        if (evo?.from && evo?.to) {
+          pendingEvolutions.push({
+            from: evo.from,
+            to: evo.to,
+            method: evo.method ?? ''
+          });
+        }
+      }
+    }
 
+    // Skip already existing Pokemon
     const existing = await prisma.pokemon.findUnique({
       where: { name: p.Name }
     });
@@ -90,20 +103,6 @@ async function main() {
         speedMax: parseInt(p.Speed[2]) ?? null,
       },
     })
-
-    // Evolution chains (store and process after all Pokemon are created)
-    const evolutionChain = Array.isArray(p["Evolution Chain"]) ? p["Evolution Chain"] : [];
-    if (evolutionChain.length) {
-      for (const evo of evolutionChain) {
-        if (evo?.from && evo?.to) {
-          pendingEvolutions.push({
-            from: evo.from,
-            to: evo.to,
-            method: evo.method ?? ''
-          });
-        }
-      }
-    }
 
 
     // Types

@@ -59,7 +59,11 @@ export async function getPokeApiId(pokemonName: string, formName?: string): Prom
 
     const slugExceptions = ['burmy-sandy', 'burmy-trash']
     
-    let form = formName ? (specialFormsMap[formName.toLowerCase()] ?? formName.trim().replace(/[%']/g, '').split(/\s+/)[0]) : null
+    let form = formName 
+      ? (formName.toLowerCase() in specialFormsMap 
+          ? specialFormsMap[formName.toLowerCase()] 
+          : formName.trim().replace(/[%']/g, '').split(/\s+/)[0]) 
+      : null;
 
     const formSlug = form ? (formMap[form.toLowerCase()] ?? form.toLowerCase().replace(/\s+/g, '-')) : null;
     

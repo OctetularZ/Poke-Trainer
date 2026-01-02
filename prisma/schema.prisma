@@ -130,10 +130,10 @@ model Evolution {
   id     Int    @id @default(autoincrement())
   method String // i.e. "Level 16", "Fire Stone", etc.
 
-  fromPokemon   Pokemon @relation("EvolvesFrom", fields: [fromPokemonId], references: [id])
+  fromPokemon   Pokemon @relation("EvolvesFrom", fields: [fromPokemonId], references: [id], onDelete: Cascade)
   fromPokemonId Int
 
-  toPokemon   Pokemon @relation("EvolvesTo", fields: [toPokemonId], references: [id])
+  toPokemon   Pokemon @relation("EvolvesTo", fields: [toPokemonId], references: [id], onDelete: Cascade)
   toPokemonId Int
 
   @@unique([fromPokemonId, toPokemonId])
@@ -157,7 +157,7 @@ model PokemonAbility {
 model PokemonForm {
   id        Int     @id @default(autoincrement())
   name      String
-  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
   pokemonId Int
 
   @@unique([pokemonId, name])
@@ -173,7 +173,7 @@ model EggGroup {
 // Good
 model TypeEffectiveness {
   id         Int     @id @default(autoincrement())
-  pokemon    Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemon    Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
   pokemonId  Int
   attackType String
   multiplier String?
@@ -188,7 +188,7 @@ model GameMove {
   gameId    Int
   move      Move    @relation(fields: [moveId], references: [id])
   moveId    Int
-  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
   pokemonId Int
   method    String // e.g. "Level up", "TM", "Egg move"
   level     String? // e.g. "15", or null for TM
@@ -221,7 +221,7 @@ model Game {
 // Good
 model GameDescription {
   id          Int     @id @default(autoincrement())
-  pokemon     Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemon     Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
   pokemonId   Int
   game        String
   description String
@@ -232,7 +232,7 @@ model GameDescription {
 // Good
 model PokemonTranslation {
   id             Int     @id @default(autoincrement())
-  pokemon        Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemon        Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
   pokemonId      Int
   language       String
   translatedName String
