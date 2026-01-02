@@ -2,13 +2,14 @@ import React from "react"
 import { Pokemon } from "@/types/pokemon"
 import PokeCard from "../../components/PokeCard"
 import { HiArrowLongRight } from "react-icons/hi2"
+import { EvolutionTree } from "@/types/evolution"
 
 interface PokemonData {
-  pokemon: Pokemon
+  evolutionTree: EvolutionTree
   loading: boolean
 }
 
-const EvolutionChain = ({ pokemon, loading }: PokemonData) => {
+const EvolutionChain = ({ evolutionTree, loading }: PokemonData) => {
   return (
     !loading && (
       <div className="flex flex-col justify-center items-center mb-20">

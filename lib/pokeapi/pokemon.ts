@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { Pokemon } from "@/types/pokemon";
 import { getFullEvolutionChain } from "./evolution";
 import { fetchPokemonForms } from "./helpers/fetchPokemonForms";
+import { fetchSprites } from "./helpers/fetchSprites";
 
 export async function getPokemonBasic(name?: string, slug?: string): Promise<Pokemon> {
   let pokemon = null;
@@ -39,9 +40,7 @@ export async function getPokemonBasic(name?: string, slug?: string): Promise<Pok
 
   if (!pokemon) throw new Error(`Could not find Pokémon: ${name || slug}`);
 
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`)
-  if (!res.ok) throw new Error(`Could not find Pokémon: ${name || slug}`)
-  const pokeApiData = await res.json()
+  const sprites = await fetchSprites(pokemon.pokeapiId!)
 
   return {
     id: pokemon.id,
@@ -49,24 +48,7 @@ export async function getPokemonBasic(name?: string, slug?: string): Promise<Pok
     nationalNumber: pokemon.nationalNumber,
     name: pokemon.name,
     types: pokemon.types,
-    sprites: {
-      front_default: pokeApiData.sprites.front_default ?? "",
-      back_default: pokeApiData.sprites.back_default ?? "",
-      front_shiny: pokeApiData.sprites.front_shiny ?? "",
-      back_shiny: pokeApiData.sprites.back_shiny ?? "",
-      other: {
-        showdown: {
-          front_default: pokeApiData.sprites.other.showdown.front_default ?? "",
-          back_default: pokeApiData.sprites.other.showdown.back_default ?? "",
-          front_shiny: pokeApiData.sprites.other.showdown.front_shiny ?? "",
-          back_shiny: pokeApiData.sprites.other.showdown.back_shiny ?? "",
-        },
-        "official-artwork": {
-          front_default: pokeApiData.sprites.other["official-artwork"].front_default ?? "",
-          front_shiny: pokeApiData.sprites.other["official-artwork"].front_shiny ?? "",
-        },
-      },
-    }
+    sprites,
   } as Pokemon
 }
 
@@ -141,9 +123,7 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
 
   if (!pokemon) throw new Error(`Could not find Pokémon: ${slug}`);
 
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`)
-  if (!res.ok) throw new Error(`Could not find Pokémon: ${slug}`)
-  const pokeApiData = await res.json()
+  const sprites = await fetchSprites(pokemon.pokeapiId!)
 
   const stats = {
     hpBase: pokemon.hpBase, 
@@ -166,7 +146,9 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
     speedMax: pokemon.speedMax,
   }
 
-  // const evolutionChain = await getFullEvolutionChain(pokemon.id);
+  const evolutionChain = await getFullEvolutionChain(pokemon.id);
+  console.log("Chain captured successfully!");
+  console.log(evolutionChain);
   const pokemonForms = await fetchPokemonForms(pokemon.forms)
 
   return {
@@ -176,24 +158,7 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
     name: pokemon.name,
     base_experience: pokemon.baseExp,
     types: pokemon.types,
-    sprites: {
-      front_default: pokeApiData.sprites.front_default ?? "",
-      back_default: pokeApiData.sprites.back_default ?? "",
-      front_shiny: pokeApiData.sprites.front_shiny ?? "",
-      back_shiny: pokeApiData.sprites.back_shiny ?? "",
-      other: {
-        showdown: {
-          front_default: pokeApiData.sprites.other.showdown.front_default ?? "",
-          back_default: pokeApiData.sprites.other.showdown.back_default ?? "",
-          front_shiny: pokeApiData.sprites.other.showdown.front_shiny ?? "",
-          back_shiny: pokeApiData.sprites.other.showdown.back_shiny ?? "",
-        },
-        "official-artwork": {
-          front_default: pokeApiData.sprites.other["official-artwork"].front_default ?? "",
-          front_shiny: pokeApiData.sprites.other["official-artwork"].front_shiny ?? "",
-        },
-      },
-    },
+    sprites,
     stats: stats,
     height: pokemon.height,
     weight: pokemon.weight,
@@ -201,7 +166,7 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
     moves: pokemon.gameMoves,
     typeChart: pokemon.typeChart,
     forms: pokemonForms,
-    // evolution_chain: evolutionChain,
+    evolution_chain: evolutionChain,
     gameDescriptions: pokemon.descriptions
   } as Pokemon
 }
@@ -257,50 +222,29 @@ export async function getPokemonList(
   // Fetch sprites for all Pokemon in parallel
   const pokemonListWithSprites = await Promise.all(
     pokemonList.map(async (pokemon) => {
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`);
-      if (!res.ok) {
+      const sprites = await fetchSprites(pokemon.pokeapiId!);
+      
+      if (!sprites) {
         console.error(`Could not fetch sprites for ${pokemon.name}`);
-        return {
-          ...pokemon,
-          sprites: {
-            front_default: "",
-            back_default: "",
-            front_shiny: "",
-            back_shiny: "",
-            other: {
-              showdown: {
-                front_default: "",
-                back_default: "",
-                front_shiny: "",
-                back_shiny: "",
-              },
-              "official-artwork": {
-                front_default: "",
-                front_shiny: "",
-              },
-            },
-          }
-        } as Pokemon;
       }
-      const pokeApiData = await res.json();
       
       return {
         ...pokemon,
-        sprites: {
-          front_default: pokeApiData.sprites.front_default ?? "",
-          back_default: pokeApiData.sprites.back_default ?? "",
-          front_shiny: pokeApiData.sprites.front_shiny ?? "",
-          back_shiny: pokeApiData.sprites.back_shiny ?? "",
+        sprites: sprites || {
+          front_default: "",
+          back_default: "",
+          front_shiny: "",
+          back_shiny: "",
           other: {
             showdown: {
-              front_default: pokeApiData.sprites.other.showdown.front_default ?? "",
-              back_default: pokeApiData.sprites.other.showdown.back_default ?? "",
-              front_shiny: pokeApiData.sprites.other.showdown.front_shiny ?? "",
-              back_shiny: pokeApiData.sprites.other.showdown.back_shiny ?? "",
+              front_default: "",
+              back_default: "",
+              front_shiny: "",
+              back_shiny: "",
             },
             "official-artwork": {
-              front_default: pokeApiData.sprites.other["official-artwork"].front_default ?? "",
-              front_shiny: pokeApiData.sprites.other["official-artwork"].front_shiny ?? "",
+              front_default: "",
+              front_shiny: "",
             },
           },
         }
