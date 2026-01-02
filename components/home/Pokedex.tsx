@@ -19,7 +19,7 @@ const Pokedex = () => {
 
   useEffect(() => {
     const fetchPokemon = async () => {
-      const res = await fetch("/api/pokemon/Dragapult")
+      const res = await fetch("/api/pokemon/dragapult")
 
       if (!res.ok) {
         console.error("Couldn't fetch showcase pokemon!")
@@ -87,6 +87,7 @@ const Pokedex = () => {
           ) : (
             <PokeCard
               id={showcasePokemon!.id}
+              slug={showcasePokemon!.slug}
               nationalNumber={showcasePokemon!.nationalNumber}
               name={showcasePokemon!.name}
               sprite={

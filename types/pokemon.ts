@@ -3,11 +3,11 @@ import { PokemonType } from "./type";
 import { PokemonAbility } from "./ability";
 import { PokemonStats } from "./stats";
 import { TypeEffectiveness } from "./type";
-import { PokemonForm } from "./form";
 import { EvolutionTree } from "./evolution";
 
 export interface Pokemon {
   id: number,
+  slug: string,
   nationalNumber: string,
   name: string,
   types: PokemonType[],

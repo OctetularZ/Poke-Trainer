@@ -165,6 +165,7 @@ const PokeGrid = () => {
         {pokemon?.map((poke) => (
           <PokeCard
             key={poke.id}
+            slug={poke.slug}
             nationalNumber={poke.nationalNumber}
             id={poke.id}
             name={poke.name}

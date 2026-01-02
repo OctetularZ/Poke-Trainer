@@ -169,6 +169,7 @@ const PokemonDisplay = ({
             {pokemonInfo.forms?.map((pokemon) => (
               <PokeCard
                 key={pokemon.id}
+                slug={pokemon.slug}
                 nationalNumber={pokemon.nationalNumber}
                 id={pokemon.id}
                 name={pokemon.name}

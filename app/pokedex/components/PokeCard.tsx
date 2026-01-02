@@ -7,20 +7,28 @@ import { getPokemonSlug } from "@/lib/pokeapi/helpers/getPokemonSlug"
 
 interface Pokemon {
   id: number
+  slug: string
   nationalNumber: string
   name: string
   sprite: string
   types: PokemonType[]
 }
 
-const PokeCard = ({ id, nationalNumber, name, sprite, types }: Pokemon) => {
+const PokeCard = ({
+  id,
+  slug,
+  nationalNumber,
+  name,
+  sprite,
+  types,
+}: Pokemon) => {
   const baseName = name.split("(")[0].trim()
   const formName = name.includes("(")
     ? name.split("(")[1].replace(")", "").trim()
     : ""
 
   return (
-    <Link href={`/pokedex/${getPokemonSlug(name)}`}>
+    <Link href={`/pokedex/${slug}`}>
       <div className="flex flex-col justify-center items-center w-55 h-full bg-charmander-dull-200 rounded-2xl pt-10 pb-8 px-5">
         <div className="relative mb-5 w-[100px] h-[100px] items-center">
           <Image

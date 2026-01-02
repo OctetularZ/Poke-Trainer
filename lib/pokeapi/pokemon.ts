@@ -5,7 +5,21 @@ import { fetchPokemonForms } from "./helpers/fetchPokemonForms";
 
 export async function getPokemonBasic(name?: string, slug?: string): Promise<Pokemon> {
   let pokemon = null;
-  if (name) {
+  if (slug) {
+    pokemon = await prisma.pokemon.findUnique({
+      where: {slug: slug},
+      include: {
+
+        // Pokemon's Types
+        types: {
+          select: {
+            name: true
+          }
+        },
+      }
+    })
+  }
+  else if (name) {
     pokemon = await prisma.pokemon.findUnique({
       where: {name: name},
       include: {
@@ -19,31 +33,19 @@ export async function getPokemonBasic(name?: string, slug?: string): Promise<Pok
       }
     })
   }
-  else if (slug) {
-    pokemon = await prisma.pokemon.findUnique({
-      where: {slug: slug},
-      include: {
-
-        // Pokemon's Types
-        types: {
-          select: {
-            name: true
-          }
-        },
-      }
-    })
-  } else {
-    throw new Error("Either Name or Slug must be provided.")
+  else {
+    throw new Error("Either name or slug must be provided!")
   }
 
-  if (!pokemon) throw new Error(`Could not find Pokémon: ${name ?? slug}`);
+  if (!pokemon) throw new Error(`Could not find Pokémon: ${name || slug}`);
 
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`)
-  if (!res.ok) throw new Error(`Could not find Pokémon: ${name ?? slug}`)
+  if (!res.ok) throw new Error(`Could not find Pokémon: ${name || slug}`)
   const pokeApiData = await res.json()
 
   return {
     id: pokemon.id,
+    slug: pokemon.slug,
     nationalNumber: pokemon.nationalNumber,
     name: pokemon.name,
     types: pokemon.types,
@@ -68,153 +70,79 @@ export async function getPokemonBasic(name?: string, slug?: string): Promise<Pok
   } as Pokemon
 }
 
-export async function getPokemonInfo(name?: string, slug?: string): Promise<Pokemon> {
-  let pokemon = null;
-  if (name) {
-    pokemon = await prisma.pokemon.findUnique({
-      where: {name: name},
-      include: {
+export async function getPokemonInfo(slug: string): Promise<Pokemon> {
+  const pokemon = await prisma.pokemon.findUnique({
+    where: {slug: slug},
+    include: {
 
-        // Pokemon's Types
-        types: {
-          select: {
-            name: true
-          }
-        },
+      // Pokemon's Types
+      types: {
+        select: {
+          name: true
+        }
+      },
 
-        // Pokemon's Abilities
-        abilities: {
-          select: {
-            name: true
-          }
-        },
+      // Pokemon's Abilities
+      abilities: {
+        select: {
+          name: true
+        }
+      },
 
-        // Pokemon's Moves
-        gameMoves: {
-          select: {
-            method: true,
-            level: true,
-            tmNumber: true,
-            move: {
-              select: {
-                name: true,
-                type: true,
-                category: true,
-                power: true,
-                accuracy: true
-              }
-            },
-            game: {
-              select: {
-                name: true
-              }
+      // Pokemon's Moves
+      gameMoves: {
+        select: {
+          method: true,
+          level: true,
+          tmNumber: true,
+          move: {
+            select: {
+              name: true,
+              type: true,
+              category: true,
+              power: true,
+              accuracy: true
+            }
+          },
+          game: {
+            select: {
+              name: true
             }
           }
-        },
+        }
+      },
 
-        // Pokemon's Type Chart
-        typeChart: {
-          select: {
-            attackType: true,
-            multiplier: true
-          }
-        },
+      // Pokemon's Type Chart
+      typeChart: {
+        select: {
+          attackType: true,
+          multiplier: true
+        }
+      },
 
-        // Pokemon's Forms
-        forms: {
-          select: {
-            id: true,
-            name: true
-          }
-        },
+      // Pokemon's Forms
+      forms: {
+        select: {
+          id: true,
+          name: true
+        }
+      },
 
-        // Game Descriptions
-        descriptions: {
-          select: {
-            id: true,
-            game: true,
-            description: true
-          }
+      // Game Descriptions
+      descriptions: {
+        select: {
+          id: true,
+          game: true,
+          description: true
         }
       }
-    })
-  }
-  else if (slug) {
-    pokemon = await prisma.pokemon.findUnique({
-      where: {slug: slug},
-      include: {
+    }
+  })
 
-        // Pokemon's Types
-        types: {
-          select: {
-            name: true
-          }
-        },
-
-        // Pokemon's Abilities
-        abilities: {
-          select: {
-            name: true
-          }
-        },
-
-        // Pokemon's Moves
-        gameMoves: {
-          select: {
-            method: true,
-            level: true,
-            tmNumber: true,
-            move: {
-              select: {
-                name: true,
-                type: true,
-                category: true,
-                power: true,
-                accuracy: true
-              }
-            },
-            game: {
-              select: {
-                name: true
-              }
-            }
-          }
-        },
-
-        // Pokemon's Type Chart
-        typeChart: {
-          select: {
-            attackType: true,
-            multiplier: true
-          }
-        },
-
-        // Pokemon's Forms
-        forms: {
-          select: {
-            id: true,
-            name: true
-          }
-        },
-
-        // Game Descriptions
-        descriptions: {
-          select: {
-            id: true,
-            game: true,
-            description: true
-          }
-        }
-      }
-    })
-  } else {
-    throw new Error("Either Name or Slug must be provided.")
-  }
-
-  if (!pokemon) throw new Error(`Could not find Pokémon: ${name ?? slug}`);
+  if (!pokemon) throw new Error(`Could not find Pokémon: ${slug}`);
 
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.pokeapiId}/`)
-  if (!res.ok) throw new Error(`Could not find Pokémon: ${name ?? slug}`)
+  if (!res.ok) throw new Error(`Could not find Pokémon: ${slug}`)
   const pokeApiData = await res.json()
 
   const stats = {
@@ -240,10 +168,10 @@ export async function getPokemonInfo(name?: string, slug?: string): Promise<Poke
 
   // const evolutionChain = await getFullEvolutionChain(pokemon.id);
   const pokemonForms = await fetchPokemonForms(pokemon.forms)
-  console.log(pokemon.typeChart);
 
   return {
     id: pokemon.id,
+    slug: pokemon.slug,
     nationalNumber: pokemon.nationalNumber,
     name: pokemon.name,
     base_experience: pokemon.baseExp,
@@ -318,6 +246,7 @@ export async function getPokemonList(
     skip: offset,
     select: {
       id: true,
+      slug: true,
       nationalNumber: true,
       name: true,
       pokeapiId: true,
