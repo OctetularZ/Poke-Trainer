@@ -204,22 +204,42 @@ export async function scrapePokemonDetails(baseName, fName, url) {
         
         // Check if it's a split evolution
         if (nextElement.hasClass("infocard-evo-split")) {
-          // Handle multiple branches - each branch is a nested .infocard-list-evo
+          // Handle multiple branches - each branch being a nested .infocard-list-evo
           nextElement.find(".infocard-list-evo").each((i, branch) => {
-            // Process all infocards within this branch to capture continuing chains
-            $(branch).children("div.infocard").each((idx, branchCard) => {
-              let branchFromPokemon = $(branchCard).find(".ent-name").text().trim();
-              
-              // Check for form name
-              let branchFormName = $(branchCard).find(".ent-name").next().next("small");
-              if (branchFormName.length && !($(branchFormName).find("a").length > 0)) {
-                branchFromPokemon = `${branchFromPokemon} (${branchFormName.text().trim()})`;
+            // For each branch, find the arrow and the target Pokemon
+            const arrow = $(branch).children(".infocard-arrow").first();
+            if (arrow.length) {
+              const method = arrow.find("small").text().trim().replace(/[()]/g, '');
+              const toCard = arrow.next(".infocard");
+              if (toCard.length) {
+                let toPokemon = toCard.find(".ent-name").text().trim();
+                
+                // Check for form name on 'to' Pokemon
+                let toFormName = toCard.find(".ent-name").next().next("small");
+                if (toFormName.length && !($(toFormName).find("a").length > 0)) {
+                  toPokemon = `${toPokemon} (${toFormName.text().trim()})`;
+                }
+                
+                if (toPokemon) {
+                  evolutionChain.push({ from: fromPokemon, to: toPokemon, method });
+                }
               }
-              
+            }
+            
+            // Also check for continuing chains within the branch
+            $(branch).children("div.infocard").each((idx, branchCard) => {
               let branchNext = $(branchCard).next();
               
-              // Check for arrow after this infocard
+              // Check for arrow after this infocard (for continuing chains)
               if (branchNext.hasClass("infocard-arrow")) {
+                let branchFromPokemon = $(branchCard).find(".ent-name").text().trim();
+                
+                // Check for form name
+                let branchFormName = $(branchCard).find(".ent-name").next().next("small");
+                if (branchFormName.length && !($(branchFormName).find("a").length > 0)) {
+                  branchFromPokemon = `${branchFromPokemon} (${branchFormName.text().trim()})`;
+                }
+                
                 let method = branchNext.find("small").text().trim().replace(/[()]/g, '');
                 let toCard = branchNext.next(".infocard");
                 let toPokemon = toCard.find(".ent-name").text().trim();
@@ -383,11 +403,11 @@ export async function getPokemonDetails() {
   console.log(successful.slice(0, 10)); // show first 10 examples
 
   // Evolution Chain check
-  // console.log(JSON.stringify(successful[2]["Evolution Chain"], null, 2));
+  // console.log(JSON.stringify(successful[508]["Evolution Chain"], null, 2));
 
   // Moves check
   // console.log(JSON.stringify(successful[36]["Moves"], null, 2));
-  // console.log(successful[36]["Name"]);
+  // console.log(successful[508]["Name"]);
 
   return successful
 };
