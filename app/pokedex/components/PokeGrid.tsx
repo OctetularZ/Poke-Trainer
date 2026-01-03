@@ -7,8 +7,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { typeColours } from "./typeColours"
 import TypeFilter from "./TypeFilter"
 import AbilityFilter from "./AbilityFilter"
-import SearchFilter from "./SearchFilter"
-import allPokemonNames from "@/data/pokemon-names.json"
+import SearchFilter, { namesAndSlugs } from "./SearchFilter"
 import { FaChevronCircleDown } from "react-icons/fa"
 import { PokemonAbility } from "@/types/ability"
 
@@ -24,8 +23,7 @@ const PokeGrid = () => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [selectedAbility, setSelectedAbility] = useState<string>("")
   const [abilities, setAbilities] = useState<PokemonAbility[]>([])
-  const [filteredPokemonNames, setFilteredPokemonNames] =
-    useState<string[]>(allPokemonNames)
+  const [pokemonNames, setPokemonNames] = useState<namesAndSlugs[]>([])
 
   const [showFilters, setShowFilters] = useState(false)
 
@@ -63,6 +61,22 @@ const PokeGrid = () => {
     }
   }
 
+  const fetchNames = async () => {
+    try {
+      const res = await fetch("/api/names")
+      if (!res.ok) {
+        setError("Failed to fetch pokemon names! Please refresh")
+        return
+      }
+      const names = await res.json()
+      return names
+    } catch (error) {
+      console.error("Error fetching names:", error)
+      setError("Failed to fetch pokemon names! Please refresh")
+      return
+    }
+  }
+
   const fetchAbilities = async () => {
     try {
       const res = await fetch("/api/abilities")
@@ -78,6 +92,16 @@ const PokeGrid = () => {
       return
     }
   }
+
+  useEffect(() => {
+    const loadNames = async () => {
+      const pokemonNames = await fetchNames()
+      if (pokemonNames) {
+        setPokemonNames(pokemonNames)
+      }
+    }
+    loadNames()
+  }, [])
 
   useEffect(() => {
     fetchPokemon(true)
@@ -102,7 +126,7 @@ const PokeGrid = () => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <SearchFilter allPokemonNames={filteredPokemonNames} />
+      <SearchFilter allPokemon={pokemonNames} />
 
       <button
         className="flex flex-row justify-center items-center gap-2 py-1 w-10/12 text-white cursor-pointer rounded-md bg-charmander-dull-200"

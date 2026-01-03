@@ -6,16 +6,42 @@ import { Pokemon } from "@/types/pokemon"
 import PokeCard from "@/app/pokedex/components/PokeCard"
 import PokeCardSkeleton from "../skeletons/PokeCardSkeleton"
 import { FaArrowRight } from "react-icons/fa6"
-import allPokemonNames from "@/data/pokemon-names.json"
-import SearchFilter from "@/app/pokedex/components/SearchFilter"
+import SearchFilter, {
+  namesAndSlugs,
+} from "@/app/pokedex/components/SearchFilter"
 
 const Pokedex = () => {
   const [showcasePokemon, setShowcasePokemon] = useState<Pokemon>()
   const [loading, setLoading] = useState(true)
   const [hovered, setHovered] = useState(false)
   const [error, setError] = useState("")
-  const [filteredPokemonNames, setFilteredPokemonNames] =
-    useState<string[]>(allPokemonNames)
+  const [pokemonNames, setPokemonNames] = useState<namesAndSlugs[]>([])
+
+  const fetchNames = async () => {
+    try {
+      const res = await fetch("/api/names")
+      if (!res.ok) {
+        setError("Failed to fetch pokemon names! Please refresh")
+        return
+      }
+      const names = await res.json()
+      return names
+    } catch (error) {
+      console.error("Error fetching names:", error)
+      setError("Failed to fetch pokemon names! Please refresh")
+      return
+    }
+  }
+
+  useEffect(() => {
+    const loadNames = async () => {
+      const pokemonNames = await fetchNames()
+      if (pokemonNames) {
+        setPokemonNames(pokemonNames)
+      }
+    }
+    loadNames()
+  }, [])
 
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -81,7 +107,7 @@ const Pokedex = () => {
           </div>
         </div>
         <div className="flex flex-col justify-center items-center">
-          <SearchFilter allPokemonNames={filteredPokemonNames} />
+          <SearchFilter allPokemon={pokemonNames} />
           {loading ? (
             <PokeCardSkeleton />
           ) : (
