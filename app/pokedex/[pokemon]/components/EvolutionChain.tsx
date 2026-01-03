@@ -1,5 +1,4 @@
 import React from "react"
-import { Pokemon } from "@/types/pokemon"
 import PokeCard from "../../components/PokeCard"
 import { HiArrowLongRight } from "react-icons/hi2"
 import { EvolutionTree } from "@/types/evolution"
@@ -9,46 +8,61 @@ interface PokemonData {
   loading: boolean
 }
 
-// Flatten the evolution tree into an array
-const flattenEvolutionTree = (tree: EvolutionTree): EvolutionTree[] => {
-  const result: EvolutionTree[] = [tree]
+interface EvolutionNodeProps {
+  node: EvolutionTree
+}
 
-  if (tree.evolutions && tree.evolutions.length > 0) {
-    tree.evolutions.forEach((evo) => {
-      result.push(...flattenEvolutionTree(evo.pokemon))
-    })
-  }
+// Recursive component to render evolution tree
+const EvolutionNode = ({ node }: EvolutionNodeProps) => {
+  const hasEvolutions = node.evolutions && node.evolutions.length > 0
 
-  return result
+  return (
+    <div className="flex flex-row items-center gap-3">
+      {/* Current Pokemon */}
+      <PokeCard
+        id={node.id}
+        slug={node.slug || ""}
+        nationalNumber={node.nationalNumber || ""}
+        name={node.name}
+        sprite={
+          node.sprites?.other?.showdown?.front_default ||
+          node.sprites?.front_default ||
+          "/placeholder.png"
+        }
+        types={node.types || []}
+      />
+
+      {/* Evolutions */}
+      {hasEvolutions && (
+        <div className="flex flex-row items-center gap-3">
+          <div className="flex flex-col gap-8 items-start">
+            {node.evolutions.map((evo, idx) => (
+              <div key={idx} className="flex flex-row items-center gap-1">
+                <div className="flex flex-row items-center w-30">
+                  <HiArrowLongRight color="white" size={30} />
+                  <p className="text-white text-xs text-center w-20">
+                    {evo.method}
+                  </p>
+                </div>
+                <EvolutionNode node={evo.pokemon} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
 
 const EvolutionChain = ({ evolutionTree, loading }: PokemonData) => {
-  const flatEvolutions = evolutionTree
-    ? flattenEvolutionTree(evolutionTree)
-    : []
-
   return (
     !loading && (
       <div className="flex flex-col justify-center items-center mb-20">
-        <h2 className="text-white text-center text-2xl ">Evolution Chain :</h2>
-        <HiArrowLongRight color="white" size={40} className="mb-5" />
-        <div className="flex flex-row flex-wrap justify-center items-center w-250">
-          {flatEvolutions.map((pokemon) => (
-            <div key={pokemon.id} className="mx-5">
-              <PokeCard
-                id={pokemon.id}
-                slug={pokemon.slug || ""}
-                nationalNumber={pokemon.nationalNumber || ""}
-                name={pokemon.name}
-                sprite={
-                  pokemon.sprites?.other?.showdown?.front_default ||
-                  pokemon.sprites?.front_default ||
-                  "/placeholder.png"
-                }
-                types={pokemon.types!}
-              />
-            </div>
-          ))}
+        <h2 className="text-white text-center text-2xl mb-5">
+          Evolution Chain
+        </h2>
+        <div className="flex justify-center items-start w-full overflow-x-auto px-5">
+          <EvolutionNode node={evolutionTree} />
         </div>
       </div>
     )

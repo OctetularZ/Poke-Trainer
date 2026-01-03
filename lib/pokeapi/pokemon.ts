@@ -147,8 +147,8 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
   }
 
   const evolutionChain = await getFullEvolutionChain(pokemon.id);
-  console.log("Chain captured successfully!");
-  console.log(evolutionChain);
+  // console.log("Chain captured successfully!");
+  // console.log(evolutionChain);
   const pokemonForms = await fetchPokemonForms(pokemon.forms)
 
   return {
