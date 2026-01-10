@@ -146,7 +146,7 @@ const PokemonDisplay = ({
           </div>
         )}
       </div>
-      {!loading && (
+      {!loading && pokemonInfo.forms && (
         <div className="relative ml-5 max-h-full">
           <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex flex-row gap-2 justify-center items-center">
             <h2 className="text-white text-xl text-center">Forms</h2>

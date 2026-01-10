@@ -2,6 +2,7 @@ import React from "react"
 import PokeCard from "../../components/PokeCard"
 import { HiArrowLongRight } from "react-icons/hi2"
 import { EvolutionTree, Evolution } from "@/types/evolution"
+import { capitalizeWords } from "@/lib/pokeapi/helpers/other"
 
 interface PokemonData {
   evolutionTree: EvolutionTree
@@ -99,11 +100,11 @@ const EvolutionNode = ({ node }: EvolutionNodeProps) => {
             <div className="flex flex-col gap-3">
               {group.map((evo, idx) => (
                 <div key={idx} className="flex flex-row items-center gap-1">
-                  <div className="flex flex-row items-center w-30">
-                    <HiArrowLongRight color="white" size={30} />
-                    <p className="text-white text-xs text-center w-20">
-                      {evo.method}
-                    </p>
+                  <div className="flex flex-row items-center w-50 mx-5">
+                    <HiArrowLongRight className="h-8 w-full" color="white" />
+                    <h2 className="text-white text-sm text-center">
+                      {capitalizeWords(evo.method)}
+                    </h2>
                   </div>
                   <EvolutionNode node={evo.pokemon} />
                 </div>
@@ -120,7 +121,7 @@ const EvolutionChain = ({ evolutionTree, loading }: PokemonData) => {
   return (
     !loading && (
       <div className="flex flex-col justify-center items-center mb-20">
-        <h2 className="text-white text-center text-2xl mb-5">
+        <h2 className="text-white text-center text-2xl mb-5 border-b-2">
           Evolution Chain
         </h2>
         <div className="flex justify-center items-start w-full overflow-x-auto px-5">
