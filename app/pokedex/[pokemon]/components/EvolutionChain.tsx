@@ -78,7 +78,7 @@ const EvolutionNode = ({ node }: EvolutionNodeProps) => {
 
   return (
     <div className="flex flex-row items-center gap-3">
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-10">
         {/* Render each group separately with its own parent Pokemon */}
         {evolutionGroups.map((group, groupIdx) => (
           <div key={groupIdx} className="flex flex-row items-center gap-3">
@@ -97,12 +97,12 @@ const EvolutionNode = ({ node }: EvolutionNodeProps) => {
             />
 
             {/* Show evolutions in this group */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-5">
               {group.map((evo, idx) => (
                 <div key={idx} className="flex flex-row items-center gap-1">
-                  <div className="flex flex-row items-center w-50 mx-5">
-                    <HiArrowLongRight className="h-8 w-full" color="white" />
-                    <h2 className="text-white text-sm text-center">
+                  <div className="flex flex-row items-center w-max gap-3 mx-5">
+                    <HiArrowLongRight className="h-8 w-8" color="white" />
+                    <h2 className="text-white text-base text-center max-w-50">
                       {capitalizeWords(evo.method)}
                     </h2>
                   </div>
@@ -121,7 +121,7 @@ const EvolutionChain = ({ evolutionTree, loading }: PokemonData) => {
   return (
     !loading && (
       <div className="flex flex-col justify-center items-center mb-20">
-        <h2 className="text-white text-center text-2xl mb-5 border-b-2">
+        <h2 className="text-white text-center text-2xl mb-10 border-b-2">
           Evolution Chain
         </h2>
         <div className="flex justify-center items-start w-full overflow-x-auto px-5">
