@@ -1,4 +1,4 @@
-import { Move } from "@/types/moves"
+import { GameMove } from "@/types/moves"
 import {
   Listbox,
   ListboxButton,
@@ -11,7 +11,7 @@ import { typeColours, typeColoursHex } from "../../components/typeColours"
 
 interface PokemonMoves {
   loading: boolean
-  pokemonMoves: Move[]
+  pokemonMoves: GameMove[]
 }
 
 const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {

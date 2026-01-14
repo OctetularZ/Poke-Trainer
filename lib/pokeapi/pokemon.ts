@@ -117,7 +117,7 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
           game: true,
           description: true
         }
-      }
+      },
     }
   })
 
