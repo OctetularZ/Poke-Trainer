@@ -17,7 +17,14 @@ interface PokemonMoves {
 const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
   const [selectedMoveFilter, setSelectedMoveFilter] = useState("level-up")
 
-  const moveLearnMethods = ["level-up", "machine", "tutor", "egg"]
+  const moveLearnMethods = ["level-up", "machine", "evolution", "egg"]
+
+  const learnMethodsMap = {
+    "Moves learnt by level up": "level-up",
+    "Moves learnt by TM": "machine",
+    "Egg moves": "egg",
+    "Moves learnt on evolution": "evolution",
+  }
 
   return (
     <div className="flex flex-col gap-10 justify-center items-center w-200">
@@ -80,47 +87,42 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
           <tbody>
             {pokemonMoves.map(
               (move) =>
-                move.move_learn_method.at(-1)?.move_learn_method.name ===
+                move.move &&
+                learnMethodsMap[move.method as keyof typeof learnMethodsMap] ===
                   selectedMoveFilter && (
-                  <tr key={move.id} className="border-b-white border-b-1">
+                  <tr
+                    key={move.move.name}
+                    className="border-b-white border-b-1"
+                  >
                     {selectedMoveFilter === "level-up" && (
-                      <td className="py-5">
-                        {move.move_learn_method.at(-1)?.level_learned_at}
-                      </td>
+                      <td className="py-5">{move.level}</td>
                     )}
                     {selectedMoveFilter === "machine" && (
-                      <td className="py-5">
-                        {move.machines.at(-1)?.item.name.toUpperCase()}
-                      </td>
+                      <td className="py-5">{move.tmNumber}</td>
                     )}
-                    <td className="py-5">
-                      {move.name.charAt(0).toUpperCase() +
-                        move.name.slice(1).replace("-", " ")}
-                    </td>
+                    <td className="py-5">{move.move.name}</td>
                     <td className="py-5">
                       <h4
-                        key={move.type.name}
+                        key={move.move.type}
                         className={`text-white text-2xl ${
                           typeColours[
-                            move.type.name as keyof typeof typeColours
+                            move.move.type as keyof typeof typeColours
                           ]
                         } rounded-lg px-3 shadow-md`}
                         style={{
                           filter: `drop-shadow(0 0 6px ${
                             typeColoursHex[
-                              move.type.name as keyof typeof typeColoursHex
+                              move.move.type as keyof typeof typeColoursHex
                             ]
                           })`,
                         }}
                       >
-                        {`${move.type.name
-                          .charAt(0)
-                          .toUpperCase()}${move.type.name.slice(1)}`}
+                        {move.move.type}
                       </h4>
                     </td>
-                    <td className="py-5">{move.damage_class.name}</td>
-                    <td className="py-5">{move.power || "-"}</td>
-                    <td className="py-5">{move.accuracy || "-"}</td>
+                    <td className="py-5">{move.move.category}</td>
+                    <td className="py-5">{move.move.power || "-"}</td>
+                    <td className="py-5">{move.move.accuracy || "-"}</td>
                   </tr>
                 )
             )}

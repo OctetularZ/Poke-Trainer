@@ -66,7 +66,7 @@ const Main = ({ pokemon }: Props) => {
         loading={loading}
         evolutionTree={pokemonInfo?.evolution_chain!}
       />
-      {/*<Moves loading={loading} pokemonMoves={pokemonInfo?.moves!} /> */}
+      <Moves loading={loading} pokemonMoves={pokemonInfo?.moves!} />
     </div>
   )
 }
