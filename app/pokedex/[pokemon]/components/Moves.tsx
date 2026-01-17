@@ -45,11 +45,14 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
 
   return (
     !loading && (
-      <div className="flex flex-col gap-10 justify-center items-center w-200">
-        <h2 className="text-white text-center text-2xl border-b-2">Moves</h2>
+      <div className="flex flex-col justify-center items-center w-200">
+        <h2 className="text-white text-center text-2xl border-b-2 mb-10">
+          Moves
+        </h2>
         {/* Game Filter Dropdown */}
+        <h2 className="text-white text-xl font-semibold mb-2">Game:</h2>
         <Listbox value={selectedGame} onChange={setSelectedGame}>
-          <div className="relative w-full text-white text-lg">
+          <div className="relative w-full text-white text-lg mb-5">
             <ListboxButton className="flex flex-row justify-between items-center w-full px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer focus:outline-none">
               {selectedGame}
               <FaChevronCircleDown />
@@ -74,8 +77,9 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
         </Listbox>
 
         {/* Move Method Filter Dropdown */}
+        <h2 className="text-white text-xl font-semibold mb-2">Method:</h2>
         <Listbox value={selectedMoveFilter} onChange={setSelectedMoveFilter}>
-          <div className="relative w-full text-white text-lg">
+          <div className="relative w-full text-white text-lg mb-10">
             <ListboxButton className="flex flex-row justify-between items-center w-full px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer focus:outline-none">
               {selectedMoveFilter.charAt(0).toUpperCase() +
                 selectedMoveFilter.slice(1).replace("-", " ")}
@@ -156,13 +160,13 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
                         key={move.move.type}
                         className={`text-white text-2xl ${
                           typeColours[
-                            move.move.type as keyof typeof typeColours
+                            move.move.type.toLowerCase() as keyof typeof typeColours
                           ]
-                        } rounded-lg px-3 shadow-md`}
+                        } rounded-lg shadow-md`}
                         style={{
                           filter: `drop-shadow(0 0 6px ${
                             typeColoursHex[
-                              move.move.type as keyof typeof typeColoursHex
+                              move.move.type.toLowerCase() as keyof typeof typeColoursHex
                             ]
                           })`,
                         }}

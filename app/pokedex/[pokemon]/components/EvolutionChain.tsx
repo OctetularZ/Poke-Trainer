@@ -102,7 +102,7 @@ const EvolutionNode = ({ node }: EvolutionNodeProps) => {
                 <div key={idx} className="flex flex-row items-center gap-1">
                   <div className="flex flex-row items-center w-max gap-3 mx-5">
                     <HiArrowLongRight className="h-8 w-8" color="white" />
-                    <h2 className="text-white text-base text-center max-w-50">
+                    <h2 className="text-white text-lg text-center max-w-50">
                       {capitalizeWords(evo.method)}
                     </h2>
                   </div>
