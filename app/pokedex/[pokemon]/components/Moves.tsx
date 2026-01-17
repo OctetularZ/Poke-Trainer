@@ -5,7 +5,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react"
-import React, { useState } from "react"
+import React, { useState, useMemo, useEffect } from "react"
 import { FaChevronCircleDown } from "react-icons/fa"
 import { typeColours, typeColoursHex } from "../../components/typeColours"
 
@@ -15,6 +15,7 @@ interface PokemonMoves {
 }
 
 const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
+  const [selectedGame, setSelectedGame] = useState("")
   const [selectedMoveFilter, setSelectedMoveFilter] = useState("level-up")
 
   const moveLearnMethods = ["level-up", "machine", "evolution", "egg"]
@@ -26,34 +27,80 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
     "Moves learnt on evolution": "evolution",
   }
 
-  return (
-    <div className="flex flex-col gap-10 justify-center items-center w-200">
-      <Listbox value={selectedMoveFilter} onChange={setSelectedMoveFilter}>
-        <div className="relative w-full text-white text-lg">
-          <ListboxButton className="flex flex-row justify-between items-center w-full px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer focus:outline-none">
-            {selectedMoveFilter.charAt(0).toUpperCase() +
-              selectedMoveFilter.slice(1).replace("-", " ")}
-            <FaChevronCircleDown />
-          </ListboxButton>
+  // Extract unique games from pokemonMoves
+  const availableGames = useMemo(() => {
+    if (!pokemonMoves || pokemonMoves.length === 0) return []
+    const games = pokemonMoves
+      .map((move) => move.game?.name)
+      .filter((game): game is string => game !== undefined && game !== null)
+    return Array.from(new Set(games))
+  }, [pokemonMoves])
 
-          <ListboxOptions className="absolute z-10 mt-1 w-full bg-charmander-dull-200 border border-gray-300 rounded shadow-lg max-h-60 overflow-auto focus:outline-none">
-            {moveLearnMethods.map((move) => (
-              <ListboxOption
-                key={move}
-                value={move}
-                className={({ active, selected }) =>
-                  `cursor-pointer select-none font-pixel px-4 py-2 ${
-                    active ? "bg-charmander-blue-400" : ""
-                  } ${selected ? "font-bold bg-charmander-blue-500" : ""}`
-                }
-              >
-                {move.charAt(0).toUpperCase() + move.slice(1).replace("-", " ")}
-              </ListboxOption>
-            ))}
-          </ListboxOptions>
-        </div>
-      </Listbox>
-      {!loading && (
+  // Set the first game as default
+  useEffect(() => {
+    if (availableGames.length > 0 && !selectedGame) {
+      setSelectedGame(availableGames[0])
+    }
+  }, [availableGames, selectedGame])
+
+  return (
+    !loading && (
+      <div className="flex flex-col gap-10 justify-center items-center w-200">
+        <h2 className="text-white text-center text-2xl border-b-2">Moves</h2>
+        {/* Game Filter Dropdown */}
+        <Listbox value={selectedGame} onChange={setSelectedGame}>
+          <div className="relative w-full text-white text-lg">
+            <ListboxButton className="flex flex-row justify-between items-center w-full px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer focus:outline-none">
+              {selectedGame}
+              <FaChevronCircleDown />
+            </ListboxButton>
+
+            <ListboxOptions className="absolute z-10 mt-1 w-full bg-charmander-dull-200 border border-gray-300 rounded shadow-lg max-h-60 overflow-auto focus:outline-none">
+              {availableGames.map((game) => (
+                <ListboxOption
+                  key={game}
+                  value={game}
+                  className={({ active, selected }) =>
+                    `cursor-pointer select-none font-pixel px-4 py-2 ${
+                      active ? "bg-charmander-blue-400" : ""
+                    } ${selected ? "font-bold bg-charmander-blue-500" : ""}`
+                  }
+                >
+                  {game}
+                </ListboxOption>
+              ))}
+            </ListboxOptions>
+          </div>
+        </Listbox>
+
+        {/* Move Method Filter Dropdown */}
+        <Listbox value={selectedMoveFilter} onChange={setSelectedMoveFilter}>
+          <div className="relative w-full text-white text-lg">
+            <ListboxButton className="flex flex-row justify-between items-center w-full px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer focus:outline-none">
+              {selectedMoveFilter.charAt(0).toUpperCase() +
+                selectedMoveFilter.slice(1).replace("-", " ")}
+              <FaChevronCircleDown />
+            </ListboxButton>
+
+            <ListboxOptions className="absolute z-10 mt-1 w-full bg-charmander-dull-200 border border-gray-300 rounded shadow-lg max-h-60 overflow-auto focus:outline-none">
+              {moveLearnMethods.map((move) => (
+                <ListboxOption
+                  key={move}
+                  value={move}
+                  className={({ active, selected }) =>
+                    `cursor-pointer select-none font-pixel px-4 py-2 ${
+                      active ? "bg-charmander-blue-400" : ""
+                    } ${selected ? "font-bold bg-charmander-blue-500" : ""}`
+                  }
+                >
+                  {move.charAt(0).toUpperCase() +
+                    move.slice(1).replace("-", " ")}
+                </ListboxOption>
+              ))}
+            </ListboxOptions>
+          </div>
+        </Listbox>
+
         <table className="w-full text-white text-center text-2xl">
           <thead>
             <tr className="divide-x">
@@ -89,9 +136,12 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
               (move) =>
                 move.move &&
                 learnMethodsMap[move.method as keyof typeof learnMethodsMap] ===
-                  selectedMoveFilter && (
+                  selectedMoveFilter &&
+                move.game?.name === selectedGame && (
                   <tr
-                    key={move.move.name}
+                    key={`${move.move.name}-${move.method}-${
+                      move.level || move.tmNumber || ""
+                    }-${move.game?.name || ""}`}
                     className="border-b-white border-b-1"
                   >
                     {selectedMoveFilter === "level-up" && (
@@ -128,8 +178,8 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
             )}
           </tbody>
         </table>
-      )}
-    </div>
+      </div>
+    )
   )
 }
 
