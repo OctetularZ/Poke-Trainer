@@ -171,6 +171,127 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
   } as Pokemon
 }
 
+export async function getRandomPokemon(): Promise<Pokemon> {
+  const count = await prisma.pokemon.count()
+  const skip = Math.floor(Math.random() * count)
+  const pokemon = await prisma.pokemon.findFirst({
+    skip,
+    include: {
+
+      // Pokemon's Types
+      types: {
+        select: {
+          name: true
+        }
+      },
+
+      // Pokemon's Abilities
+      abilities: {
+        select: {
+          name: true
+        }
+      },
+
+      // Pokemon's Moves
+      gameMoves: {
+        select: {
+          method: true,
+          level: true,
+          tmNumber: true,
+          move: {
+            select: {
+              name: true,
+              type: true,
+              category: true,
+              power: true,
+              accuracy: true
+            }
+          },
+          game: {
+            select: {
+              name: true
+            }
+          }
+        }
+      },
+
+      // Pokemon's Type Chart
+      typeChart: {
+        select: {
+          attackType: true,
+          multiplier: true
+        }
+      },
+
+      // Pokemon's Forms
+      forms: {
+        select: {
+          id: true,
+          name: true
+        }
+      },
+
+      // Game Descriptions
+      descriptions: {
+        select: {
+          id: true,
+          game: true,
+          description: true
+        }
+      },
+    }
+  })
+
+  if (!pokemon) throw new Error('Could not fetch random Pokémon!');
+
+  const sprites = await fetchSprites(pokemon.pokeapiId!)
+
+  const stats = {
+    hpBase: pokemon.hpBase, 
+    hpMin: pokemon.hpMin, 
+    hpMax: pokemon.hpMax,
+    attackBase: pokemon.attackBase,
+    attackMin: pokemon.attackMin,
+    attackMax: pokemon.attackMax,
+    defenseBase: pokemon.defenseBase,
+    defenseMin: pokemon.defenseMin,
+    defenseMax: pokemon.defenseMax,
+    spAtkBase: pokemon.spAtkBase,
+    spAtkMin: pokemon.spAtkMin,
+    spAtkMax: pokemon.spAtkMax,
+    spDefBase: pokemon.spDefBase,
+    spDefMin: pokemon.spDefMin,
+    spDefMax: pokemon.spDefMax,
+    speedBase: pokemon.speedBase,
+    speedMin: pokemon.speedMin,
+    speedMax: pokemon.speedMax,
+  }
+
+  const evolutionChain = await getFullEvolutionChain(pokemon.id);
+  // console.log("Chain captured successfully!");
+  // console.log(evolutionChain);
+  const pokemonForms = await fetchPokemonForms(pokemon.forms)
+
+  return {
+    id: pokemon.id,
+    slug: pokemon.slug,
+    nationalNumber: pokemon.nationalNumber,
+    name: pokemon.name,
+    base_experience: pokemon.baseExp,
+    types: pokemon.types,
+    sprites,
+    stats: stats,
+    height: pokemon.height,
+    weight: pokemon.weight,
+    abilities: pokemon.abilities,
+    moves: pokemon.gameMoves,
+    typeChart: pokemon.typeChart,
+    forms: pokemonForms,
+    evolution_chain: evolutionChain,
+    gameDescriptions: pokemon.descriptions
+  } as Pokemon
+}
+
 export async function getPokemonList(
   limit: number,
   offset: number,

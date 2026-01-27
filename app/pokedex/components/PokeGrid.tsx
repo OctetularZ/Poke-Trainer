@@ -41,7 +41,7 @@ const PokeGrid = () => {
           (selectedTypes.length > 0
             ? `&types=${selectedTypes.join(",")}`
             : "") +
-          abilityQuery
+          abilityQuery,
       )
 
       if (!res.ok) {
@@ -119,7 +119,7 @@ const PokeGrid = () => {
 
   const toggleType = (type: string) => {
     setSelectedTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
     )
     setAllLoaded(false)
   }
