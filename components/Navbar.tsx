@@ -14,7 +14,7 @@ const Navbar = () => {
           <Link href="/pokedex">Pokédex</Link>
         </li>
         <li>
-          <Link href="/gtp">GTP</Link>
+          <Link href="/guess-the-pokemon">GTP</Link>
         </li>
         <li>
           <Link href="#">Team Builder</Link>
