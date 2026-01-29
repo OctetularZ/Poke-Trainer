@@ -9,7 +9,7 @@ interface SpriteImage {
 
 const PokemonImage = ({ loading, spriteImageUrl }: SpriteImage) => {
   return (
-    <div className="w-[50%] h-[50%] flex items-center justify-center">
+    <div className="w-[50%] h-[50%] flex items-center justify-center border-2 border-amber-100 rounded-xl">
       {loading ? (
         <motion.div
           className="mt-5"
@@ -30,7 +30,7 @@ const PokemonImage = ({ loading, spriteImageUrl }: SpriteImage) => {
         </motion.div>
       ) : (
         <img
-          className="brightness-0 w-[50%] h-[50%]"
+          className="brightness-0 w-[50%] h-[50%] my-10"
           src={spriteImageUrl}
         ></img>
       )}

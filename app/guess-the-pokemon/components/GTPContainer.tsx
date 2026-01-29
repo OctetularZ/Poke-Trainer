@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react"
 import { Pokemon } from "@/types/pokemon"
 import PokemonImage from "./PokemonImage"
+import LetterGrid from "./LetterGrid"
 
 // interface GTPContainer {}
 
@@ -11,6 +12,13 @@ const GTPContainer = () => {
   const [sprites, setSprites] = useState<string[]>()
   const [shinySprites, setShinySprites] = useState<string[]>()
   const [error, setError] = useState<string | null>(null)
+
+  // Guess the Pokemon states
+  const [clickedLetters, setClickedLetters] = useState<string[]>([])
+
+  const handleLetterClick = (letter: string) => {
+    setClickedLetters((prev) => [...prev, letter])
+  }
 
   const fetchPokemonInfo = async () => {
     try {
@@ -44,7 +52,7 @@ const GTPContainer = () => {
   }, [])
 
   return (
-    <div className="flex w-full h-full flex-row justify-center items-center mt-20 mb-20">
+    <div className="flex w-full h-full flex-row justify-center items-center mt-20 mb-20 gap-10">
       <PokemonImage
         loading={loading}
         spriteImageUrl={
@@ -52,6 +60,10 @@ const GTPContainer = () => {
           pokemonInfo?.sprites.front_default ||
           "/placeholder.png"
         }
+      />
+      <LetterGrid
+        clickedLetters={clickedLetters}
+        onLetterClick={handleLetterClick}
       />
     </div>
   )

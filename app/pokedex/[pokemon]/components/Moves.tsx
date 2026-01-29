@@ -178,7 +178,7 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
                     <td className="py-5">{move.move.power || "-"}</td>
                     <td className="py-5">{move.move.accuracy || "-"}</td>
                   </tr>
-                )
+                ),
             )}
           </tbody>
         </table>
