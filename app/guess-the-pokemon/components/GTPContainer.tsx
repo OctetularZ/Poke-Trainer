@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react"
 import { Pokemon } from "@/types/pokemon"
 import PokemonImage from "./PokemonImage"
 import LetterGrid from "./LetterGrid"
+import GuessDisplay from "./GuessDisplay"
 
 // interface GTPContainer {}
 
@@ -61,10 +62,16 @@ const GTPContainer = () => {
           "/placeholder.png"
         }
       />
-      <LetterGrid
-        clickedLetters={clickedLetters}
-        onLetterClick={handleLetterClick}
-      />
+      <div className="flex flex-col">
+        <GuessDisplay
+          pokemonName={pokemonInfo!.name}
+          clickedLetters={clickedLetters}
+        />
+        <LetterGrid
+          clickedLetters={clickedLetters}
+          onLetterClick={handleLetterClick}
+        />
+      </div>
     </div>
   )
 }

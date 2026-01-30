@@ -1,6 +1,6 @@
 import React from "react"
 import Image from "next/image"
-import { motion, AnimatePresence } from "motion/react"
+import { motion } from "motion/react"
 
 interface SpriteImage {
   loading: boolean
@@ -9,7 +9,7 @@ interface SpriteImage {
 
 const PokemonImage = ({ loading, spriteImageUrl }: SpriteImage) => {
   return (
-    <div className="w-[50%] h-[50%] flex items-center justify-center border-2 border-amber-100 rounded-xl">
+    <div className="w-[50%] h-[50%] flex items-center justify-center border-2 border-amber-100 rounded-xl bg-gray-800">
       {loading ? (
         <motion.div
           className="mt-5"
