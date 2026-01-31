@@ -14,8 +14,8 @@ const GuessDisplay = ({ pokemonName, clickedLetters }: GuessDisplayProps) => {
     .join(" ")
 
   return (
-    <div>
-      <h1 className="text-4xl text-white font-bold tracking-wider">
+    <div className="max-w-100 mb-10">
+      <h1 className="text-4xl text-white text-center font-bold tracking-wider">
         {displayName}
       </h1>
     </div>

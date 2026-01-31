@@ -63,10 +63,12 @@ const GTPContainer = () => {
         }
       />
       <div className="flex flex-col">
-        <GuessDisplay
-          pokemonName={pokemonInfo!.name}
-          clickedLetters={clickedLetters}
-        />
+        {!loading && pokemonInfo && (
+          <GuessDisplay
+            pokemonName={pokemonInfo!.name}
+            clickedLetters={clickedLetters}
+          />
+        )}
         <LetterGrid
           clickedLetters={clickedLetters}
           onLetterClick={handleLetterClick}
