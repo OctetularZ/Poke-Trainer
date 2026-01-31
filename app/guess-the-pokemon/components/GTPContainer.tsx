@@ -52,6 +52,11 @@ const GTPContainer = () => {
     fetchPokemonInfo()
   }, [])
 
+  // Parse baseName and formName safely
+  const baseName = pokemonInfo?.name.split("(")[0].trim() || ""
+  const formName =
+    pokemonInfo?.name.split("(")[1]?.replace(")", "").trim() || ""
+
   return (
     <div className="flex w-full h-full flex-row justify-center items-center mt-20 mb-20 gap-10">
       <PokemonImage
@@ -64,10 +69,20 @@ const GTPContainer = () => {
       />
       <div className="flex flex-col">
         {!loading && pokemonInfo && (
-          <GuessDisplay
-            pokemonName={pokemonInfo!.name}
-            clickedLetters={clickedLetters}
-          />
+          <div className="flex flex-col items-center">
+            <h1 className="text-white text-xl">Base:</h1>
+            <GuessDisplay
+              pokemonName={baseName}
+              clickedLetters={clickedLetters}
+            />
+            <h1 className="text-white text-xl">Form:</h1>
+            {formName && (
+              <GuessDisplay
+                pokemonName={formName}
+                clickedLetters={clickedLetters}
+              />
+            )}
+          </div>
         )}
         <LetterGrid
           clickedLetters={clickedLetters}

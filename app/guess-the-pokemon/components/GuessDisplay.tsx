@@ -9,7 +9,11 @@ const GuessDisplay = ({ pokemonName, clickedLetters }: GuessDisplayProps) => {
   const displayName = pokemonName
     .split("")
     .map((letter) =>
-      clickedLetters.includes(letter.toUpperCase()) ? letter : "_",
+      /[^a-zA-Z]/.test(letter) // Show special symbols and spaces but not letters
+        ? letter
+        : clickedLetters.includes(letter.toUpperCase())
+          ? letter
+          : "—",
     )
     .join(" ")
 

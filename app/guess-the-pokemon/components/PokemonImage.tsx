@@ -30,7 +30,7 @@ const PokemonImage = ({ loading, spriteImageUrl }: SpriteImage) => {
         </motion.div>
       ) : (
         <img
-          className="brightness-0 w-[75%] h-[75%] my-10"
+          className="brightness-0 object-contain w-[75%] h-[75%] my-10"
           src={spriteImageUrl}
         ></img>
       )}
