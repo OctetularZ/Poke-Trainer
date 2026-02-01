@@ -15,11 +15,11 @@ const GuessDisplay = ({ pokemonName, clickedLetters }: GuessDisplayProps) => {
           ? letter
           : "—",
     )
-    .join(" ")
+    .join("")
 
   return (
     <div className="max-w-100 mb-10">
-      <h1 className="text-4xl text-white text-center font-bold tracking-wider">
+      <h1 className="text-4xl text-white text-center font-bold tracking-[0.2em]">
         {displayName}
       </h1>
     </div>
