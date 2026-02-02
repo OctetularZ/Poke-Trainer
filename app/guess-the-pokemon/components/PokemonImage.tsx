@@ -37,7 +37,7 @@ const PokemonImage = ({
         </motion.div>
       ) : (
         <img
-          className={`${baseNameCompleted && formNameCompleted ? "" : "brightness-0"}  object-contain w-[75%] h-[75%] my-10`}
+          className={`${baseNameCompleted && formNameCompleted ? "" : "brightness-0"}  object-contain w-[50%] h-[50%] my-10 transition-all duration-500 ease-in-out`}
           src={spriteImageUrl}
         ></img>
       )}

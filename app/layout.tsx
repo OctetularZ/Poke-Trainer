@@ -1,6 +1,17 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
+import localFont from "next/font/local"
+
+const minecraft = localFont({
+  src: [
+    {
+      path: "./fonts/Minecraft 2.woff2",
+      weight: "400",
+    },
+  ],
+  variable: "--font-minecraft",
+})
 
 export const metadata: Metadata = {
   title: "Poké Trainer",
@@ -17,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={minecraft.variable}>
         <Navbar />
         {children}
       </body>
