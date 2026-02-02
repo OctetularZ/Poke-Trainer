@@ -25,6 +25,7 @@ const GTPContainer = () => {
   const [baseNameCompleted, setBaseNameCompleted] = useState(false)
   const [formNameCompleted, setFormNameCompleted] = useState(false)
   const [wrongGuesses, setWrongGuesses] = useState(0)
+  const [hintGiven, setHintGiven] = useState(false) // Track if hint was given at 3 wrong
 
   const handleLetterClick = (letter: string) => {
     setClickedLetters((prev) => [...prev, letter])
@@ -86,7 +87,9 @@ const GTPContainer = () => {
 
   // Checking for completed form name (if applicable). 5 points if completed.
   useEffect(() => {
-    if (!formName || formNameCompleted) return
+    if (formNameCompleted) return
+
+    if (!formName) setFormNameCompleted(true)
 
     const formNameLetters = formName
       .toUpperCase()
@@ -118,20 +121,37 @@ const GTPContainer = () => {
 
   // Handle wrong guesses based on counter
   // useEffect(() => {
-  //   if (wrongGuesses === 2) {
-  //     console.log("2 wrong guesses - show first hint")
-  //     // TODO: Show first hint
-  //   } else if (wrongGuesses === 3) {
-  //     console.log("3 wrong guesses - show second hint")
-  //     // TODO: Show second hint
-  //   } else if (wrongGuesses === 4) {
-  //     console.log("4 wrong guesses - game over")
   //     // TODO: Game over logic
   //   } else if (wrongGuesses === 5) {
   //     console.log("5 wrong guesses - game over")
   //     // TODO: Game over logic
   //   }
   // }, [wrongGuesses])
+
+  // Add missing letter hint at 3 wrong guesses
+  useEffect(() => {
+    if (wrongGuesses !== 4 || hintGiven || !baseName) return
+
+    // Get all unique letters from pokemon name (both base and form)
+    const allNameLetters = (baseName + formName)
+      .toUpperCase()
+      .split("")
+      .filter((char) => /[A-Z]/.test(char))
+
+    // Find letters that haven't been clicked yet
+    const missingLetters = [...new Set(allNameLetters)].filter(
+      (letter) => !clickedLetters.includes(letter),
+    )
+
+    if (missingLetters.length > 0) {
+      // Pick a random missing letter
+      const randomIndex = Math.floor(Math.random() * missingLetters.length)
+      const hintLetter = missingLetters[randomIndex]
+
+      setClickedLetters((prev) => [...prev, hintLetter])
+      setHintGiven(true)
+    }
+  }, [wrongGuesses, hintGiven, baseName, formName, clickedLetters])
 
   return (
     <div className="flex w-full h-full flex-row justify-center items-center mt-20 mb-20 gap-10">
@@ -142,6 +162,8 @@ const GTPContainer = () => {
           pokemonInfo?.sprites.front_default ||
           "/placeholder.png"
         }
+        baseNameCompleted={baseNameCompleted}
+        formNameCompleted={formNameCompleted}
       />
       <div className="flex flex-col items-center">
         <div className="grid grid-cols-2 gap-4 mb-4">
@@ -150,6 +172,8 @@ const GTPContainer = () => {
             Wrong: {wrongGuesses}/5
           </h2>
         </div>
+
+        {/* 1st hint - Type */}
         {wrongGuesses >= 2 && (
           <div className="flex flex-row gap-3 mb-4">
             <h1 className="text-white text-2xl">Hint 1:</h1>
@@ -176,6 +200,29 @@ const GTPContainer = () => {
             </div>
           </div>
         )}
+
+        {/* 2nd Hint - Game Description */}
+        {wrongGuesses >= 3 && (
+          <div className="flex flex-row gap-3 mb-4">
+            <h1 className="text-white text-2xl">Hint 2:</h1>
+            <h2 className="text-white text-2xl max-w-75 line-clamp-2">
+              {pokemonInfo?.gameDescriptions?.[0].description &&
+              pokemonInfo.gameDescriptions.length > 0
+                ? pokemonInfo.gameDescriptions[0].description
+                : ""}
+            </h2>
+          </div>
+        )}
+
+        {/* 3rd Hint - Random letter revealed */}
+        {wrongGuesses >= 4 && (
+          <div className="flex flex-row gap-3 mb-4">
+            <h1 className="text-white text-2xl">
+              Hint 3: Random Letter Revealed!
+            </h1>
+          </div>
+        )}
+
         {!loading && pokemonInfo && (
           <div className="flex flex-col items-center">
             <h1 className="text-white text-2xl">Name:</h1>

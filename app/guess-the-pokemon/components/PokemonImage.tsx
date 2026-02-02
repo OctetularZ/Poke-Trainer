@@ -5,9 +5,16 @@ import { motion } from "motion/react"
 interface SpriteImage {
   loading: boolean
   spriteImageUrl: string
+  baseNameCompleted: boolean
+  formNameCompleted: boolean
 }
 
-const PokemonImage = ({ loading, spriteImageUrl }: SpriteImage) => {
+const PokemonImage = ({
+  loading,
+  spriteImageUrl,
+  baseNameCompleted,
+  formNameCompleted,
+}: SpriteImage) => {
   return (
     <div className="w-200 h-150 flex items-center justify-center border-2 border-amber-100 rounded-xl bg-gray-800">
       {loading ? (
@@ -30,7 +37,7 @@ const PokemonImage = ({ loading, spriteImageUrl }: SpriteImage) => {
         </motion.div>
       ) : (
         <img
-          className="brightness-0 object-contain w-[75%] h-[75%] my-10"
+          className={`${baseNameCompleted && formNameCompleted ? "" : "brightness-0"}  object-contain w-[75%] h-[75%] my-10`}
           src={spriteImageUrl}
         ></img>
       )}
