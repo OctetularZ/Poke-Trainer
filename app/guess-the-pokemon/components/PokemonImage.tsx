@@ -7,6 +7,7 @@ interface SpriteImage {
   spriteImageUrl: string
   baseNameCompleted: boolean
   formNameCompleted: boolean
+  gameOver: boolean
 }
 
 const PokemonImage = ({
@@ -14,7 +15,11 @@ const PokemonImage = ({
   spriteImageUrl,
   baseNameCompleted,
   formNameCompleted,
+  gameOver,
 }: SpriteImage) => {
+  // Reveal image when: both names completed (win) OR game is over (loss at 5 wrong letter guessed)
+  const shouldReveal = (baseNameCompleted && formNameCompleted) || gameOver
+
   return (
     <div className="w-200 h-150 flex items-center justify-center border-2 border-amber-100 rounded-xl bg-gray-800">
       {loading ? (
@@ -37,7 +42,7 @@ const PokemonImage = ({
         </motion.div>
       ) : (
         <img
-          className={`${baseNameCompleted && formNameCompleted ? "" : "brightness-0"}  object-contain w-[50%] h-[50%] my-10 transition-all duration-500 ease-in-out`}
+          className={`${shouldReveal ? "" : "brightness-0"}  object-contain w-[50%] h-[50%] my-10 transition-all duration-500 ease-in-out`}
           src={spriteImageUrl}
         ></img>
       )}

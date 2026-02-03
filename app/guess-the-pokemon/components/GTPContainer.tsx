@@ -112,7 +112,7 @@ const GTPContainer = () => {
       clickedLetters.includes(letter),
     )
 
-    if (allLettersGuessed) {
+    if (allLettersGuessed && wrongGuesses < 5) {
       setPoints((prev) => prev + 5)
       setBaseNameCompleted(true)
     }
@@ -130,7 +130,7 @@ const GTPContainer = () => {
       clickedLetters.includes(letter),
     )
 
-    if (allLettersGuessed) {
+    if (allLettersGuessed && wrongGuesses < 5) {
       setPoints((prev) => prev + 5)
       setFormNameCompleted(true)
     }
@@ -177,17 +177,25 @@ const GTPContainer = () => {
 
   // For when the user guesses the pokemon correctly
   useEffect(() => {
-    if (baseNameCompleted && formNameCompleted) {
+    if (baseNameCompleted && formNameCompleted && wrongGuesses < 5) {
       setShowCorrectPopup(true)
     }
-  }, [baseNameCompleted, formNameCompleted])
+  }, [baseNameCompleted, formNameCompleted, wrongGuesses])
 
   // For when the user guesses the pokemon incorrect (5 wrong guesses (letters pressed))
   useEffect(() => {
     if (wrongGuesses === 5) {
+      // Reveal all letters by adding missing ones to clickedLetters
+      const allNameLetters = (baseName + formName)
+        .toUpperCase()
+        .split("")
+        .filter((char) => /[A-Z]/.test(char))
+
+      const uniqueLetters = [...new Set(allNameLetters)]
+      setClickedLetters(uniqueLetters)
       setShowIncorrectPopup(true)
     }
-  }, [wrongGuesses])
+  }, [wrongGuesses, baseName, formName])
 
   return (
     <div className="flex w-full h-full flex-row justify-center items-center mt-20 mb-20 gap-10">
@@ -200,6 +208,7 @@ const GTPContainer = () => {
         }
         baseNameCompleted={baseNameCompleted}
         formNameCompleted={formNameCompleted}
+        gameOver={gameOver}
       />
       <div className="flex flex-col items-center">
         <div className="grid grid-cols-2 gap-4 mb-4">
@@ -288,14 +297,16 @@ const GTPContainer = () => {
           onLetterClick={handleLetterClick}
           gameOver={gameOver}
         />
-        <button
-          onClick={() => {
-            resetGame()
-          }}
-          className="text-white my-10 bg-charmander-blue-500 px-6 py-3 rounded-lg hover:bg-charmander-blue-400 hover:scale-105 transition-all"
-        >
-          Play Again
-        </button>
+        {((baseNameCompleted && formNameCompleted) || gameOver) && (
+          <button
+            onClick={() => {
+              resetGame()
+            }}
+            className="text-white my-10 bg-charmander-blue-500 px-6 py-3 rounded-lg hover:bg-charmander-blue-400 hover:scale-105 transition-all"
+          >
+            Play Again
+          </button>
+        )}
       </div>
 
       {/* Pop up for correct answer */}
