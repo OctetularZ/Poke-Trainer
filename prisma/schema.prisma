@@ -19,6 +19,10 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  // Custom fields
+  username String?
+  coins    Int     @default(0)
+
   @@unique([email])
   @@map("user")
 }

@@ -1,4 +1,5 @@
 import { createAuthClient } from "better-auth/react"
+import { redirect } from "next/navigation";
 export const authClient = createAuthClient({
     baseURL: "http://localhost:3000"
 })
@@ -20,6 +21,11 @@ export const discordSignIn = async () => {
         provider: "discord"
     })
 };
+
+export const signOut = async () => {
+    await authClient.signOut()
+    redirect('/')
+}
 
 //     authClient.signIn.social({
 //   provider: "github",          // or "google", "apple", etc.

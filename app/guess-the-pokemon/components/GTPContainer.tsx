@@ -10,6 +10,7 @@ import {
   typeColoursHex,
 } from "@/app/pokedex/components/typeColours"
 import PopUp from "./PopUp"
+import { addCoins } from "@/app/actions/coins"
 
 // interface GTPContainer {}
 
@@ -22,7 +23,7 @@ const GTPContainer = () => {
 
   // Guess the Pokemon states
   const [clickedLetters, setClickedLetters] = useState<string[]>([])
-  const [points, setPoints] = useState(0)
+  const [coins, setCoins] = useState(0)
   const [baseNameCompleted, setBaseNameCompleted] = useState(false)
   const [formNameCompleted, setFormNameCompleted] = useState(false)
   const [wrongGuesses, setWrongGuesses] = useState(0)
@@ -44,7 +45,7 @@ const GTPContainer = () => {
   const resetGame = () => {
     // Reset all game states
     setClickedLetters([])
-    setPoints(0)
+    setCoins(0)
     setBaseNameCompleted(false)
     setFormNameCompleted(false)
     setWrongGuesses(0)
@@ -93,14 +94,21 @@ const GTPContainer = () => {
   const formName =
     pokemonInfo?.name.split("(")[1]?.replace(")", "").trim() || ""
 
+  // Add coins function
+  const updateCoins = async (coins: number) => {
+    await addCoins(coins)
+  }
+
   // Set formNameCompleted to true if there's no form name
   useEffect(() => {
     if (!formName && pokemonInfo) {
       setFormNameCompleted(true)
+    } else if (formName && pokemonInfo) {
+      setFormNameCompleted(false)
     }
   }, [formName, pokemonInfo])
 
-  // Checking for completed base name. 5 points if completed.
+  // Checking for completed base name. 5 coins if completed.
   useEffect(() => {
     if (!baseName || baseNameCompleted) return
 
@@ -113,12 +121,13 @@ const GTPContainer = () => {
     )
 
     if (allLettersGuessed && wrongGuesses < 5) {
-      setPoints((prev) => prev + 5)
+      setCoins((prev) => prev + 5)
+      updateCoins(5)
       setBaseNameCompleted(true)
     }
   }, [clickedLetters, baseName, baseNameCompleted])
 
-  // Checking for completed form name (if applicable). 5 points if completed.
+  // Checking for completed form name (if applicable). 5 coins if completed.
   useEffect(() => {
     if (!formName || formNameCompleted) return
 
@@ -131,7 +140,8 @@ const GTPContainer = () => {
     )
 
     if (allLettersGuessed && wrongGuesses < 5) {
-      setPoints((prev) => prev + 5)
+      setCoins((prev) => prev + 5)
+      updateCoins(5)
       setFormNameCompleted(true)
     }
   }, [clickedLetters, formName, formNameCompleted])
@@ -213,8 +223,8 @@ const GTPContainer = () => {
       <div className="flex flex-col items-center">
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="flex flex-row gap-2 items-center">
-            <h2 className="text-white text-3xl font-bold">Points: </h2>
-            <h4 className="text-white text-4xl font-bold">{points}</h4>
+            <h2 className="text-white text-3xl font-bold">Coins: </h2>
+            <h4 className="text-white text-4xl font-bold">{coins}</h4>
           </div>
           <div className="flex flex-row gap-2 items-center">
             <h2 className="text-red-400 text-3xl font-bold">Wrong: </h2>
@@ -319,7 +329,7 @@ const GTPContainer = () => {
         <h4 className="text-3xl mb-4">
           {baseName} {formName} is correct!
         </h4>
-        <h4 className="text-3xl mb-4">Points: {points}</h4>
+        <h4 className="text-3xl mb-4">Coins: {coins}</h4>
         <button
           onClick={() => {
             resetGame()
@@ -340,7 +350,7 @@ const GTPContainer = () => {
         <h4 className="text-3xl mb-4">
           The correct answer is {baseName} {formName}!
         </h4>
-        <h4 className="text-3xl mb-4">Points: {points}</h4>
+        <h4 className="text-3xl mb-4">Coins: {coins}</h4>
         <button
           onClick={() => {
             resetGame()
