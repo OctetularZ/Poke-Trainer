@@ -1,9 +1,13 @@
 "use client"
+import { signOut, useSession } from "@/lib/auth-client"
 import Image from "next/image"
 import Link from "next/link"
 import React from "react"
 
 const Navbar = () => {
+  // Getting user session
+  const { data: session, isPending } = useSession()
+
   return (
     <nav className="grid grid-cols-[1fr_auto_1fr] items-center justify-center justify-self-center mt-10 bg-charmander-dull-200 w-11/12 pl-5 pr-2 py-2 rounded-4xl text-white shadow-md drop-shadow-[0_0_10px_rgba(41,150,246,0.7)]">
       <ul className="flex gap-5 justify-self-start items-center text-2xl">
@@ -33,18 +37,39 @@ const Navbar = () => {
           KÉ TRAINER
         </h1>
       </Link>
-      <ul className="flex gap-5 justify-self-end items-center text-2xl">
-        <li>
-          <Link href="/login">Login</Link>
-        </li>
-        <li>
-          <Link href="/register">
-            <button className="py-2 px-5 bg-charmander-blue-400 rounded-4xl shadow-md drop-shadow-[0_0_10px_rgba(41,182,246,0.7)] cursor-pointer">
-              Register
-            </button>
-          </Link>
-        </li>
-      </ul>
+      {!session && (
+        <ul className="flex gap-5 justify-self-end items-center text-2xl">
+          <li>
+            <Link href="/login">Login</Link>
+          </li>
+          <li>
+            <Link href="/register">
+              <button className="py-2 px-5 bg-charmander-blue-400 rounded-4xl shadow-md drop-shadow-[0_0_10px_rgba(41,182,246,0.7)] cursor-pointer">
+                Register
+              </button>
+            </Link>
+          </li>
+        </ul>
+      )}
+      {session && (
+        <ul className="flex gap-5 justify-self-end items-center text-2xl">
+          <li>
+            <Link className="underline underline-offset-5" href="/#">
+              Profile
+            </Link>
+          </li>
+          <li>
+            <Link href="/">
+              <button
+                onClick={signOut}
+                className="py-2 px-5 bg-charmander-blue-400 rounded-4xl shadow-md drop-shadow-[0_0_10px_rgba(41,182,246,0.7)] cursor-pointer"
+              >
+                Logout
+              </button>
+            </Link>
+          </li>
+        </ul>
+      )}
     </nav>
   )
 }

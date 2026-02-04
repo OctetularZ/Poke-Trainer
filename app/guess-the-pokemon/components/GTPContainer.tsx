@@ -11,6 +11,8 @@ import {
 } from "@/app/pokedex/components/typeColours"
 import PopUp from "./PopUp"
 import { addCoins } from "@/app/actions/coins"
+import { useSession } from "@/lib/auth-client"
+import Link from "next/link"
 
 // interface GTPContainer {}
 
@@ -40,6 +42,9 @@ const GTPContainer = () => {
     if (gameOver) return // Prevent letter clicks when game is over.
     setClickedLetters((prev) => [...prev, letter])
   }
+
+  // Getting user session
+  const { data: session, isPending } = useSession()
 
   // Reset game
   const resetGame = () => {
@@ -338,6 +343,13 @@ const GTPContainer = () => {
         >
           Play Again
         </button>
+        {!session && (
+          <Link href={"/login"}>
+            <h1 className="text-red-500 text-xl mt-5">
+              Login (or Register) To Start Earning Coins!
+            </h1>
+          </Link>
+        )}
       </PopUp>
 
       {/* Pop up for incorrect answer */}
@@ -359,6 +371,13 @@ const GTPContainer = () => {
         >
           Play Again
         </button>
+        {!session && (
+          <Link href={"/login"}>
+            <h1 className="text-red-500 text-xl mt-5">
+              Login (or Register) To Start Earning Coins!
+            </h1>
+          </Link>
+        )}
       </PopUp>
     </div>
   )
