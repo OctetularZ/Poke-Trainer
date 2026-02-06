@@ -21,7 +21,7 @@ const PokemonImage = ({
   const shouldReveal = (baseNameCompleted && formNameCompleted) || gameOver
 
   return (
-    <div className="w-200 h-150 flex items-center justify-center border-2 border-amber-100 rounded-xl bg-gray-800">
+    <div className="w-200 h-150 flex items-center justify-center border-2 border-amber-100 rounded-xl bg-gray-700">
       {loading ? (
         <motion.div
           className="mt-5"

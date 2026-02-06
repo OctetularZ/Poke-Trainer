@@ -54,7 +54,7 @@ const Navbar = () => {
       {session && (
         <ul className="flex gap-5 justify-self-end items-center text-2xl">
           <li>
-            <Link className="underline underline-offset-5" href="/#">
+            <Link className="underline underline-offset-5" href="/profile">
               Profile
             </Link>
           </li>
