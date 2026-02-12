@@ -272,10 +272,7 @@ const GTPContainer = () => {
           <div className="flex flex-row gap-3 mb-4">
             <h1 className="text-white text-2xl">Hint 2:</h1>
             <h2 className="text-white text-2xl max-w-75 line-clamp-2">
-              {pokemonInfo?.gameDescriptions?.[0].description &&
-              pokemonInfo.gameDescriptions.length > 0
-                ? pokemonInfo.gameDescriptions[0].description
-                : ""}
+              {pokemonInfo?.gameDescriptions?.[0]?.description || ""}
             </h2>
           </div>
         )}

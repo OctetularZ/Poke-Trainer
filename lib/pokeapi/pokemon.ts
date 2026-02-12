@@ -376,3 +376,95 @@ export async function getPokemonList(
   return pokemonListWithSprites;
 
 }
+
+export async function getPokemonListFull(
+  limit: number,
+  offset: number,
+  typesParam?: string,
+  abilitiesParam?: string
+): Promise<Pokemon[]> {
+  
+  const typeNames = typesParam?.split(",");
+  const abilityNames = abilitiesParam?.split(",");
+  
+  // Fetch Pokemon from DB who have all selected types/abilities
+  const pokemonList = await prisma.pokemon.findMany({
+    where: {
+      AND: [
+        ...(typeNames ? typeNames.map(typeName => ({
+          types: {
+            some: {
+              name: { 
+                equals: typeName,
+                mode: 'insensitive' as const
+              }
+            }
+          }
+        })) : []),
+        ...(abilityNames ? abilityNames.map(abilityName => ({
+          abilities: {
+            some: {
+              name: { 
+                equals: abilityName,
+                mode: 'insensitive' as const
+              }
+            }
+          }
+        })) : [])
+      ]
+    },
+    take: limit,
+    skip: offset,
+    include: {
+      // Pokemon's Types
+      types: {
+        select: {
+          name: true
+        }
+      },
+
+      // Pokemon's Abilities
+      abilities: {
+        select: {
+          name: true
+        }
+      },
+    }
+  });
+
+  // Fetch sprites for all Pokemon in parallel
+  const pokemonListWithSprites = await Promise.all(
+    pokemonList.map(async (pokemon) => {
+      const sprites = await fetchSprites(pokemon.pokeapiId!);
+      
+      if (!sprites) {
+        console.error(`Could not fetch sprites for ${pokemon.name}`);
+      }
+      
+      return {
+        ...pokemon,
+        sprites: sprites || {
+          front_default: "",
+          back_default: "",
+          front_shiny: "",
+          back_shiny: "",
+          other: {
+            showdown: {
+              front_default: "",
+              back_default: "",
+              front_shiny: "",
+              back_shiny: "",
+            },
+            "official-artwork": {
+              front_default: "",
+              front_shiny: "",
+            },
+          },
+        }
+      } as Pokemon;
+    })
+  );
+
+  return pokemonListWithSprites;
+
+}

@@ -167,9 +167,9 @@ const ProfileForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-6 bg-charmander-blue-200 hover:bg-charmander-blue-100 text-charmander-blue-900 font-bold rounded-lg transition-colors duration-400 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full py-3 px-6 text-2xl bg-charmander-blue-200 hover:bg-charmander-blue-100 text-charmander-blue-900 font-bold rounded-lg transition-colors duration-400 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            Save Changes
+            SAVE!
           </button>
         </form>
       )}
