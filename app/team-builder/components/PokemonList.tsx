@@ -5,10 +5,77 @@ import { Pokemon } from "@/types/pokemon"
 import Image from "next/image"
 import { motion, AnimatePresence } from "motion/react"
 import { useState, useEffect } from "react"
-import { typeColours } from "@/app/pokedex/components/typeColours"
+import { typeColoursHex } from "@/app/pokedex/components/typeColours"
+import {
+  ColumnDef,
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+} from "@tanstack/react-table"
 
 const fetchSize = 50
-const types = Object.keys(typeColours)
+const types = Object.keys(typeColoursHex)
+
+// Column definitions for TanStack Table
+const columns: ColumnDef<Pokemon>[] = [
+  {
+    accessorKey: "sprites",
+    header: "Sprite",
+    cell: ({ row }) => (
+      <img
+        src={row.original.sprites.front_default}
+        alt={row.original.name}
+        width={60}
+        height={60}
+      />
+    ),
+  },
+  {
+    accessorKey: "nationalNumber",
+    header: "#",
+    cell: ({ getValue }) => (
+      <span className="capitalize text-xl">{getValue<string>()}</span>
+    ),
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ getValue }) => (
+      <span className="capitalize text-xl">{getValue<string>()}</span>
+    ),
+  },
+  {
+    accessorKey: "types",
+    header: "Types",
+    cell: ({ row }) => (
+      <div className="flex gap-1">
+        {row.original.types?.map((type) => (
+          <span
+            key={type.name}
+            className="px-2 py-1 rounded text-lg capitalize"
+            style={{
+              backgroundColor:
+                typeColoursHex[
+                  type.name.toLowerCase() as keyof typeof typeColoursHex
+                ],
+            }}
+          >
+            {type.name}
+          </span>
+        ))}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "abilities",
+    header: "Abilities",
+    cell: ({ row }) => (
+      <span className="capitalize text-xl">
+        {row.original.abilities?.map((a) => a.name).join(", ")}
+      </span>
+    ),
+  },
+]
 
 export default function PokemonList() {
   const [pokemon, setPokemon] = useState<Pokemon[]>([])
@@ -22,6 +89,13 @@ export default function PokemonList() {
 
   const [showFilters, setShowFilters] = useState(false)
 
+  // Create table instance
+  const table = useReactTable({
+    data: pokemon,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  })
+
   const fetchAllPokemon = async (reset = false) => {
     setLoading(true)
     try {
@@ -32,7 +106,7 @@ export default function PokemonList() {
         : ""
 
       const res = await fetch(
-        `/api/pokemon?limit=${fetchSize}&offset=${reset ? 0 : offset}` +
+        `/api/listOfAllPokemon?limit=${fetchSize}&offset=${reset ? 0 : offset}` +
           (selectedTypes.length > 0
             ? `&types=${selectedTypes.join(",")}`
             : "") +
@@ -89,10 +163,37 @@ export default function PokemonList() {
         </motion.div>
       )}
 
-      <div>
-        {pokemon?.map((poke) => (
-          <h1 className="text-white">{poke.name}</h1>
-        ))}
+      <div className="w-full max-h-[400px] overflow-y-auto">
+        <table className="w-full text-white border-collapse">
+          <thead className="sticky top-0 bg-gray-900 z-10 text-xl">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="border-b border-gray-700">
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id} className="px-4 py-3 text-left">
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr
+                key={row.id}
+                className="border-b border-gray-800 hover:bg-gray-800/50"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="px-4 py-3">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   )
