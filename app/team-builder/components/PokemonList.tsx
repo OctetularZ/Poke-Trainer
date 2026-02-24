@@ -163,7 +163,7 @@ export default function PokemonList() {
         </motion.div>
       )}
 
-      <div className="w-full max-h-[400px] overflow-y-auto">
+      <div className="max-w-[700px] max-h-[400px] overflow-y-auto mx-5">
         <table className="w-full text-white border-collapse">
           <thead className="sticky top-0 bg-gray-900 z-10 text-xl">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -183,7 +183,7 @@ export default function PokemonList() {
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-gray-800 hover:bg-gray-800/50"
+                className="border-b border-gray-700 hover:bg-gray-700/50 cursor-pointer"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-3">
