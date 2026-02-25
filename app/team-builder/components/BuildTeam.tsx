@@ -1,5 +1,8 @@
 import { motion, AnimatePresence } from "motion/react"
+import { useState } from "react"
+import { Pokemon } from "@/types/pokemon"
 import PokemonList from "./PokemonList"
+import PokemonStatSetter from "./PokemonStatSetter"
 
 interface BuildTeamProps {
   isOpen: boolean
@@ -7,6 +10,7 @@ interface BuildTeamProps {
 }
 
 export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
+  const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null)
   return (
     <AnimatePresence>
       {isOpen && (
@@ -32,7 +36,10 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
               >
                 x
               </button>
-              <PokemonList />
+              <div className="flex flex-row items-center justify-center">
+                <PokemonList onSelectPokemon={setSelectedPokemon} />
+                <PokemonStatSetter selectedPokemon={selectedPokemon} />
+              </div>
             </div>
           </motion.div>
         </>

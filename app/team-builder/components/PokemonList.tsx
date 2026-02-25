@@ -1,5 +1,3 @@
-"use client"
-
 import { PokemonAbility } from "@/types/ability"
 import { Pokemon } from "@/types/pokemon"
 import Image from "next/image"
@@ -77,7 +75,11 @@ const columns: ColumnDef<Pokemon>[] = [
   },
 ]
 
-export default function PokemonList() {
+interface PokemonListProps {
+  onSelectPokemon?: (pokemon: Pokemon) => void
+}
+
+export default function PokemonList({ onSelectPokemon }: PokemonListProps) {
   const [pokemon, setPokemon] = useState<Pokemon[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -142,7 +144,7 @@ export default function PokemonList() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center w-[700px] h-[400px]">
       {loading && (
         <motion.div
           className="mt-5"
@@ -163,38 +165,46 @@ export default function PokemonList() {
         </motion.div>
       )}
 
-      <div className="max-w-[700px] max-h-[400px] overflow-y-auto mx-5">
-        <table className="w-full text-white border-collapse">
-          <thead className="sticky top-0 bg-gray-900 z-10 text-xl">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b border-gray-700">
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="px-4 py-3 text-left">
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className="border-b border-gray-700 hover:bg-gray-700/50 cursor-pointer"
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-3">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {!loading && (
+        <div className="max-w-[700px] max-h-[400px] overflow-y-auto mx-5">
+          <table className="w-full text-white border-collapse">
+            <thead className="sticky top-0 bg-gray-900 z-10 text-xl">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id} className="border-b border-gray-700">
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id} className="px-4 py-3 text-left">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr
+                  key={row.id}
+                  onClick={() => {
+                    onSelectPokemon?.(row.original)
+                  }}
+                  className="border-b border-gray-700 hover:bg-gray-700/50 cursor-pointer"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="px-4 py-3">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }
