@@ -5,10 +5,28 @@ import { Pokemon } from "@/types/pokemon"
 import Image from "next/image"
 import { motion, AnimatePresence } from "motion/react"
 import { useState, useEffect } from "react"
+import { PokemonType } from "@/types/type"
+import {
+  typeColours,
+  typeColoursHex,
+} from "@/app/pokedex/components/typeColours"
+import EVSlider from "./EVSlider"
 
 interface PokemonStatSetterProps {
   selectedPokemon: Pokemon | null
 }
+
+interface EVStats {
+  hp: number
+  attack: number
+  defense: number
+  specialAttack: number
+  specialDefense: number
+  speed: number
+}
+
+const MAX_TOTAL_EVS = 508
+const MAX_STAT_EV = 252
 
 export default function PokemonStatSetter({
   selectedPokemon,
@@ -17,17 +35,131 @@ export default function PokemonStatSetter({
   const [error, setError] = useState<string | null>(null)
   const [selectedAbility, setSelectedAbility] = useState<string>("")
 
+  const [evs, setEvs] = useState<EVStats>({
+    hp: 0,
+    attack: 0,
+    defense: 0,
+    specialAttack: 0,
+    specialDefense: 0,
+    speed: 0,
+  })
+
+  const totalEVs =
+    evs.hp +
+    evs.attack +
+    evs.defense +
+    evs.specialAttack +
+    evs.specialDefense +
+    evs.speed
+
+  const remainingEVs = MAX_TOTAL_EVS - totalEVs
+
+  const handleEVChange = (stat: keyof EVStats, value: number) => {
+    setEvs((prev) => ({
+      ...prev,
+      [stat]: value,
+    }))
+  }
+
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center w-[600px] gap-6">
       {selectedPokemon && (
-        <div className="flex flex-col items-center text-white">
+        <div className="flex flex-col items-center justify-center text-white">
           <img
-            src={selectedPokemon.sprites.other.showdown.front_default}
+            src={
+              selectedPokemon.sprites.other.showdown.front_default ||
+              selectedPokemon.sprites.front_default ||
+              "/placeholder.png"
+            }
             width={200}
             height={200}
           />
           <h2 className="text-2xl capitalize">{selectedPokemon.name}</h2>
           <p>#{selectedPokemon.nationalNumber}</p>
+          <div className="flex flex-row gap-3 mt-2">
+            {selectedPokemon.types.map((type: PokemonType, index) => (
+              <h4
+                key={index}
+                className={`text-white text-xl ${
+                  typeColours[
+                    type.name.toLowerCase() as keyof typeof typeColours
+                  ]
+                } rounded-lg px-3 shadow-md`}
+                style={{
+                  filter: `drop-shadow(0 0 8px ${
+                    typeColoursHex[
+                      type.name.toLowerCase() as keyof typeof typeColoursHex
+                    ]
+                  })`,
+                }}
+              >
+                {`${type.name.charAt(0).toUpperCase()}${type.name.slice(1)}`}
+              </h4>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {selectedPokemon && (
+        <div className="w-full bg-gray-800 rounded-lg p-6 shadow-lg">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold text-white">EV Distribution</h1>
+            <div className="text-white">
+              <span
+                className={remainingEVs < 0 ? "text-red-500" : "text-green-500"}
+              >
+                {totalEVs} / {MAX_TOTAL_EVS}
+              </span>
+              <span className="text-gray-400 ml-2">
+                ({remainingEVs} remaining)
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <EVSlider
+              statName="HP"
+              value={evs.hp}
+              onChange={(value) => handleEVChange("hp", value)}
+              maxValue={MAX_STAT_EV}
+              remainingEVs={remainingEVs}
+            />
+            <EVSlider
+              statName="Attack"
+              value={evs.attack}
+              onChange={(value) => handleEVChange("attack", value)}
+              maxValue={MAX_STAT_EV}
+              remainingEVs={remainingEVs}
+            />
+            <EVSlider
+              statName="Defense"
+              value={evs.defense}
+              onChange={(value) => handleEVChange("defense", value)}
+              maxValue={MAX_STAT_EV}
+              remainingEVs={remainingEVs}
+            />
+            <EVSlider
+              statName="Sp. Attack"
+              value={evs.specialAttack}
+              onChange={(value) => handleEVChange("specialAttack", value)}
+              maxValue={MAX_STAT_EV}
+              remainingEVs={remainingEVs}
+            />
+            <EVSlider
+              statName="Sp. Defense"
+              value={evs.specialDefense}
+              onChange={(value) => handleEVChange("specialDefense", value)}
+              maxValue={MAX_STAT_EV}
+              remainingEVs={remainingEVs}
+            />
+            <EVSlider
+              statName="Speed"
+              value={evs.speed}
+              onChange={(value) => handleEVChange("speed", value)}
+              maxValue={MAX_STAT_EV}
+              remainingEVs={remainingEVs}
+            />
+          </div>
         </div>
       )}
     </div>
