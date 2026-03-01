@@ -144,7 +144,7 @@ export default function PokemonList({ onSelectPokemon }: PokemonListProps) {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center w-[700px] h-[400px]">
+    <div className="flex flex-col justify-center items-center w-[700px] h-[450px]">
       {loading && (
         <motion.div
           className="mt-5"
@@ -166,7 +166,7 @@ export default function PokemonList({ onSelectPokemon }: PokemonListProps) {
       )}
 
       {!loading && (
-        <div className="max-w-[700px] max-h-[400px] overflow-y-auto mx-5">
+        <div className="max-w-[700px] max-h-[450px] overflow-y-auto mx-5">
           <table className="w-full text-white border-collapse">
             <thead className="sticky top-0 bg-gray-900 z-10 text-xl">
               {table.getHeaderGroups().map((headerGroup) => (

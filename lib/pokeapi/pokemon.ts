@@ -440,9 +440,31 @@ export async function getPokemonListFull(
       if (!sprites) {
         console.error(`Could not fetch sprites for ${pokemon.name}`);
       }
+
+      const stats = {
+        hpBase: pokemon.hpBase, 
+        hpMin: pokemon.hpMin, 
+        hpMax: pokemon.hpMax,
+        attackBase: pokemon.attackBase,
+        attackMin: pokemon.attackMin,
+        attackMax: pokemon.attackMax,
+        defenseBase: pokemon.defenseBase,
+        defenseMin: pokemon.defenseMin,
+        defenseMax: pokemon.defenseMax,
+        spAtkBase: pokemon.spAtkBase,
+        spAtkMin: pokemon.spAtkMin,
+        spAtkMax: pokemon.spAtkMax,
+        spDefBase: pokemon.spDefBase,
+        spDefMin: pokemon.spDefMin,
+        spDefMax: pokemon.spDefMax,
+        speedBase: pokemon.speedBase,
+        speedMin: pokemon.speedMin,
+        speedMax: pokemon.speedMax,
+      }
       
       return {
         ...pokemon,
+        stats,
         sprites: sprites || {
           front_default: "",
           back_default: "",

@@ -61,6 +61,14 @@ export default function PokemonStatSetter({
     }))
   }
 
+  // Calculate actual stat values at level 100 with neutral nature
+  const calculateStat = (base: number, ev: number, isHp: boolean = false) => {
+    if (isHp) {
+      return Math.floor(2 * base + ev / 4 + 110)
+    }
+    return Math.floor(2 * base + ev / 4 + 5)
+  }
+
   return (
     <div className="flex flex-col justify-center items-center w-[600px] gap-6">
       {selectedPokemon && (
@@ -75,7 +83,7 @@ export default function PokemonStatSetter({
             height={200}
           />
           <h2 className="text-2xl capitalize">{selectedPokemon.name}</h2>
-          <p>#{selectedPokemon.nationalNumber}</p>
+          <h4 className="text-2xl">#{selectedPokemon.nationalNumber}</h4>
           <div className="flex flex-row gap-3 mt-2">
             {selectedPokemon.types.map((type: PokemonType, index) => (
               <h4
@@ -103,16 +111,16 @@ export default function PokemonStatSetter({
       {selectedPokemon && (
         <div className="w-full bg-gray-800 rounded-lg p-6 shadow-lg">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-white">EV Distribution</h1>
-            <div className="text-white">
-              <span
-                className={remainingEVs < 0 ? "text-red-500" : "text-green-500"}
+            <h1 className="text-2xl font-bold text-white">Stat Distribution</h1>
+            <div className="text-white text-xl flex flex-row gap-2">
+              <h4
+                className={
+                  remainingEVs === 0 ? "text-red-500" : "text-green-500"
+                }
               >
                 {totalEVs} / {MAX_TOTAL_EVS}
-              </span>
-              <span className="text-gray-400 ml-2">
-                ({remainingEVs} remaining)
-              </span>
+              </h4>
+              <h4 className="text-gray-400">({remainingEVs} remaining)</h4>
             </div>
           </div>
 
@@ -123,6 +131,12 @@ export default function PokemonStatSetter({
               onChange={(value) => handleEVChange("hp", value)}
               maxValue={MAX_STAT_EV}
               remainingEVs={remainingEVs}
+              baseStat={selectedPokemon.stats?.hpBase || 0}
+              calculatedStat={calculateStat(
+                selectedPokemon.stats?.hpBase || 0,
+                evs.hp,
+                true,
+              )}
             />
             <EVSlider
               statName="Attack"
@@ -130,6 +144,11 @@ export default function PokemonStatSetter({
               onChange={(value) => handleEVChange("attack", value)}
               maxValue={MAX_STAT_EV}
               remainingEVs={remainingEVs}
+              baseStat={selectedPokemon.stats?.attackBase || 0}
+              calculatedStat={calculateStat(
+                selectedPokemon.stats?.attackBase || 0,
+                evs.attack,
+              )}
             />
             <EVSlider
               statName="Defense"
@@ -137,6 +156,11 @@ export default function PokemonStatSetter({
               onChange={(value) => handleEVChange("defense", value)}
               maxValue={MAX_STAT_EV}
               remainingEVs={remainingEVs}
+              baseStat={selectedPokemon.stats?.defenseBase || 0}
+              calculatedStat={calculateStat(
+                selectedPokemon.stats?.defenseBase || 0,
+                evs.defense,
+              )}
             />
             <EVSlider
               statName="Sp. Attack"
@@ -144,6 +168,11 @@ export default function PokemonStatSetter({
               onChange={(value) => handleEVChange("specialAttack", value)}
               maxValue={MAX_STAT_EV}
               remainingEVs={remainingEVs}
+              baseStat={selectedPokemon.stats?.spAtkBase || 0}
+              calculatedStat={calculateStat(
+                selectedPokemon.stats?.spAtkBase || 0,
+                evs.specialAttack,
+              )}
             />
             <EVSlider
               statName="Sp. Defense"
@@ -151,6 +180,11 @@ export default function PokemonStatSetter({
               onChange={(value) => handleEVChange("specialDefense", value)}
               maxValue={MAX_STAT_EV}
               remainingEVs={remainingEVs}
+              baseStat={selectedPokemon.stats?.spDefBase || 0}
+              calculatedStat={calculateStat(
+                selectedPokemon.stats?.spDefBase || 0,
+                evs.specialDefense,
+              )}
             />
             <EVSlider
               statName="Speed"
@@ -158,6 +192,11 @@ export default function PokemonStatSetter({
               onChange={(value) => handleEVChange("speed", value)}
               maxValue={MAX_STAT_EV}
               remainingEVs={remainingEVs}
+              baseStat={selectedPokemon.stats?.speedBase || 0}
+              calculatedStat={calculateStat(
+                selectedPokemon.stats?.speedBase || 0,
+                evs.speed,
+              )}
             />
           </div>
         </div>
