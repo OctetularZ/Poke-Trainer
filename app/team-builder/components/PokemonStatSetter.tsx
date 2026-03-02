@@ -2,15 +2,14 @@
 
 import { PokemonAbility } from "@/types/ability"
 import { Pokemon } from "@/types/pokemon"
-import Image from "next/image"
-import { motion, AnimatePresence } from "motion/react"
 import { useState, useEffect } from "react"
 import { PokemonType } from "@/types/type"
 import {
   typeColours,
   typeColoursHex,
 } from "@/app/pokedex/components/typeColours"
-import EVSlider from "./EVSlider"
+import EVSlider from "./PokemonStatSetterComponents/EVSlider"
+import OptionBtn from "./PokemonStatSetterComponents/OptionBtn"
 
 interface PokemonStatSetterProps {
   selectedPokemon: Pokemon | null
@@ -28,12 +27,41 @@ interface EVStats {
 const MAX_TOTAL_EVS = 508
 const MAX_STAT_EV = 252
 
+const natures = [
+  "Hardy",
+  "Lonely",
+  "Brave",
+  "Adamant",
+  "Naughty",
+  "Bold",
+  "Docile",
+  "Relaxed",
+  "Impish",
+  "Lax",
+  "Timid",
+  "Hasty",
+  "Serious",
+  "Jolly",
+  "Naive",
+  "Modest",
+  "Mild",
+  "Quiet",
+  "Bashful",
+  "Rash",
+  "Calm",
+  "Gentle",
+  "Sassy",
+  "Careful",
+  "Quirky",
+]
+
 export default function PokemonStatSetter({
   selectedPokemon,
 }: PokemonStatSetterProps) {
   const [pokemon, setPokemon] = useState<Pokemon[]>([])
   const [error, setError] = useState<string | null>(null)
   const [selectedAbility, setSelectedAbility] = useState<string>("")
+  const [selectedNature, setSelectedNature] = useState<string>("")
 
   const [evs, setEvs] = useState<EVStats>({
     hp: 0,
@@ -61,7 +89,7 @@ export default function PokemonStatSetter({
     }))
   }
 
-  // Calculate actual stat values at level 100 with neutral nature
+  // Calculate actual stat values (at level 100) with neutral nature
   const calculateStat = (base: number, ev: number, isHp: boolean = false) => {
     if (isHp) {
       return Math.floor(2 * base + ev / 4 + 110)
@@ -70,7 +98,7 @@ export default function PokemonStatSetter({
   }
 
   return (
-    <div className="flex flex-col justify-center items-center w-[600px] gap-6">
+    <div className="flex flex-col items-center w-[600px] overflow-y-auto h-full gap-6">
       {selectedPokemon && (
         <div className="flex flex-col items-center justify-center text-white">
           <img
@@ -198,6 +226,21 @@ export default function PokemonStatSetter({
                 evs.speed,
               )}
             />
+          </div>
+        </div>
+      )}
+      {selectedPokemon && (
+        <div className="flex flex-col items-center gap-3">
+          <h1 className="text-white text-xl">Select Nature:</h1>
+          <div className="flex flex-row flex-wrap justify-center gap-3 max-w-[500px]">
+            {natures.map((nature) => (
+              <OptionBtn
+                key={nature}
+                nature={nature}
+                isSelected={selectedNature === nature}
+                onClick={() => setSelectedNature(nature)}
+              />
+            ))}
           </div>
         </div>
       )}

@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "motion/react"
 import { useState } from "react"
 import { Pokemon } from "@/types/pokemon"
-import PokemonList from "./PokemonList"
+import PokemonList from "./PokemonStatSetterComponents/PokemonList"
 import PokemonStatSetter from "./PokemonStatSetter"
 
 interface BuildTeamProps {
@@ -29,14 +29,14 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             className="fixed inset-0 flex items-center justify-center z-50 p-4"
           >
-            <div className="w-full relative flex flex-col justify-center items-start mt-10 mx-5 border-charmander-blue-400 border-2 rounded-xl p-6">
+            <div className="w-full h-[700px] relative flex flex-col justify-center items-start mt-10 mx-5 border-charmander-blue-400 border-2 rounded-xl p-6">
               <button
                 onClick={onClose}
                 className="absolute top-3 right-5 text-gray-400 hover:text-white hover:scale-105 text-4xl transition-all"
               >
                 x
               </button>
-              <div className="flex flex-row items-center justify-center">
+              <div className="h-full flex flex-row items-center justify-center">
                 <PokemonList onSelectPokemon={setSelectedPokemon} />
                 <PokemonStatSetter selectedPokemon={selectedPokemon} />
               </div>
