@@ -8,6 +8,7 @@ import {
   typeColours,
   typeColoursHex,
 } from "@/app/pokedex/components/typeColours"
+import { natureEffects } from "./PokemonStatSetterComponents/NatureObj"
 import EVSlider from "./PokemonStatSetterComponents/EVSlider"
 import OptionBtn from "./PokemonStatSetterComponents/OptionBtn"
 
@@ -89,12 +90,27 @@ export default function PokemonStatSetter({
     }))
   }
 
+  // Helper to get nature modifier for a specific stat
+  const getNatureModifier = (nature: string, stat: string): number => {
+    if (!nature || !natureEffects[nature]) return 1.0
+
+    const effect = natureEffects[nature]
+    if (effect.increases === stat) return 1.1
+    if (effect.decreases === stat) return 0.9
+    return 1.0
+  }
+
   // Calculate actual stat values (at level 100) with neutral nature
-  const calculateStat = (base: number, ev: number, isHp: boolean = false) => {
-    if (isHp) {
-      return Math.floor(2 * base + ev / 4 + 110)
-    }
-    return Math.floor(2 * base + ev / 4 + 5)
+  const calculateStat = (
+    base: number,
+    ev: number,
+    stat: string,
+    isHp: boolean = false,
+  ) => {
+    const baseCalc = isHp ? 2 * base + ev / 4 + 110 : 2 * base + ev / 4 + 5
+
+    const natureModifier = getNatureModifier(selectedNature, stat)
+    return Math.floor(baseCalc * natureModifier)
   }
 
   return (
@@ -163,6 +179,7 @@ export default function PokemonStatSetter({
               calculatedStat={calculateStat(
                 selectedPokemon.stats?.hpBase || 0,
                 evs.hp,
+                "hp",
                 true,
               )}
             />
@@ -176,6 +193,7 @@ export default function PokemonStatSetter({
               calculatedStat={calculateStat(
                 selectedPokemon.stats?.attackBase || 0,
                 evs.attack,
+                "attack",
               )}
             />
             <EVSlider
@@ -188,6 +206,7 @@ export default function PokemonStatSetter({
               calculatedStat={calculateStat(
                 selectedPokemon.stats?.defenseBase || 0,
                 evs.defense,
+                "defense",
               )}
             />
             <EVSlider
@@ -200,6 +219,7 @@ export default function PokemonStatSetter({
               calculatedStat={calculateStat(
                 selectedPokemon.stats?.spAtkBase || 0,
                 evs.specialAttack,
+                "specialAttack",
               )}
             />
             <EVSlider
@@ -212,6 +232,7 @@ export default function PokemonStatSetter({
               calculatedStat={calculateStat(
                 selectedPokemon.stats?.spDefBase || 0,
                 evs.specialDefense,
+                "specialDefense",
               )}
             />
             <EVSlider
@@ -224,6 +245,7 @@ export default function PokemonStatSetter({
               calculatedStat={calculateStat(
                 selectedPokemon.stats?.speedBase || 0,
                 evs.speed,
+                "speed",
               )}
             />
           </div>
