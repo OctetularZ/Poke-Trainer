@@ -7,6 +7,7 @@ import {
   ListboxOptions,
 } from "@headlessui/react"
 import { FaChevronCircleDown } from "react-icons/fa"
+import { typeColoursHex } from "@/app/pokedex/components/typeColours"
 
 // Fix fetch to get moves as well as they haven't been added to select query
 
@@ -46,23 +47,47 @@ export default function MoveList({ moves }: MoveListProps) {
         <h4 className="text-white text-2xl mb-2">
           Selected Moves ({selectedMoves.length}/4)
         </h4>
+        {selectedMoves.length > 0 && (
+          <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_32px] items-center bg-gray-700 px-4 py-2 rounded-md text-white text-lg text-center mb-2">
+            <h1>Name</h1>
+            <h1>Type</h1>
+            <h1>Category</h1>
+            <h1>Power</h1>
+            <h1>Accuracy</h1>
+            <span />
+          </div>
+        )}
         <div className="flex flex-col gap-2">
           {selectedMoves.map((move, index) => (
             <div
               key={index}
-              className="flex justify-between items-center bg-gray-700 px-4 py-2 rounded-md text-white"
+              className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_32px] items-center bg-gray-700 px-4 py-2 rounded-md text-white text-center capitalize"
             >
-              <h1 className="capitalize text-xl">{move.move?.name}</h1>
+              <h1 className="text-lg">{move.move?.name}</h1>
+              <h1
+                className="px-2 py-1 rounded text-lg justify-self-center"
+                style={{
+                  backgroundColor:
+                    typeColoursHex[
+                      move.move?.type.toLowerCase() as keyof typeof typeColoursHex
+                    ],
+                }}
+              >
+                {move.move?.type}
+              </h1>
+              <h1 className="text-lg">{move.move?.category}</h1>
+              <h1 className="text-lg">{move.move?.power ?? "—"}</h1>
+              <h1 className="text-lg">{move.move?.accuracy ?? "—"}</h1>
               <button
                 onClick={() => handleRemoveMove(index)}
                 className="text-red-500 hover:text-red-400 text-2xl font-bold"
               >
-                <h1>x</h1>
+                <h1>×</h1>
               </button>
             </div>
           ))}
           {selectedMoves.length === 0 && (
-            <h1 className="text-gray-400 italic">No moves selected</h1>
+            <h1 className="text-gray-400 text-lg italic">No moves selected</h1>
           )}
         </div>
       </div>
@@ -84,17 +109,41 @@ export default function MoveList({ moves }: MoveListProps) {
           </ListboxButton>
 
           <ListboxOptions className="absolute z-10 mt-1 w-full bg-charmander-dull-200 border border-gray-300 rounded shadow-lg max-h-60 overflow-auto focus:outline-none">
+            {/* Header Row */}
+            <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr] px-4 py-2 text-gray-400 text-lg border-b border-gray-400 sticky top-0 bg-charmander-dull-200 text-center mb-2">
+              <h1>Name</h1>
+              <h1>Type</h1>
+              <h1>Category</h1>
+              <h1>Power</h1>
+              <h1>Accuracy</h1>
+            </div>
             {availableMoves.map((move) => (
               <ListboxOption
                 key={move.move?.name}
                 value={move}
-                className={({ active, selected }) =>
-                  `cursor-pointer select-none font-pixel px-4 py-2 capitalize ${
+                className={({ active }) =>
+                  `cursor-pointer select-none px-4 py-2 capitalize ${
                     active ? "bg-charmander-blue-400" : ""
-                  } ${selected ? "font-bold bg-charmander-blue-500" : ""}`
+                  }`
                 }
               >
-                {move.move?.name}
+                <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr] items-center text-center text-white text-lg">
+                  <h1>{move.move?.name}</h1>
+                  <h1
+                    className="px-2 py-1 rounded justify-self-center"
+                    style={{
+                      backgroundColor:
+                        typeColoursHex[
+                          move.move?.type.toLowerCase() as keyof typeof typeColoursHex
+                        ],
+                    }}
+                  >
+                    {move.move?.type}
+                  </h1>
+                  <h1>{move.move?.category}</h1>
+                  <h1>{move.move?.power ?? "—"}</h1>
+                  <h1>{move.move?.accuracy ?? "—"}</h1>
+                </div>
               </ListboxOption>
             ))}
           </ListboxOptions>
