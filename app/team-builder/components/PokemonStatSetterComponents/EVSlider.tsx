@@ -25,7 +25,7 @@ export default function EVSlider({
   const actualMax = Math.min(maxValue, value + remainingEVs)
 
   return (
-    <div className="grid grid-cols-[100px_130px_1fr_80px] gap-4 items-center">
+    <div className="grid grid-cols-[110px_130px_1fr_80px] gap-4 items-center">
       {/* Stat Name */}
       <label>
         <h1 className="text-white font-semibold capitalize text-lg text-right">

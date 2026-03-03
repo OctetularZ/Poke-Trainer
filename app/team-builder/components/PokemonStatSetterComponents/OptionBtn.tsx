@@ -1,11 +1,11 @@
 interface OptionBtnProps {
-  nature: string
+  optionName: string
   isSelected?: boolean
   onClick?: () => void
 }
 
 export default function OptionBtn({
-  nature,
+  optionName,
   isSelected = false,
   onClick,
 }: OptionBtnProps) {
@@ -18,7 +18,7 @@ export default function OptionBtn({
           : "bg-gray-600 hover:bg-gray-500"
       }`}
     >
-      <h1 className="text-white">{nature}</h1>
+      <h1 className="text-white">{optionName}</h1>
     </button>
   )
 }
