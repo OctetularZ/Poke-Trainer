@@ -75,8 +75,6 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
       gameMoves: {
         select: {
           method: true,
-          level: true,
-          tmNumber: true,
           move: {
             select: {
               name: true,
@@ -84,11 +82,6 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
               category: true,
               power: true,
               accuracy: true
-            }
-          },
-          game: {
-            select: {
-              name: true
             }
           }
         }
@@ -429,6 +422,29 @@ export async function getPokemonListFull(
           name: true
         }
       },
+
+      // Pokemon's Moves
+      gameMoves: {
+        select: {
+          method: true,
+          level: true,
+          tmNumber: true,
+          move: {
+            select: {
+              name: true,
+              type: true,
+              category: true,
+              power: true,
+              accuracy: true
+            }
+          },
+          game: {
+            select: {
+              name: true
+            }
+          }
+        }
+      }
     }
   });
 
@@ -465,6 +481,7 @@ export async function getPokemonListFull(
       return {
         ...pokemon,
         stats,
+        moves: pokemon.gameMoves,
         sprites: sprites || {
           front_default: "",
           back_default: "",

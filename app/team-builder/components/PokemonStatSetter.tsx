@@ -11,6 +11,7 @@ import {
 import { natureEffects } from "./PokemonStatSetterComponents/NatureObj"
 import EVSlider from "./PokemonStatSetterComponents/EVSlider"
 import OptionBtn from "./PokemonStatSetterComponents/OptionBtn"
+import MoveList from "./PokemonStatSetterComponents/MoveList"
 
 interface PokemonStatSetterProps {
   selectedPokemon: Pokemon | null
@@ -286,8 +287,11 @@ export default function PokemonStatSetter({
 
           {/* Set Pokemon Moves */}
           <div className="w-full bg-gray-800 rounded-lg p-6 shadow-lg">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex flex-col justify-between items-center mb-4">
               <h1 className="text-2xl font-bold text-white">Moves</h1>
+              {selectedPokemon.moves && (
+                <MoveList moves={selectedPokemon.moves} />
+              )}
             </div>
           </div>
         </>
