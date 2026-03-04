@@ -1,5 +1,6 @@
 "use client"
 
+import { GameMove } from "@/types/moves"
 import { PokemonAbility } from "@/types/ability"
 import { Pokemon } from "@/types/pokemon"
 import { useState, useEffect } from "react"
@@ -64,6 +65,7 @@ export default function PokemonStatSetter({
   const [error, setError] = useState<string | null>(null)
   const [selectedNature, setSelectedNature] = useState<string>("")
   const [selectedAbility, setSelectedAbility] = useState<string>("")
+  const [selectedMoves, setSelectedMoves] = useState<GameMove[]>([])
 
   const [evs, setEvs] = useState<EVStats>({
     hp: 0,
@@ -290,7 +292,10 @@ export default function PokemonStatSetter({
             <div className="flex flex-col justify-between items-center mb-4">
               <h1 className="text-2xl font-bold text-white">Moves</h1>
               {selectedPokemon.moves && (
-                <MoveList moves={selectedPokemon.moves} />
+                <MoveList
+                  moves={selectedPokemon.moves}
+                  onMovesChange={setSelectedMoves}
+                />
               )}
             </div>
           </div>

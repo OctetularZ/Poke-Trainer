@@ -13,9 +13,10 @@ import { typeColoursHex } from "@/app/pokedex/components/typeColours"
 
 interface MoveListProps {
   moves: GameMove[]
+  onMovesChange: (moves: GameMove[]) => void
 }
 
-export default function MoveList({ moves }: MoveListProps) {
+export default function MoveList({ moves, onMovesChange }: MoveListProps) {
   const [selectedMoves, setSelectedMoves] = useState<GameMove[]>([])
   const [selectedMove, setSelectedMove] = useState<GameMove | null>(null)
 
@@ -31,13 +32,17 @@ export default function MoveList({ moves }: MoveListProps) {
 
   const handleMoveSelect = (move: GameMove) => {
     if (selectedMoves.length < 4 && move) {
-      setSelectedMoves([...selectedMoves, move])
-      setSelectedMove(null) // Reset selection
+      const updated = [...selectedMoves, move]
+      setSelectedMoves(updated)
+      onMovesChange(updated)
+      setSelectedMove(null)
     }
   }
 
   const handleRemoveMove = (index: number) => {
-    setSelectedMoves(selectedMoves.filter((_, i) => i !== index))
+    const updated = selectedMoves.filter((_, i) => i !== index)
+    setSelectedMoves(updated)
+    onMovesChange(updated)
   }
 
   return (
