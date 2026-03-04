@@ -36,7 +36,7 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
               >
                 x
               </button>
-              <div className="h-full flex flex-row items-center justify-center">
+              <div className="h-full flex flex-row gap-5 items-center justify-center">
                 <PokemonList onSelectPokemon={setSelectedPokemon} />
                 <PokemonStatSetter selectedPokemon={selectedPokemon} />
               </div>

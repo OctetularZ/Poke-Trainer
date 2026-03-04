@@ -2,7 +2,7 @@ import { PokemonAbility } from "@/types/ability"
 import { Pokemon } from "@/types/pokemon"
 import Image from "next/image"
 import { motion, AnimatePresence } from "motion/react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { typeColoursHex } from "@/app/pokedex/components/typeColours"
 import {
   ColumnDef,
@@ -13,67 +13,6 @@ import {
 
 const fetchSize = 50
 const types = Object.keys(typeColoursHex)
-
-// Column definitions for TanStack Table
-const columns: ColumnDef<Pokemon>[] = [
-  {
-    accessorKey: "sprites",
-    header: "Sprite",
-    cell: ({ row }) => (
-      <img
-        src={row.original.sprites.front_default}
-        alt={row.original.name}
-        width={60}
-        height={60}
-      />
-    ),
-  },
-  {
-    accessorKey: "nationalNumber",
-    header: "#",
-    cell: ({ getValue }) => (
-      <span className="capitalize text-xl">{getValue<string>()}</span>
-    ),
-  },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ getValue }) => (
-      <span className="capitalize text-xl">{getValue<string>()}</span>
-    ),
-  },
-  {
-    accessorKey: "types",
-    header: "Types",
-    cell: ({ row }) => (
-      <div className="flex gap-1">
-        {row.original.types?.map((type) => (
-          <span
-            key={type.name}
-            className="px-2 py-1 rounded text-lg capitalize"
-            style={{
-              backgroundColor:
-                typeColoursHex[
-                  type.name.toLowerCase() as keyof typeof typeColoursHex
-                ],
-            }}
-          >
-            {type.name}
-          </span>
-        ))}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "abilities",
-    header: "Abilities",
-    cell: ({ row }) => (
-      <span className="capitalize text-xl">
-        {row.original.abilities?.map((a) => a.name).join(", ")}
-      </span>
-    ),
-  },
-]
 
 interface PokemonListProps {
   onSelectPokemon?: (pokemon: Pokemon) => void
@@ -90,6 +29,119 @@ export default function PokemonList({ onSelectPokemon }: PokemonListProps) {
   const [abilities, setAbilities] = useState<PokemonAbility[]>([])
 
   const [showFilters, setShowFilters] = useState(false)
+  const [nameFilter, setNameFilter] = useState("")
+  const [nameFilterOpen, setNameFilterOpen] = useState(false)
+  const [typeFilterOpen, setTypeFilterOpen] = useState(false)
+
+  // Column definitions — inside component so header renderers can access state
+  const columns = useMemo<ColumnDef<Pokemon>[]>(
+    () => [
+      {
+        accessorKey: "sprites",
+        header: () => <div className="px-4 py-3">Sprite</div>,
+        cell: ({ row }) => (
+          <img
+            src={row.original.sprites.front_default}
+            alt={row.original.name}
+            width={60}
+            height={60}
+          />
+        ),
+      },
+      {
+        accessorKey: "nationalNumber",
+        header: () => <div className="px-4 py-3">#</div>,
+        cell: ({ getValue }) => (
+          <span className="capitalize text-xl">{getValue<string>()}</span>
+        ),
+      },
+      {
+        accessorKey: "name",
+        header: () => (
+          <div
+            className="px-4 py-3 flex flex-col gap-1 hover:bg-gray-700 transition-colors cursor-pointer"
+            onClick={() => setNameFilterOpen((prev) => !prev)}
+          >
+            <h4>Name</h4>
+            {nameFilterOpen && (
+              <input
+                type="text"
+                value={nameFilter}
+                onChange={(e) => setNameFilter(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                placeholder="Search name..."
+                className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                autoFocus
+              />
+            )}
+          </div>
+        ),
+        cell: ({ getValue }) => (
+          <span className="capitalize text-xl">{getValue<string>()}</span>
+        ),
+      },
+      {
+        accessorKey: "types",
+        header: () => (
+          <div
+            className="relative px-4 py-3 hover:bg-gray-700 transition-colors cursor-pointer"
+            onClick={() => setTypeFilterOpen((prev) => !prev)}
+          >
+            <h4>Types</h4>
+            {typeFilterOpen && (
+              <div
+                className="absolute top-full left-0 z-20 flex flex-col overflow-y-auto overscroll-y-none gap-1 w-full max-h-[200px] bg-gray-900 border border-gray-600 rounded-b p-2"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {types.map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => toggleType(type)}
+                    className="px-2 py-0.5 rounded text-sm capitalize transition-opacity"
+                    style={{
+                      backgroundColor:
+                        typeColoursHex[type as keyof typeof typeColoursHex],
+                      opacity: selectedTypes.includes(type) ? 1 : 0.4,
+                    }}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ),
+        cell: ({ row }) => (
+          <div className="flex gap-1">
+            {row.original.types?.map((type) => (
+              <span
+                key={type.name}
+                className="px-2 py-1 rounded text-lg capitalize"
+                style={{
+                  backgroundColor:
+                    typeColoursHex[
+                      type.name.toLowerCase() as keyof typeof typeColoursHex
+                    ],
+                }}
+              >
+                {type.name}
+              </span>
+            ))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "abilities",
+        header: () => <div className="px-4 py-3">Abilities</div>,
+        cell: ({ row }) => (
+          <span className="capitalize text-xl">
+            {row.original.abilities?.map((a) => a.name).join(", ")}
+          </span>
+        ),
+      },
+    ],
+    [nameFilter, nameFilterOpen, typeFilterOpen, selectedTypes],
+  )
 
   // Create table instance
   const table = useReactTable({
@@ -145,45 +197,48 @@ export default function PokemonList({ onSelectPokemon }: PokemonListProps) {
 
   return (
     <div className="flex flex-col justify-center items-center w-[700px] h-full">
-      {loading && (
-        <motion.div
-          className="mt-5"
-          animate={{ rotate: 360 }}
-          transition={{
-            duration: 0.3,
-            ease: "linear",
-            repeat: Infinity,
-            repeatDelay: 1,
-          }}
-        >
-          <Image
-            src={"/pixel-great-ball.png"}
-            width={50}
-            height={50}
-            alt="pixel-great-ball-loading"
-          ></Image>
-        </motion.div>
-      )}
-
-      {!loading && (
-        <div className="max-w-[700px] h-full overflow-y-auto mx-5">
-          <table className="w-full text-white border-collapse">
-            <thead className="sticky top-0 bg-gray-900 z-10 text-xl">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="border-b border-gray-700">
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id} className="px-4 py-3 text-left">
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
+      <div className="min-w-[650px] min-h-[400px] h-full overflow-y-auto mx-5">
+        <table className="w-full text-white border-collapse">
+          <thead className="sticky top-0 bg-gray-900 z-10 text-xl">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="border-b border-gray-700">
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id} className="text-left">
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={columns.length} className="text-center py-10">
+                  <div className="flex justify-center">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 0.3,
+                        ease: "linear",
+                        repeat: Infinity,
+                        repeatDelay: 1,
+                      }}
+                    >
+                      <Image
+                        src={"/pixel-great-ball.png"}
+                        width={50}
+                        height={50}
+                        alt="pixel-great-ball-loading"
+                      />
+                    </motion.div>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
                   onClick={() => {
@@ -200,11 +255,11 @@ export default function PokemonList({ onSelectPokemon }: PokemonListProps) {
                     </td>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
