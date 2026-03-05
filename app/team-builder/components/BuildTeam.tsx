@@ -11,6 +11,7 @@ interface BuildTeamProps {
 
 export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null)
+  const [pokemonLoading, setPokemonLoading] = useState(false)
   return (
     <AnimatePresence>
       {isOpen && (
@@ -37,8 +38,14 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                 x
               </button>
               <div className="h-full flex flex-row gap-5 items-center justify-center">
-                <PokemonList onSelectPokemon={setSelectedPokemon} />
-                <PokemonStatSetter selectedPokemon={selectedPokemon} />
+                <PokemonList
+                  onSelectPokemon={setSelectedPokemon}
+                  onLoadingChange={setPokemonLoading}
+                />
+                <PokemonStatSetter
+                  selectedPokemon={selectedPokemon}
+                  isLoading={pokemonLoading}
+                />
               </div>
             </div>
           </motion.div>

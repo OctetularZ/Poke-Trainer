@@ -10,15 +10,21 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table"
+import PokemonSearchFilter from "./PokemonSearchFilter"
+import { namesAndSlugs } from "@/app/pokedex/components/SearchFilter"
 
 const fetchSize = 50
 const types = Object.keys(typeColoursHex)
 
 interface PokemonListProps {
   onSelectPokemon?: (pokemon: Pokemon) => void
+  onLoadingChange?: (loading: boolean) => void
 }
 
-export default function PokemonList({ onSelectPokemon }: PokemonListProps) {
+export default function PokemonList({
+  onSelectPokemon,
+  onLoadingChange,
+}: PokemonListProps) {
   const [pokemon, setPokemon] = useState<Pokemon[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -27,11 +33,62 @@ export default function PokemonList({ onSelectPokemon }: PokemonListProps) {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [selectedAbility, setSelectedAbility] = useState<string>("")
   const [abilities, setAbilities] = useState<PokemonAbility[]>([])
+  const [pokemonNames, setPokemonNames] = useState<namesAndSlugs[]>([])
+  const [selectedName, setSelectedName] = useState<namesAndSlugs | null>(null)
 
   const [showFilters, setShowFilters] = useState(false)
   const [nameFilter, setNameFilter] = useState("")
   const [nameFilterOpen, setNameFilterOpen] = useState(false)
   const [typeFilterOpen, setTypeFilterOpen] = useState(false)
+
+  const fetchNames = async () => {
+    try {
+      const res = await fetch("/api/names")
+      if (!res.ok) {
+        setError("Failed to fetch pokemon names! Please refresh")
+        return
+      }
+      const names = await res.json()
+      return names
+    } catch (error) {
+      console.error("Error fetching names:", error)
+      setError("Failed to fetch pokemon names! Please refresh")
+      return
+    }
+  }
+
+  useEffect(() => {
+    const loadNames = async () => {
+      const pokemonNames = await fetchNames()
+      if (pokemonNames) {
+        setPokemonNames(pokemonNames)
+      }
+    }
+    loadNames()
+  }, [])
+
+  useEffect(() => {
+    if (!selectedName) return
+
+    const fetchPokemon = async () => {
+      onLoadingChange?.(true)
+      const res = await fetch(`/api/pokemon/${selectedName.slug}`)
+
+      if (!res.ok) {
+        console.error("Couldn't fetch showcase pokemon!")
+        setError("Couldn't fetch showcase pokemon!")
+        onLoadingChange?.(false)
+        return
+      }
+
+      const data: Pokemon = await res.json()
+
+      onSelectPokemon?.(data)
+      onLoadingChange?.(false)
+      setLoading(false)
+    }
+    fetchPokemon()
+  }, [selectedName])
 
   // Column definitions — inside component so header renderers can access state
   const columns = useMemo<ColumnDef<Pokemon>[]>(
@@ -64,15 +121,12 @@ export default function PokemonList({ onSelectPokemon }: PokemonListProps) {
           >
             <h4>Name</h4>
             {nameFilterOpen && (
-              <input
-                type="text"
-                value={nameFilter}
-                onChange={(e) => setNameFilter(e.target.value)}
-                onClick={(e) => e.stopPropagation()}
-                placeholder="Search name..."
-                className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                autoFocus
-              />
+              <div onClick={(e) => e.stopPropagation()}>
+                <PokemonSearchFilter
+                  allPokemon={pokemonNames}
+                  onSelect={(pokemon) => setSelectedName(pokemon)}
+                />
+              </div>
             )}
           </div>
         ),

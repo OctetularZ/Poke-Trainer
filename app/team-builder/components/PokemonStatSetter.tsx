@@ -5,6 +5,8 @@ import { PokemonAbility } from "@/types/ability"
 import { Pokemon } from "@/types/pokemon"
 import { useState, useEffect } from "react"
 import { PokemonType } from "@/types/type"
+import Image from "next/image"
+import { motion } from "motion/react"
 import {
   typeColours,
   typeColoursHex,
@@ -16,6 +18,7 @@ import MoveList from "./PokemonStatSetterComponents/MoveList"
 
 interface PokemonStatSetterProps {
   selectedPokemon: Pokemon | null
+  isLoading?: boolean
 }
 
 interface EVStats {
@@ -60,6 +63,7 @@ const natures = [
 
 export default function PokemonStatSetter({
   selectedPokemon,
+  isLoading,
 }: PokemonStatSetterProps) {
   const [pokemon, setPokemon] = useState<Pokemon[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -118,188 +122,209 @@ export default function PokemonStatSetter({
 
   return (
     <div className="flex flex-col items-center w-[600px] overflow-y-auto h-full gap-6">
-      {selectedPokemon && (
-        <>
-          <div className="flex flex-col items-center justify-center text-white">
-            <img
-              src={
-                selectedPokemon.sprites.other.showdown.front_default ||
-                selectedPokemon.sprites.front_default ||
-                "/placeholder.png"
-              }
-              width={200}
-              height={200}
+      {isLoading ? (
+        <div className="flex items-center justify-center h-full">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 0.3,
+              ease: "linear",
+              repeat: Infinity,
+              repeatDelay: 1,
+            }}
+          >
+            <Image
+              src="/pixel-great-ball.png"
+              width={50}
+              height={50}
+              alt="pixel-great-ball-loading"
             />
-            <h2 className="text-2xl capitalize">{selectedPokemon.name}</h2>
-            <h4 className="text-2xl">#{selectedPokemon.nationalNumber}</h4>
-            <div className="flex flex-row gap-3 mt-2">
-              {selectedPokemon.types.map((type: PokemonType, index) => (
-                <h4
-                  key={index}
-                  className={`text-white text-xl ${
-                    typeColours[
-                      type.name.toLowerCase() as keyof typeof typeColours
-                    ]
-                  } rounded-lg px-3 shadow-md`}
-                  style={{
-                    filter: `drop-shadow(0 0 8px ${
-                      typeColoursHex[
-                        type.name.toLowerCase() as keyof typeof typeColoursHex
+          </motion.div>
+        </div>
+      ) : (
+        selectedPokemon && (
+          <>
+            <div className="flex flex-col items-center justify-center text-white">
+              <img
+                src={
+                  selectedPokemon.sprites.other.showdown.front_default ||
+                  selectedPokemon.sprites.front_default ||
+                  "/placeholder.png"
+                }
+                width={200}
+                height={200}
+              />
+              <h2 className="text-2xl capitalize">{selectedPokemon.name}</h2>
+              <h4 className="text-2xl">#{selectedPokemon.nationalNumber}</h4>
+              <div className="flex flex-row gap-3 mt-2">
+                {selectedPokemon.types.map((type: PokemonType, index) => (
+                  <h4
+                    key={index}
+                    className={`text-white text-xl ${
+                      typeColours[
+                        type.name.toLowerCase() as keyof typeof typeColours
                       ]
-                    })`,
-                  }}
-                >
-                  {`${type.name.charAt(0).toUpperCase()}${type.name.slice(1)}`}
-                </h4>
-              ))}
-            </div>
-          </div>
-
-          {/* Set Pokemon EVs Distribution */}
-          <div className="w-full bg-gray-800 rounded-lg p-6 shadow-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-bold text-white">
-                Stat Distribution
-              </h1>
-              <div className="text-white text-xl flex flex-row gap-2">
-                <h4
-                  className={
-                    remainingEVs === 0 ? "text-red-500" : "text-green-500"
-                  }
-                >
-                  {totalEVs} / {MAX_TOTAL_EVS}
-                </h4>
-                <h4 className="text-gray-400">({remainingEVs} remaining)</h4>
+                    } rounded-lg px-3 shadow-md`}
+                    style={{
+                      filter: `drop-shadow(0 0 8px ${
+                        typeColoursHex[
+                          type.name.toLowerCase() as keyof typeof typeColoursHex
+                        ]
+                      })`,
+                    }}
+                  >
+                    {`${type.name.charAt(0).toUpperCase()}${type.name.slice(1)}`}
+                  </h4>
+                ))}
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <EVSlider
-                statName="HP"
-                value={evs.hp}
-                onChange={(value) => handleEVChange("hp", value)}
-                maxValue={MAX_STAT_EV}
-                remainingEVs={remainingEVs}
-                baseStat={selectedPokemon.stats?.hpBase || 0}
-                calculatedStat={calculateStat(
-                  selectedPokemon.stats?.hpBase || 0,
-                  evs.hp,
-                  "hp",
-                  true,
-                )}
-              />
-              <EVSlider
-                statName="Attack"
-                value={evs.attack}
-                onChange={(value) => handleEVChange("attack", value)}
-                maxValue={MAX_STAT_EV}
-                remainingEVs={remainingEVs}
-                baseStat={selectedPokemon.stats?.attackBase || 0}
-                calculatedStat={calculateStat(
-                  selectedPokemon.stats?.attackBase || 0,
-                  evs.attack,
-                  "attack",
-                )}
-              />
-              <EVSlider
-                statName="Defense"
-                value={evs.defense}
-                onChange={(value) => handleEVChange("defense", value)}
-                maxValue={MAX_STAT_EV}
-                remainingEVs={remainingEVs}
-                baseStat={selectedPokemon.stats?.defenseBase || 0}
-                calculatedStat={calculateStat(
-                  selectedPokemon.stats?.defenseBase || 0,
-                  evs.defense,
-                  "defense",
-                )}
-              />
-              <EVSlider
-                statName="Sp. Attack"
-                value={evs.specialAttack}
-                onChange={(value) => handleEVChange("specialAttack", value)}
-                maxValue={MAX_STAT_EV}
-                remainingEVs={remainingEVs}
-                baseStat={selectedPokemon.stats?.spAtkBase || 0}
-                calculatedStat={calculateStat(
-                  selectedPokemon.stats?.spAtkBase || 0,
-                  evs.specialAttack,
-                  "specialAttack",
-                )}
-              />
-              <EVSlider
-                statName="Sp. Defense"
-                value={evs.specialDefense}
-                onChange={(value) => handleEVChange("specialDefense", value)}
-                maxValue={MAX_STAT_EV}
-                remainingEVs={remainingEVs}
-                baseStat={selectedPokemon.stats?.spDefBase || 0}
-                calculatedStat={calculateStat(
-                  selectedPokemon.stats?.spDefBase || 0,
-                  evs.specialDefense,
-                  "specialDefense",
-                )}
-              />
-              <EVSlider
-                statName="Speed"
-                value={evs.speed}
-                onChange={(value) => handleEVChange("speed", value)}
-                maxValue={MAX_STAT_EV}
-                remainingEVs={remainingEVs}
-                baseStat={selectedPokemon.stats?.speedBase || 0}
-                calculatedStat={calculateStat(
-                  selectedPokemon.stats?.speedBase || 0,
-                  evs.speed,
-                  "speed",
-                )}
-              />
-            </div>
-          </div>
+            {/* Set Pokemon EVs Distribution */}
+            <div className="w-full bg-gray-800 rounded-lg p-6 shadow-lg">
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold text-white">
+                  Stat Distribution
+                </h1>
+                <div className="text-white text-xl flex flex-row gap-2">
+                  <h4
+                    className={
+                      remainingEVs === 0 ? "text-red-500" : "text-green-500"
+                    }
+                  >
+                    {totalEVs} / {MAX_TOTAL_EVS}
+                  </h4>
+                  <h4 className="text-gray-400">({remainingEVs} remaining)</h4>
+                </div>
+              </div>
 
-          {/* Select Nature for Pokemon */}
-          <div className="flex flex-col items-center gap-3">
-            <h1 className="text-white text-xl">Select Nature:</h1>
-            <div className="flex flex-row flex-wrap justify-center gap-3 max-w-[500px]">
-              {natures.map((nature) => (
-                <OptionBtn
-                  key={nature}
-                  optionName={nature}
-                  isSelected={selectedNature === nature}
-                  onClick={() => setSelectedNature(nature)}
+              <div className="flex flex-col gap-4">
+                <EVSlider
+                  statName="HP"
+                  value={evs.hp}
+                  onChange={(value) => handleEVChange("hp", value)}
+                  maxValue={MAX_STAT_EV}
+                  remainingEVs={remainingEVs}
+                  baseStat={selectedPokemon.stats?.hpBase || 0}
+                  calculatedStat={calculateStat(
+                    selectedPokemon.stats?.hpBase || 0,
+                    evs.hp,
+                    "hp",
+                    true,
+                  )}
                 />
-              ))}
+                <EVSlider
+                  statName="Attack"
+                  value={evs.attack}
+                  onChange={(value) => handleEVChange("attack", value)}
+                  maxValue={MAX_STAT_EV}
+                  remainingEVs={remainingEVs}
+                  baseStat={selectedPokemon.stats?.attackBase || 0}
+                  calculatedStat={calculateStat(
+                    selectedPokemon.stats?.attackBase || 0,
+                    evs.attack,
+                    "attack",
+                  )}
+                />
+                <EVSlider
+                  statName="Defense"
+                  value={evs.defense}
+                  onChange={(value) => handleEVChange("defense", value)}
+                  maxValue={MAX_STAT_EV}
+                  remainingEVs={remainingEVs}
+                  baseStat={selectedPokemon.stats?.defenseBase || 0}
+                  calculatedStat={calculateStat(
+                    selectedPokemon.stats?.defenseBase || 0,
+                    evs.defense,
+                    "defense",
+                  )}
+                />
+                <EVSlider
+                  statName="Sp. Attack"
+                  value={evs.specialAttack}
+                  onChange={(value) => handleEVChange("specialAttack", value)}
+                  maxValue={MAX_STAT_EV}
+                  remainingEVs={remainingEVs}
+                  baseStat={selectedPokemon.stats?.spAtkBase || 0}
+                  calculatedStat={calculateStat(
+                    selectedPokemon.stats?.spAtkBase || 0,
+                    evs.specialAttack,
+                    "specialAttack",
+                  )}
+                />
+                <EVSlider
+                  statName="Sp. Defense"
+                  value={evs.specialDefense}
+                  onChange={(value) => handleEVChange("specialDefense", value)}
+                  maxValue={MAX_STAT_EV}
+                  remainingEVs={remainingEVs}
+                  baseStat={selectedPokemon.stats?.spDefBase || 0}
+                  calculatedStat={calculateStat(
+                    selectedPokemon.stats?.spDefBase || 0,
+                    evs.specialDefense,
+                    "specialDefense",
+                  )}
+                />
+                <EVSlider
+                  statName="Speed"
+                  value={evs.speed}
+                  onChange={(value) => handleEVChange("speed", value)}
+                  maxValue={MAX_STAT_EV}
+                  remainingEVs={remainingEVs}
+                  baseStat={selectedPokemon.stats?.speedBase || 0}
+                  calculatedStat={calculateStat(
+                    selectedPokemon.stats?.speedBase || 0,
+                    evs.speed,
+                    "speed",
+                  )}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Set Pokemon Ability */}
-          <div className="flex flex-col items-center gap-3">
-            <h1 className="text-white text-xl">Select Ability:</h1>
-            <div className="flex flex-row flex-wrap justify-center gap-3 max-w-[500px]">
-              {selectedPokemon.abilities &&
-                selectedPokemon.abilities.map((ability) => (
+            {/* Select Nature for Pokemon */}
+            <div className="flex flex-col items-center gap-3">
+              <h1 className="text-white text-xl">Select Nature:</h1>
+              <div className="flex flex-row flex-wrap justify-center gap-3 max-w-[500px]">
+                {natures.map((nature) => (
                   <OptionBtn
-                    key={ability.name}
-                    optionName={ability.name}
-                    isSelected={selectedAbility === ability.name}
-                    onClick={() => setSelectedAbility(ability.name)}
+                    key={nature}
+                    optionName={nature}
+                    isSelected={selectedNature === nature}
+                    onClick={() => setSelectedNature(nature)}
                   />
                 ))}
+              </div>
             </div>
-          </div>
 
-          {/* Set Pokemon Moves */}
-          <div className="w-full bg-gray-800 rounded-lg p-6 shadow-lg">
-            <div className="flex flex-col justify-between items-center mb-4">
-              <h1 className="text-2xl font-bold text-white">Moves</h1>
-              {selectedPokemon.moves && (
-                <MoveList
-                  moves={selectedPokemon.moves}
-                  onMovesChange={setSelectedMoves}
-                />
-              )}
+            {/* Set Pokemon Ability */}
+            <div className="flex flex-col items-center gap-3">
+              <h1 className="text-white text-xl">Select Ability:</h1>
+              <div className="flex flex-row flex-wrap justify-center gap-3 max-w-[500px]">
+                {selectedPokemon.abilities &&
+                  selectedPokemon.abilities.map((ability) => (
+                    <OptionBtn
+                      key={ability.name}
+                      optionName={ability.name}
+                      isSelected={selectedAbility === ability.name}
+                      onClick={() => setSelectedAbility(ability.name)}
+                    />
+                  ))}
+              </div>
             </div>
-          </div>
-        </>
+
+            {/* Set Pokemon Moves */}
+            <div className="w-full bg-gray-800 rounded-lg p-6 shadow-lg">
+              <div className="flex flex-col justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold text-white">Moves</h1>
+                {selectedPokemon.moves && (
+                  <MoveList
+                    moves={selectedPokemon.moves}
+                    onMovesChange={setSelectedMoves}
+                  />
+                )}
+              </div>
+            </div>
+          </>
+        )
       )}
     </div>
   )
