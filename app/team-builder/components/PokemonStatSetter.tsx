@@ -323,6 +323,12 @@ export default function PokemonStatSetter({
                 )}
               </div>
             </div>
+
+            <button className="bg-charmander-blue-500 py-1 px-3 rounded-md hover:bg-charmander-blue-400 transition-all mb-5">
+              <h1 className="text-white text-lg">
+                Add {selectedPokemon.name} to team?
+              </h1>
+            </button>
           </>
         )
       )}
