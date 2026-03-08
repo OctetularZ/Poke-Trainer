@@ -11,6 +11,7 @@ import {
   flexRender,
 } from "@tanstack/react-table"
 import PokemonSearchFilter from "./PokemonSearchFilter"
+import AbilitySearchFilter from "./AbilitySearchFilter"
 import { namesAndSlugs } from "@/app/pokedex/components/SearchFilter"
 
 const fetchSize = 50
@@ -40,6 +41,7 @@ export default function PokemonList({
   const [nameFilter, setNameFilter] = useState("")
   const [nameFilterOpen, setNameFilterOpen] = useState(false)
   const [typeFilterOpen, setTypeFilterOpen] = useState(false)
+  const [abilityFilterOpen, setAbilityFilterOpen] = useState(false)
 
   const fetchNames = async () => {
     try {
@@ -67,6 +69,32 @@ export default function PokemonList({
     loadNames()
   }, [])
 
+  const fetchAbilities = async () => {
+    try {
+      const res = await fetch("/api/abilities")
+      if (!res.ok) {
+        setError("Failed to fetch pokemon abilities! Please refresh")
+        return
+      }
+      const abilities = await res.json()
+      return abilities
+    } catch (error) {
+      console.error("Error fetching abilities:", error)
+      setError("Failed to fetch pokemon abilities! Please refresh")
+      return
+    }
+  }
+
+  useEffect(() => {
+    const loadAbilities = async () => {
+      const abilitiesData = await fetchAbilities()
+      if (abilitiesData) {
+        setAbilities(abilitiesData)
+      }
+    }
+    loadAbilities()
+  }, [])
+
   useEffect(() => {
     if (!selectedName) return
 
@@ -90,7 +118,6 @@ export default function PokemonList({
     fetchPokemon()
   }, [selectedName])
 
-  // Column definitions — inside component so header renderers can access state
   const columns = useMemo<ColumnDef<Pokemon>[]>(
     () => [
       {
@@ -120,14 +147,16 @@ export default function PokemonList({
             onClick={() => setNameFilterOpen((prev) => !prev)}
           >
             <h4>Name</h4>
-            {nameFilterOpen && (
-              <div onClick={(e) => e.stopPropagation()}>
-                <PokemonSearchFilter
-                  allPokemon={pokemonNames}
-                  onSelect={(pokemon) => setSelectedName(pokemon)}
-                />
-              </div>
-            )}
+            <div
+              className={nameFilterOpen ? "" : "hidden"}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <PokemonSearchFilter
+                allPokemon={pokemonNames}
+                value={selectedName?.name ?? ""}
+                onSelect={(pokemon) => setSelectedName(pokemon)}
+              />
+            </div>
           </div>
         ),
         cell: ({ getValue }) => (
@@ -142,27 +171,25 @@ export default function PokemonList({
             onClick={() => setTypeFilterOpen((prev) => !prev)}
           >
             <h4>Types</h4>
-            {typeFilterOpen && (
-              <div
-                className="absolute top-full left-0 z-20 flex flex-col overflow-y-auto overscroll-y-none gap-1 w-full max-h-[200px] bg-gray-900 border border-gray-600 rounded-b p-2"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {types.map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => toggleType(type)}
-                    className="px-2 py-0.5 rounded text-sm capitalize transition-opacity"
-                    style={{
-                      backgroundColor:
-                        typeColoursHex[type as keyof typeof typeColoursHex],
-                      opacity: selectedTypes.includes(type) ? 1 : 0.4,
-                    }}
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div
+              className={`absolute top-full left-0 z-20 flex flex-col overflow-y-auto overscroll-y-none gap-1 w-full max-h-[200px] bg-gray-900 border border-gray-600 rounded-b p-2 ${typeFilterOpen ? "" : "hidden"}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {types.map((type) => (
+                <button
+                  key={type}
+                  onClick={() => toggleType(type)}
+                  className="px-2 py-0.5 rounded text-sm capitalize transition-opacity"
+                  style={{
+                    backgroundColor:
+                      typeColoursHex[type as keyof typeof typeColoursHex],
+                    opacity: selectedTypes.includes(type) ? 1 : 0.4,
+                  }}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
           </div>
         ),
         cell: ({ row }) => (
@@ -186,7 +213,24 @@ export default function PokemonList({
       },
       {
         accessorKey: "abilities",
-        header: () => <div className="px-4 py-3">Abilities</div>,
+        header: () => (
+          <div
+            className="px-4 py-3 flex flex-col gap-1 hover:bg-gray-700 transition-colors cursor-pointer"
+            onClick={() => setAbilityFilterOpen((prev) => !prev)}
+          >
+            <h4>Abilities</h4>
+            <div
+              className={abilityFilterOpen ? "" : "hidden"}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <AbilitySearchFilter
+                allAbilities={abilities}
+                value={selectedAbility}
+                onSelect={(ability) => setSelectedAbility(ability.name)}
+              />
+            </div>
+          </div>
+        ),
         cell: ({ row }) => (
           <span className="capitalize text-xl">
             {row.original.abilities?.map((a) => a.name).join(", ")}
@@ -194,7 +238,14 @@ export default function PokemonList({
         ),
       },
     ],
-    [nameFilter, nameFilterOpen, typeFilterOpen, selectedTypes],
+    [
+      nameFilter,
+      nameFilterOpen,
+      typeFilterOpen,
+      abilityFilterOpen,
+      selectedTypes,
+      abilities,
+    ],
   )
 
   // Create table instance

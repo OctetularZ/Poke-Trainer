@@ -1,28 +1,28 @@
 "use client"
-import { namesAndSlugs } from "@/app/pokedex/components/SearchFilter"
+import { PokemonAbility } from "@/types/ability"
 import React, { useState } from "react"
 
-interface PokemonSearchFilterProps {
-  allPokemon: namesAndSlugs[]
-  onSelect: (pokemon: namesAndSlugs) => void
+interface AbilitySearchFilterProps {
+  allAbilities: PokemonAbility[]
+  onSelect: (ability: PokemonAbility) => void
   value?: string
 }
 
-const PokemonSearchFilter = ({
-  allPokemon,
+const AbilitySearchFilter = ({
+  allAbilities,
   onSelect,
   value = "",
-}: PokemonSearchFilterProps) => {
+}: AbilitySearchFilterProps) => {
   const [searchTerm, setSearchTerm] = useState(value)
   const [inputFocused, setInputFocused] = useState(false)
 
-  const filteredPokemon = allPokemon.filter((pokemon) =>
-    pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredAbilities = allAbilities.filter((ability) =>
+    ability.name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const handleSelect = (pokemon: namesAndSlugs) => {
-    setSearchTerm(pokemon.name)
-    onSelect(pokemon)
+  const handleSelect = (ability: { name: string }) => {
+    setSearchTerm(ability.name)
+    onSelect(ability)
   }
 
   return (
@@ -30,21 +30,24 @@ const PokemonSearchFilter = ({
       <input
         type="text"
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={(e) => {
+          setSearchTerm(e.target.value)
+          if (e.target.value === "") onSelect({ name: "" })
+        }}
         onFocus={() => setInputFocused(true)}
         onBlur={() => setTimeout(() => setInputFocused(false), 200)}
-        placeholder="Search Name..."
+        placeholder="Search Ability..."
         className="px-2 py-1 w-full rounded border bg-gray-800 border-gray-600 text-white focus:outline-none focus:border-blue-500"
       />
       {searchTerm && inputFocused && (
         <ul className="text-white absolute left-0 top-full border border-gray-600 max-h-60 overflow-auto w-full bg-gray-800 rounded shadow z-10">
-          {filteredPokemon.map((pokemon) => (
+          {filteredAbilities.map((ability) => (
             <li
-              key={pokemon.slug}
-              onClick={() => handleSelect(pokemon)}
+              key={ability.name}
+              onClick={() => handleSelect(ability)}
               className="pl-2 py-1 capitalize cursor-pointer hover:bg-gray-700"
             >
-              {pokemon.name}
+              {ability.name}
             </li>
           ))}
         </ul>
@@ -53,4 +56,4 @@ const PokemonSearchFilter = ({
   )
 }
 
-export default PokemonSearchFilter
+export default AbilitySearchFilter
