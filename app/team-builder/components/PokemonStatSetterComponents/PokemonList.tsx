@@ -14,7 +14,7 @@ import PokemonSearchFilter from "./PokemonSearchFilter"
 import AbilitySearchFilter from "./AbilitySearchFilter"
 import { namesAndSlugs } from "@/app/pokedex/components/SearchFilter"
 
-const fetchSize = 50
+const fetchSize = 30
 const types = Object.keys(typeColoursHex)
 
 interface PokemonListProps {
@@ -28,6 +28,7 @@ export default function PokemonList({
 }: PokemonListProps) {
   const [pokemon, setPokemon] = useState<Pokemon[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [allLoaded, setAllLoaded] = useState(false)
   const [offset, setOffset] = useState(0)
@@ -256,10 +257,13 @@ export default function PokemonList({
   })
 
   const fetchAllPokemon = async (reset = false) => {
-    setLoading(true)
+    if (reset) {
+      setLoading(true)
+      setAllLoaded(false)
+    } else {
+      setLoadingMore(true)
+    }
     try {
-      if (reset) setAllLoaded(false)
-
       const abilityQuery = selectedAbility
         ? `&abilities=${selectedAbility}`
         : ""
@@ -286,6 +290,7 @@ export default function PokemonList({
       console.error(err)
     } finally {
       setLoading(false)
+      setLoadingMore(false)
     }
   }
 
@@ -364,6 +369,35 @@ export default function PokemonList({
             )}
           </tbody>
         </table>
+        {!loading && !allLoaded && (
+          <div className="flex justify-center py-4">
+            {loadingMore ? (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{
+                  duration: 0.3,
+                  ease: "linear",
+                  repeat: Infinity,
+                  repeatDelay: 1,
+                }}
+              >
+                <Image
+                  src="/pixel-great-ball.png"
+                  width={50}
+                  height={50}
+                  alt="pixel-great-ball-loading"
+                />
+              </motion.div>
+            ) : (
+              <button
+                onClick={() => fetchAllPokemon()}
+                className="px-6 py-2 bg-charmander-blue-500 text-white rounded-md shadow-md drop-shadow-[0_0_10px_rgba(41,150,246,0.7)] cursor-pointer hover:bg-charmander-blue-300 transition-colors"
+              >
+                Load More
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
