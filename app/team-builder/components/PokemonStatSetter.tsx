@@ -19,6 +19,15 @@ import MoveList from "./PokemonStatSetterComponents/MoveList"
 interface PokemonStatSetterProps {
   selectedPokemon: Pokemon | null
   isLoading?: boolean
+  onAddToTeam?: (build: PokemonBuild) => void
+}
+
+export interface PokemonBuild {
+  pokemon: Pokemon
+  nature: string
+  ability: string
+  evs: EVStats
+  moves: GameMove[]
 }
 
 interface EVStats {
@@ -64,8 +73,8 @@ const natures = [
 export default function PokemonStatSetter({
   selectedPokemon,
   isLoading,
+  onAddToTeam,
 }: PokemonStatSetterProps) {
-  const [pokemon, setPokemon] = useState<Pokemon[]>([])
   const [error, setError] = useState<string | null>(null)
   const [selectedNature, setSelectedNature] = useState<string>("")
   const [selectedAbility, setSelectedAbility] = useState<string>("")
@@ -95,6 +104,28 @@ export default function PokemonStatSetter({
       ...prev,
       [stat]: value,
     }))
+  }
+
+  const handleAddToTeam = () => {
+    if (!selectedPokemon) return
+    onAddToTeam?.({
+      pokemon: selectedPokemon,
+      nature: selectedNature,
+      ability: selectedAbility,
+      evs,
+      moves: selectedMoves,
+    })
+    setSelectedNature("")
+    setSelectedAbility("")
+    setSelectedMoves([])
+    setEvs({
+      hp: 0,
+      attack: 0,
+      defense: 0,
+      specialAttack: 0,
+      specialDefense: 0,
+      speed: 0,
+    })
   }
 
   // Helper to get nature modifier for a specific stat
@@ -324,7 +355,10 @@ export default function PokemonStatSetter({
               </div>
             </div>
 
-            <button className="bg-charmander-blue-500 py-1 px-3 rounded-md hover:bg-charmander-blue-400 transition-all mb-5">
+            <button
+              onClick={handleAddToTeam}
+              className="bg-charmander-blue-500 py-1 px-3 rounded-md hover:bg-charmander-blue-400 transition-all mb-5"
+            >
               <h1 className="text-white text-lg">
                 Add {selectedPokemon.name} to team?
               </h1>

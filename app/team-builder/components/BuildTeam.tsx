@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { useState } from "react"
 import { Pokemon } from "@/types/pokemon"
 import PokemonList from "./PokemonStatSetterComponents/PokemonList"
-import PokemonStatSetter from "./PokemonStatSetter"
+import PokemonStatSetter, { PokemonBuild } from "./PokemonStatSetter"
 
 interface BuildTeamProps {
   isOpen: boolean
@@ -12,6 +12,7 @@ interface BuildTeamProps {
 export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null)
   const [pokemonLoading, setPokemonLoading] = useState(false)
+  const [team, setTeam] = useState<PokemonBuild[]>([])
   return (
     <AnimatePresence>
       {isOpen && (
@@ -38,13 +39,27 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                 x
               </button>
               <div className="h-full flex flex-row gap-5 items-center justify-center">
-                <PokemonList
-                  onSelectPokemon={setSelectedPokemon}
-                  onLoadingChange={setPokemonLoading}
-                />
+                <div className="h-full flex flex-col items-center">
+                  <div className="flex flex-row items-center mb-5">
+                    <h4 className="text-white text-2xl mr-5">Current Team: </h4>
+                    {team.map((pokemon) => (
+                      <img
+                        key={pokemon.pokemon.id}
+                        src={pokemon.pokemon.sprites.front_default}
+                        width={50}
+                        height={50}
+                      />
+                    ))}
+                  </div>
+                  <PokemonList
+                    onSelectPokemon={setSelectedPokemon}
+                    onLoadingChange={setPokemonLoading}
+                  />
+                </div>
                 <PokemonStatSetter
                   selectedPokemon={selectedPokemon}
                   isLoading={pokemonLoading}
+                  onAddToTeam={(build) => setTeam((prev) => [...prev, build])}
                 />
               </div>
             </div>
