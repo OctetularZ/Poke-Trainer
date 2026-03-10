@@ -39,9 +39,9 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                 x
               </button>
               <div className="h-full flex flex-row gap-5 items-center justify-center">
-                <div className="h-full flex flex-col items-center">
+                <div className="h-full flex flex-col items-center overflow-hidden">
                   <div className="flex flex-row items-center mb-5">
-                    <h4 className="text-white text-2xl mr-5">Current Team: </h4>
+                    <h4 className="text-white text-2xl mr-3">Current Team: </h4>
                     {team.map((pokemon) => (
                       <img
                         key={pokemon.pokemon.id}
