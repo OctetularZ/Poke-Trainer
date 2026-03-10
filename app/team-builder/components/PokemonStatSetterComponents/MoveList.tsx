@@ -9,15 +9,20 @@ import {
 import { FaChevronCircleDown } from "react-icons/fa"
 import { typeColoursHex } from "@/app/pokedex/components/typeColours"
 
-// Fix fetch to get moves as well as they haven't been added to select query
-
 interface MoveListProps {
   moves: GameMove[]
   onMovesChange: (moves: GameMove[]) => void
+  initialMoves?: GameMove[]
 }
 
-export default function MoveList({ moves, onMovesChange }: MoveListProps) {
-  const [selectedMoves, setSelectedMoves] = useState<GameMove[]>([])
+export default function MoveList({
+  moves,
+  onMovesChange,
+  initialMoves,
+}: MoveListProps) {
+  const [selectedMoves, setSelectedMoves] = useState<GameMove[]>(
+    initialMoves ?? [],
+  )
   const [selectedMove, setSelectedMove] = useState<GameMove | null>(null)
 
   // Remove duplicate moves (due to game duplicates) and remove selected moves

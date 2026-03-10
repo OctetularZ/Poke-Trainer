@@ -20,6 +20,8 @@ interface PokemonStatSetterProps {
   selectedPokemon: Pokemon | null
   isLoading?: boolean
   onAddToTeam?: (build: PokemonBuild) => void
+  initialBuild?: PokemonBuild
+  isEditing?: boolean
 }
 
 export interface PokemonBuild {
@@ -74,20 +76,30 @@ export default function PokemonStatSetter({
   selectedPokemon,
   isLoading,
   onAddToTeam,
+  initialBuild,
+  isEditing,
 }: PokemonStatSetterProps) {
   const [error, setError] = useState<string | null>(null)
-  const [selectedNature, setSelectedNature] = useState<string>("")
-  const [selectedAbility, setSelectedAbility] = useState<string>("")
-  const [selectedMoves, setSelectedMoves] = useState<GameMove[]>([])
+  const [selectedNature, setSelectedNature] = useState<string>(
+    initialBuild?.nature ?? "",
+  )
+  const [selectedAbility, setSelectedAbility] = useState<string>(
+    initialBuild?.ability ?? "",
+  )
+  const [selectedMoves, setSelectedMoves] = useState<GameMove[]>(
+    initialBuild?.moves ?? [],
+  )
 
-  const [evs, setEvs] = useState<EVStats>({
-    hp: 0,
-    attack: 0,
-    defense: 0,
-    specialAttack: 0,
-    specialDefense: 0,
-    speed: 0,
-  })
+  const [evs, setEvs] = useState<EVStats>(
+    initialBuild?.evs ?? {
+      hp: 0,
+      attack: 0,
+      defense: 0,
+      specialAttack: 0,
+      specialDefense: 0,
+      speed: 0,
+    },
+  )
 
   const totalEVs =
     evs.hp +
@@ -348,8 +360,10 @@ export default function PokemonStatSetter({
                 <h1 className="text-2xl font-bold text-white">Moves</h1>
                 {selectedPokemon.moves && (
                   <MoveList
+                    key={selectedPokemon.id}
                     moves={selectedPokemon.moves}
                     onMovesChange={setSelectedMoves}
+                    initialMoves={initialBuild?.moves}
                   />
                 )}
               </div>
@@ -360,7 +374,9 @@ export default function PokemonStatSetter({
               className="bg-charmander-blue-500 py-1 px-3 rounded-md hover:bg-charmander-blue-400 transition-all mb-5"
             >
               <h1 className="text-white text-lg">
-                Add {selectedPokemon.name} to team?
+                {isEditing
+                  ? `Update ${selectedPokemon.name}?`
+                  : `Add ${selectedPokemon.name} to team?`}
               </h1>
             </button>
           </>
