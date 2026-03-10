@@ -82,13 +82,15 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                       ))}
                     </div>
                   )}
-                  <PokemonList
-                    onSelectPokemon={(pokemon) => {
-                      setEditingIndex(null)
-                      setSelectedPokemon(pokemon)
-                    }}
-                    onLoadingChange={setPokemonLoading}
-                  />
+                  <div className="flex-1 min-h-0">
+                    <PokemonList
+                      onSelectPokemon={(pokemon) => {
+                        setEditingIndex(null)
+                        setSelectedPokemon(pokemon)
+                      }}
+                      onLoadingChange={setPokemonLoading}
+                    />
+                  </div>
                 </div>
                 <PokemonStatSetter
                   key={
