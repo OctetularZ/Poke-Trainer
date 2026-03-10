@@ -89,6 +89,9 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                         setSelectedPokemon(pokemon)
                       }}
                       onLoadingChange={setPokemonLoading}
+                      excludedIds={team
+                        .filter((_, i) => i !== editingIndex)
+                        .map((b) => b.pokemon.id)}
                     />
                   </div>
                 </div>

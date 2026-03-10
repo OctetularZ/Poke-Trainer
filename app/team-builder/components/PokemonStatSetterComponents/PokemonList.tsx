@@ -20,11 +20,13 @@ const types = Object.keys(typeColoursHex)
 interface PokemonListProps {
   onSelectPokemon?: (pokemon: Pokemon) => void
   onLoadingChange?: (loading: boolean) => void
+  excludedIds?: number[]
 }
 
 export default function PokemonList({
   onSelectPokemon,
   onLoadingChange,
+  excludedIds = [],
 }: PokemonListProps) {
   const [pokemon, setPokemon] = useState<Pokemon[]>([])
   const [loading, setLoading] = useState(true)
@@ -38,7 +40,6 @@ export default function PokemonList({
   const [pokemonNames, setPokemonNames] = useState<namesAndSlugs[]>([])
   const [selectedName, setSelectedName] = useState<namesAndSlugs | null>(null)
 
-  const [showFilters, setShowFilters] = useState(false)
   const [nameFilter, setNameFilter] = useState("")
   const [nameFilterOpen, setNameFilterOpen] = useState(false)
   const [typeFilterOpen, setTypeFilterOpen] = useState(false)
@@ -249,9 +250,14 @@ export default function PokemonList({
     ],
   )
 
+  const filteredPokemon = useMemo(
+    () => pokemon.filter((p) => !excludedIds.includes(p.id)),
+    [pokemon, excludedIds],
+  )
+
   // Create table instance
   const table = useReactTable({
-    data: pokemon,
+    data: filteredPokemon,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })

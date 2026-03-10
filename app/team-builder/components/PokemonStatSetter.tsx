@@ -371,7 +371,12 @@ export default function PokemonStatSetter({
 
             <button
               onClick={handleAddToTeam}
-              className="bg-charmander-blue-500 py-1 px-3 rounded-md hover:bg-charmander-blue-400 transition-all mb-5"
+              disabled={
+                !selectedNature ||
+                !selectedAbility ||
+                selectedMoves.length === 0
+              }
+              className="bg-charmander-blue-500 py-1 px-3 rounded-md hover:bg-charmander-blue-400 transition-all mb-5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-charmander-blue-500"
             >
               <h1 className="text-white text-lg">
                 {isEditing
