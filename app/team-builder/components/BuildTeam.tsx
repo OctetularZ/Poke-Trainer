@@ -50,34 +50,38 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
               </button>
               <div className="h-full flex flex-row gap-5 items-center justify-center">
                 <div className="h-full flex flex-col items-center overflow-hidden">
-                  <div className="flex flex-row items-center mb-5">
-                    <h4 className="text-white text-2xl mr-3">Current Team: </h4>
-                    {team.map((build, index) => (
-                      <div key={build.pokemon.id} className="relative group">
-                        <img
-                          src={build.pokemon.sprites.front_default}
-                          width={50}
-                          height={50}
-                          className="cursor-pointer hover:opacity-70 transition-opacity"
-                          onClick={() => {
-                            setEditingIndex(index)
-                            setSelectedPokemon(build.pokemon)
-                          }}
-                        />
-                        <button
-                          onClick={() => {
-                            setTeam((prev) =>
-                              prev.filter((_, i) => i !== index),
-                            )
-                            if (editingIndex === index) setEditingIndex(null)
-                          }}
-                          className="absolute -top-1 -right-1 hidden group-hover:flex bg-red-600 text-white rounded-full w-4 h-4 text-xs items-center justify-center leading-none"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                  {team.length > 0 && (
+                    <div className="flex flex-row items-center mb-5">
+                      <h4 className="text-white text-2xl mr-3">
+                        Current Team:{" "}
+                      </h4>
+                      {team.map((build, index) => (
+                        <div key={build.pokemon.id} className="relative group">
+                          <img
+                            src={build.pokemon.sprites.front_default}
+                            width={50}
+                            height={50}
+                            className="cursor-pointer hover:opacity-70 transition-opacity"
+                            onClick={() => {
+                              setEditingIndex(index)
+                              setSelectedPokemon(build.pokemon)
+                            }}
+                          />
+                          <button
+                            onClick={() => {
+                              setTeam((prev) =>
+                                prev.filter((_, i) => i !== index),
+                              )
+                              if (editingIndex === index) setEditingIndex(null)
+                            }}
+                            className="absolute -top-1 -right-1 hidden group-hover:flex bg-red-600 text-white rounded-full w-4 h-4 text-xs items-center justify-center leading-none"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   <PokemonList
                     onSelectPokemon={(pokemon) => {
                       setEditingIndex(null)
@@ -87,7 +91,11 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                   />
                 </div>
                 <PokemonStatSetter
-                  key={editingIndex ?? "new"}
+                  key={
+                    editingIndex !== null
+                      ? `edit-${editingIndex}`
+                      : `new-${selectedPokemon?.id ?? "none"}`
+                  }
                   selectedPokemon={selectedPokemon}
                   isLoading={pokemonLoading}
                   initialBuild={
