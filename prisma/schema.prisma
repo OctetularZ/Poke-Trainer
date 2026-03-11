@@ -22,6 +22,7 @@ model User {
   // Custom fields
   username String?
   coins    Int     @default(0)
+  teams    Team[]
 
   @@unique([email])
   @@map("user")
@@ -126,8 +127,9 @@ model Pokemon {
   eggGroups    EggGroup[]
   translations PokemonTranslation[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  teamMembers TeamMember[]
 }
 
 model Evolution {
@@ -152,9 +154,10 @@ model PokemonType {
 
 // Good
 model PokemonAbility {
-  id      Int       @id @default(autoincrement())
-  name    String    @unique
-  pokemon Pokemon[]
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  pokemon     Pokemon[]
+  teamMembers TeamMember[]
 }
 
 // Good
@@ -187,16 +190,17 @@ model TypeEffectiveness {
 
 // Good
 model GameMove {
-  id        Int     @id @default(autoincrement())
-  game      Game    @relation(fields: [gameId], references: [id])
-  gameId    Int
-  move      Move    @relation(fields: [moveId], references: [id])
-  moveId    Int
-  pokemon   Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
-  pokemonId Int
-  method    String // e.g. "Level up", "TM", "Egg move"
-  level     String? // e.g. "15", or null for TM
-  tmNumber  String? // optional
+  id              Int              @id @default(autoincrement())
+  game            Game             @relation(fields: [gameId], references: [id])
+  gameId          Int
+  move            Move             @relation(fields: [moveId], references: [id])
+  moveId          Int
+  pokemon         Pokemon          @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
+  pokemonId       Int
+  method          String // e.g. "Level up", "TM", "Egg move"
+  level           String? // e.g. "15", or null for TM
+  tmNumber        String? // optional
+  teamMemberMoves TeamMemberMove[]
 }
 
 // Good
@@ -242,4 +246,48 @@ model PokemonTranslation {
   translatedName String
 
   @@unique([pokemonId, language])
+}
+
+// User Pokemon Teams
+
+model Team {
+  id        Int          @id @default(autoincrement())
+  name      String?
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  members   TeamMember[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model TeamMember {
+  id        Int              @id @default(autoincrement())
+  slot      Int // 1–6, order in team
+  nature    String
+  ability   PokemonAbility   @relation(fields: [abilityId], references: [id])
+  abilityId Int
+  evHp      Int              @default(0)
+  evAtk     Int              @default(0)
+  evDef     Int              @default(0)
+  evSpAtk   Int              @default(0)
+  evSpDef   Int              @default(0)
+  evSpeed   Int              @default(0)
+  team      Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    Int
+  pokemon   Pokemon          @relation(fields: [pokemonId], references: [id])
+  pokemonId Int
+  moves     TeamMemberMove[]
+
+  @@unique([teamId, slot])
+}
+
+model TeamMemberMove {
+  id           Int        @id @default(autoincrement())
+  slot         Int // 1–4, move order
+  teamMember   TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
+  teamMemberId Int
+  gameMove     GameMove   @relation(fields: [gameMoveId], references: [id])
+  gameMoveId   Int
+
+  @@unique([teamMemberId, slot])
 }
