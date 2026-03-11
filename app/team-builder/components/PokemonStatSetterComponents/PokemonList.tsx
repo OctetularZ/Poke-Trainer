@@ -11,6 +11,7 @@ import {
   flexRender,
 } from "@tanstack/react-table"
 import PokemonSearchFilter from "./PokemonSearchFilter"
+import { PiCaretUpDownFill } from "react-icons/pi"
 import AbilitySearchFilter from "./AbilitySearchFilter"
 import { namesAndSlugs } from "@/app/pokedex/components/SearchFilter"
 
@@ -148,7 +149,10 @@ export default function PokemonList({
             className="px-4 py-3 flex flex-col gap-1 hover:bg-gray-700 transition-colors cursor-pointer"
             onClick={() => setNameFilterOpen((prev) => !prev)}
           >
-            <h4>Name</h4>
+            <div className="flex flex-row items-center justify-between">
+              <h4>Name</h4>
+              <PiCaretUpDownFill size={20} />
+            </div>
             <div
               className={nameFilterOpen ? "" : "hidden"}
               onClick={(e) => e.stopPropagation()}
@@ -172,7 +176,10 @@ export default function PokemonList({
             className="relative px-4 py-3 hover:bg-gray-700 transition-colors cursor-pointer"
             onClick={() => setTypeFilterOpen((prev) => !prev)}
           >
-            <h4>Types</h4>
+            <div className="flex flex-row items-center justify-between">
+              <h4>Types</h4>
+              <PiCaretUpDownFill size={20} />
+            </div>
             <div
               className={`absolute top-full left-0 z-20 flex flex-col overflow-y-auto overscroll-y-none gap-1 w-full max-h-[200px] bg-gray-900 border border-gray-600 rounded-b p-2 ${typeFilterOpen ? "" : "hidden"}`}
               onClick={(e) => e.stopPropagation()}
@@ -220,7 +227,10 @@ export default function PokemonList({
             className="px-4 py-3 flex flex-col gap-1 hover:bg-gray-700 transition-colors cursor-pointer"
             onClick={() => setAbilityFilterOpen((prev) => !prev)}
           >
-            <h4>Abilities</h4>
+            <div className="flex flex-row items-center justify-between">
+              <h4>Abilities</h4>
+              <PiCaretUpDownFill size={20} />
+            </div>
             <div
               className={abilityFilterOpen ? "" : "hidden"}
               onClick={(e) => e.stopPropagation()}

@@ -49,7 +49,7 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                 x
               </button>
               <div className="h-full flex flex-row gap-5 items-center justify-center">
-                <div className="h-full flex flex-col items-center overflow-hidden">
+                <div className="h-full flex flex-col items-center">
                   {team.length > 0 && (
                     <div className="flex flex-row items-center mb-5">
                       <h4 className="text-white text-2xl mr-3">
@@ -74,7 +74,7 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                               )
                               if (editingIndex === index) setEditingIndex(null)
                             }}
-                            className="absolute -top-1 -right-1 hidden group-hover:flex bg-red-600 text-white rounded-full w-4 h-4 text-xs items-center justify-center leading-none"
+                            className="absolute -top-1 -right-1 hidden group-hover:flex bg-red-600 hover:bg-red-400 text-white rounded-sm w-4 h-4 text-xs items-center justify-center leading-none"
                           >
                             ×
                           </button>
