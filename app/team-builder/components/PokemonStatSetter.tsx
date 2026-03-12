@@ -22,6 +22,7 @@ interface PokemonStatSetterProps {
   onAddToTeam?: (build: PokemonBuild) => void
   initialBuild?: PokemonBuild
   isEditing?: boolean
+  teamFull?: boolean
 }
 
 export interface PokemonBuild {
@@ -78,6 +79,7 @@ export default function PokemonStatSetter({
   onAddToTeam,
   initialBuild,
   isEditing,
+  teamFull,
 }: PokemonStatSetterProps) {
   const [error, setError] = useState<string | null>(null)
   const [selectedNature, setSelectedNature] = useState<string>(
@@ -374,7 +376,8 @@ export default function PokemonStatSetter({
               disabled={
                 !selectedNature ||
                 !selectedAbility ||
-                selectedMoves.length === 0
+                selectedMoves.length === 0 ||
+                (!isEditing && teamFull)
               }
               className="bg-charmander-blue-500 py-1 px-3 rounded-md hover:bg-charmander-blue-400 transition-all mb-5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-charmander-blue-500"
             >

@@ -3,11 +3,14 @@ import { useState } from "react"
 import { Pokemon } from "@/types/pokemon"
 import PokemonList from "./PokemonStatSetterComponents/PokemonList"
 import PokemonStatSetter, { PokemonBuild } from "./PokemonStatSetter"
+import { FaSquareCheck } from "react-icons/fa6"
 
 interface BuildTeamProps {
   isOpen: boolean
   onClose: () => void
 }
+
+// CheckList: 3) add team to DB.
 
 export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null)
@@ -53,7 +56,7 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                   {team.length > 0 && (
                     <div className="flex flex-row items-center mb-5">
                       <h4 className="text-white text-2xl mr-3">
-                        Current Team:{" "}
+                        Current Team:
                       </h4>
                       {team.map((build, index) => (
                         <div key={build.pokemon.id} className="relative group">
@@ -76,10 +79,21 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                             }}
                             className="absolute -top-1 -right-1 hidden group-hover:flex bg-red-600 hover:bg-red-400 text-white rounded-sm w-4 h-4 text-xs items-center justify-center leading-none"
                           >
-                            ×
+                            x
                           </button>
                         </div>
                       ))}
+                      {team.length >= 6 && (
+                        <div className="flex flex-row items-center gap-3">
+                          <button className="ml-5">
+                            <FaSquareCheck
+                              size={25}
+                              className="text-green-500 hover:text-green-300 transition-all"
+                            />
+                          </button>
+                          <h4 className="text-white text-2xl">Confirm Team?</h4>
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="flex-1 min-h-0">
@@ -107,6 +121,7 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                     editingIndex !== null ? team[editingIndex] : undefined
                   }
                   isEditing={editingIndex !== null}
+                  teamFull={team.length >= 6}
                   onAddToTeam={handleAddToTeam}
                 />
               </div>
