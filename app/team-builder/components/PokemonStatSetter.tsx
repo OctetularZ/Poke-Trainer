@@ -15,6 +15,8 @@ import { natureEffects } from "./PokemonStatSetterComponents/NatureObj"
 import EVSlider from "./PokemonStatSetterComponents/EVSlider"
 import OptionBtn from "./PokemonStatSetterComponents/OptionBtn"
 import MoveList from "./PokemonStatSetterComponents/MoveList"
+import { PokemonBuild } from "@/types/team"
+import { EVStats } from "@/types/team"
 
 interface PokemonStatSetterProps {
   selectedPokemon: Pokemon | null
@@ -23,23 +25,6 @@ interface PokemonStatSetterProps {
   initialBuild?: PokemonBuild
   isEditing?: boolean
   teamFull?: boolean
-}
-
-export interface PokemonBuild {
-  pokemon: Pokemon
-  nature: string
-  ability: string
-  evs: EVStats
-  moves: GameMove[]
-}
-
-interface EVStats {
-  hp: number
-  attack: number
-  defense: number
-  specialAttack: number
-  specialDefense: number
-  speed: number
 }
 
 const MAX_TOTAL_EVS = 508
@@ -85,8 +70,8 @@ export default function PokemonStatSetter({
   const [selectedNature, setSelectedNature] = useState<string>(
     initialBuild?.nature ?? "",
   )
-  const [selectedAbility, setSelectedAbility] = useState<string>(
-    initialBuild?.ability ?? "",
+  const [selectedAbility, setSelectedAbility] = useState<PokemonAbility | null>(
+    initialBuild?.ability ?? null,
   )
   const [selectedMoves, setSelectedMoves] = useState<GameMove[]>(
     initialBuild?.moves ?? [],
@@ -125,12 +110,12 @@ export default function PokemonStatSetter({
     onAddToTeam?.({
       pokemon: selectedPokemon,
       nature: selectedNature,
-      ability: selectedAbility,
+      ability: selectedAbility!,
       evs,
       moves: selectedMoves,
     })
     setSelectedNature("")
-    setSelectedAbility("")
+    setSelectedAbility(null)
     setSelectedMoves([])
     setEvs({
       hp: 0,
@@ -349,8 +334,8 @@ export default function PokemonStatSetter({
                     <OptionBtn
                       key={ability.name}
                       optionName={ability.name}
-                      isSelected={selectedAbility === ability.name}
-                      onClick={() => setSelectedAbility(ability.name)}
+                      isSelected={selectedAbility?.name === ability.name}
+                      onClick={() => setSelectedAbility(ability)}
                     />
                   ))}
               </div>
@@ -375,7 +360,7 @@ export default function PokemonStatSetter({
               onClick={handleAddToTeam}
               disabled={
                 !selectedNature ||
-                !selectedAbility ||
+                !selectedAbility?.name ||
                 selectedMoves.length === 0 ||
                 (!isEditing && teamFull)
               }

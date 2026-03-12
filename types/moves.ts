@@ -3,6 +3,7 @@
 import { Game } from "./game"
 
 export interface GameMove {
+  id: number,
   method: string,
   level?: string,
   tmNumber?: string,

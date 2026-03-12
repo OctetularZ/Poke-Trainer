@@ -2,8 +2,9 @@ import { motion, AnimatePresence } from "motion/react"
 import { useState } from "react"
 import { Pokemon } from "@/types/pokemon"
 import PokemonList from "./PokemonStatSetterComponents/PokemonList"
-import PokemonStatSetter, { PokemonBuild } from "./PokemonStatSetter"
+import PokemonStatSetter from "./PokemonStatSetter"
 import { FaSquareCheck } from "react-icons/fa6"
+import { PokemonBuild } from "@/types/team"
 
 interface BuildTeamProps {
   isOpen: boolean

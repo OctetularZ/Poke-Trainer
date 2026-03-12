@@ -142,12 +142,7 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
                 learnMethodsMap[move.method as keyof typeof learnMethodsMap] ===
                   selectedMoveFilter &&
                 move.game?.name === selectedGame && (
-                  <tr
-                    key={`${move.move.name}-${move.method}-${
-                      move.level || move.tmNumber || ""
-                    }-${move.game?.name || ""}`}
-                    className="border-b-white border-b-1"
-                  >
+                  <tr key={move.id} className="border-b-white border-b-1">
                     {selectedMoveFilter === "level-up" && (
                       <td className="py-5">{move.level}</td>
                     )}
