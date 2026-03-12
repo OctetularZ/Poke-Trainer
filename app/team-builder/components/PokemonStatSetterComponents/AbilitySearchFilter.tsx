@@ -4,7 +4,7 @@ import React, { useState } from "react"
 
 interface AbilitySearchFilterProps {
   allAbilities: PokemonAbility[]
-  onSelect: (ability: PokemonAbility) => void
+  onSelect: (ability: PokemonAbility | null) => void
   value?: string
 }
 
@@ -20,7 +20,7 @@ const AbilitySearchFilter = ({
     ability.name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const handleSelect = (ability: { name: string }) => {
+  const handleSelect = (ability: PokemonAbility) => {
     setSearchTerm(ability.name)
     onSelect(ability)
   }
@@ -32,7 +32,7 @@ const AbilitySearchFilter = ({
         value={searchTerm}
         onChange={(e) => {
           setSearchTerm(e.target.value)
-          if (e.target.value === "") onSelect({ name: "" })
+          if (e.target.value === "") onSelect(null)
         }}
         onFocus={() => setInputFocused(true)}
         onBlur={() => setTimeout(() => setInputFocused(false), 200)}

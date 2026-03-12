@@ -36,7 +36,9 @@ export default function PokemonList({
   const [allLoaded, setAllLoaded] = useState(false)
   const [offset, setOffset] = useState(0)
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
-  const [selectedAbility, setSelectedAbility] = useState<string>("")
+  const [selectedAbility, setSelectedAbility] = useState<PokemonAbility | null>(
+    null,
+  )
   const [abilities, setAbilities] = useState<PokemonAbility[]>([])
   const [pokemonNames, setPokemonNames] = useState<namesAndSlugs[]>([])
   const [selectedName, setSelectedName] = useState<namesAndSlugs | null>(null)
@@ -237,8 +239,8 @@ export default function PokemonList({
             >
               <AbilitySearchFilter
                 allAbilities={abilities}
-                value={selectedAbility}
-                onSelect={(ability) => setSelectedAbility(ability.name)}
+                value={selectedAbility?.name ?? ""}
+                onSelect={(ability) => setSelectedAbility(ability)}
               />
             </div>
           </div>
@@ -281,7 +283,7 @@ export default function PokemonList({
     }
     try {
       const abilityQuery = selectedAbility
-        ? `&abilities=${selectedAbility}`
+        ? `&abilities=${selectedAbility.name}`
         : ""
 
       const res = await fetch(

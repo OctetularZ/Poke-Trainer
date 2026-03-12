@@ -67,6 +67,7 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
       // Pokemon's Abilities
       abilities: {
         select: {
+          id: true,
           name: true
         }
       },
@@ -188,6 +189,7 @@ export async function getRandomPokemon(): Promise<Pokemon> {
       // Pokemon's Abilities
       abilities: {
         select: {
+          id: true,
           name: true
         }
       },
@@ -426,6 +428,7 @@ export async function getPokemonListFull(
       // Pokemon's Abilities
       abilities: {
         select: {
+          id: true,
           name: true
         }
       },

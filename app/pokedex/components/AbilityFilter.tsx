@@ -23,11 +23,11 @@ const AbilityFilter = ({
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredAbilities = abilities.filter((a) =>
-    a.name.toLowerCase().includes(searchTerm.toLowerCase())
+    a.name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   const sortedAbilities = [...filteredAbilities].sort((a, b) =>
-    a.name.localeCompare(b.name)
+    a.name.localeCompare(b.name),
   )
 
   return (
@@ -39,7 +39,7 @@ const AbilityFilter = ({
             {selectedAbility
               ? (() => {
                   const ability = abilities.find(
-                    (a) => a.name === selectedAbility
+                    (a) => a.name === selectedAbility,
                   )
                   return ability
                     ? ability.name.charAt(0).toUpperCase() +
