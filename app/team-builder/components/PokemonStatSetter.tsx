@@ -22,6 +22,7 @@ interface PokemonStatSetterProps {
   selectedPokemon: Pokemon | null
   isLoading?: boolean
   onAddToTeam?: (build: PokemonBuild) => void
+  onClearSelectedPokemon?: () => void
   initialBuild?: PokemonBuild
   isEditing?: boolean
   teamFull?: boolean
@@ -62,6 +63,7 @@ export default function PokemonStatSetter({
   selectedPokemon,
   isLoading,
   onAddToTeam,
+  onClearSelectedPokemon,
   initialBuild,
   isEditing,
   teamFull,
@@ -125,6 +127,7 @@ export default function PokemonStatSetter({
       specialDefense: 0,
       speed: 0,
     })
+    onClearSelectedPokemon?.()
   }
 
   // Helper to get nature modifier for a specific stat

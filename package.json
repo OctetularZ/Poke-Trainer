@@ -15,7 +15,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.7",
     "@prisma/adapter-pg": "^7.2.0",
-    "@prisma/client": "^7.2.0",
+    "@prisma/client": "^7.4.1",
     "@prisma/extension-accelerate": "^3.0.1",
     "@tanstack/react-table": "^8.21.3",
     "@types/node": "^24.7.1",
@@ -39,7 +39,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
-    "prisma": "^7.2.0",
+    "prisma": "^6.19.2",
     "tailwindcss": "^4",
     "tsx": "^4.20.5",
     "typescript": "^5.9.3"

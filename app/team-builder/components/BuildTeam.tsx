@@ -5,6 +5,7 @@ import PokemonList from "./PokemonStatSetterComponents/PokemonList"
 import PokemonStatSetter from "./PokemonStatSetter"
 import { FaSquareCheck } from "react-icons/fa6"
 import { PokemonBuild } from "@/types/team"
+import { saveTeam } from "@/app/actions/teams"
 
 interface BuildTeamProps {
   isOpen: boolean
@@ -53,46 +54,52 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                 x
               </button>
               <div className="h-full flex flex-row gap-5 items-center justify-center">
-                <div className="h-full flex flex-col items-center">
+                <div className="h-full flex flex-col items-center gap-1">
                   {team.length > 0 && (
-                    <div className="flex flex-row items-center mb-5">
-                      <h4 className="text-white text-2xl mr-3">
-                        Current Team:
-                      </h4>
-                      {team.map((build, index) => (
-                        <div key={build.pokemon.id} className="relative group">
-                          <img
-                            src={build.pokemon.sprites.front_default}
-                            width={50}
-                            height={50}
-                            className="cursor-pointer hover:opacity-70 transition-opacity"
-                            onClick={() => {
-                              setEditingIndex(index)
-                              setSelectedPokemon(build.pokemon)
-                            }}
-                          />
-                          <button
-                            onClick={() => {
-                              setTeam((prev) =>
-                                prev.filter((_, i) => i !== index),
-                              )
-                              if (editingIndex === index) setEditingIndex(null)
-                            }}
-                            className="absolute -top-1 -right-1 hidden group-hover:flex bg-red-600 hover:bg-red-400 text-white rounded-sm w-4 h-4 text-xs items-center justify-center leading-none"
+                    <div className="flex flex-col items-start mb-5">
+                      <div className="flex flex-row items-center">
+                        <h4 className="text-white text-2xl mr-3">
+                          Current Team:
+                        </h4>
+                        {team.map((build, index) => (
+                          <div
+                            key={build.pokemon.id}
+                            className="relative group"
                           >
-                            x
-                          </button>
-                        </div>
-                      ))}
+                            <img
+                              src={build.pokemon.sprites.front_default}
+                              width={50}
+                              height={50}
+                              className="cursor-pointer hover:opacity-70 transition-opacity"
+                              onClick={() => {
+                                setEditingIndex(index)
+                                setSelectedPokemon(build.pokemon)
+                              }}
+                            />
+                            <button
+                              onClick={() => {
+                                setTeam((prev) =>
+                                  prev.filter((_, i) => i !== index),
+                                )
+                                if (editingIndex === index)
+                                  setEditingIndex(null)
+                              }}
+                              className="absolute -top-1 -right-1 hidden group-hover:flex bg-red-600 hover:bg-red-400 text-white rounded-sm w-4 h-4 text-xs items-center justify-center leading-none"
+                            >
+                              x
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                       {team.length >= 6 && (
                         <div className="flex flex-row items-center gap-3">
-                          <button className="ml-5">
+                          <h4 className="text-white text-2xl">Confirm Team?</h4>
+                          <button onClick={() => saveTeam(team)}>
                             <FaSquareCheck
                               size={25}
                               className="text-green-500 hover:text-green-300 transition-all"
                             />
                           </button>
-                          <h4 className="text-white text-2xl">Confirm Team?</h4>
                         </div>
                       )}
                     </div>
@@ -124,6 +131,7 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                   isEditing={editingIndex !== null}
                   teamFull={team.length >= 6}
                   onAddToTeam={handleAddToTeam}
+                  onClearSelectedPokemon={() => setSelectedPokemon(null)}
                 />
               </div>
             </div>
