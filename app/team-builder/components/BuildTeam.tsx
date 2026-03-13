@@ -19,6 +19,7 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
   const [pokemonLoading, setPokemonLoading] = useState(false)
   const [team, setTeam] = useState<PokemonBuild[]>([])
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [teamName, setTeamName] = useState("")
 
   const handleAddToTeam = (build: PokemonBuild) => {
     if (editingIndex !== null) {
@@ -94,7 +95,22 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                       {team.length >= 6 && (
                         <div className="flex flex-row items-center gap-3">
                           <h4 className="text-white text-2xl">Confirm Team?</h4>
-                          <button onClick={() => saveTeam(team)}>
+                          <input
+                            value={teamName}
+                            onChange={(event) =>
+                              setTeamName(event.target.value)
+                            }
+                            placeholder="Team name?"
+                            className="bg-black/40 text-white px-3 py-1 rounded-md border border-white/20 focus:outline-none focus:ring-2 focus:ring-charmander-blue-400"
+                          />
+                          <button
+                            onClick={() => {
+                              saveTeam(team, teamName)
+                              onClose()
+                              setTeam([])
+                              setTeamName("")
+                            }}
+                          >
                             <FaSquareCheck
                               size={25}
                               className="text-green-500 hover:text-green-300 transition-all"
