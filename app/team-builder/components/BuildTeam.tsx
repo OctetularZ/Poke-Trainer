@@ -12,8 +12,6 @@ interface BuildTeamProps {
   onClose: () => void
 }
 
-// CheckList: 3) add team to DB.
-
 export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null)
   const [pokemonLoading, setPokemonLoading] = useState(false)

@@ -371,7 +371,7 @@ const GTPContainer = () => {
         {!session && (
           <Link href={"/login"}>
             <h1 className="text-red-500 text-xl mt-5">
-              Login (or Register) To Start Earning Coins!
+              Login/Register To Start Earning Coins!
             </h1>
           </Link>
         )}
