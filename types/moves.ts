@@ -15,6 +15,6 @@ export interface Move {
   name: string,
   type: string,
   category: string,
-  power: string,
-  accuracy: string
+  power: string | null,
+  accuracy: string | null
 }

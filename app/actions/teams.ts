@@ -1,8 +1,10 @@
 "use server"
 import prisma from "@/lib/prisma"
-import { PokemonBuild } from "@/types/team"
+import { PokemonBuild, Team } from "@/types/team"
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
+import { PokemonSprites } from "@/types/pokemon"
+import { fetchSprites } from "@/lib/pokeapi/helpers/fetchSprites"
 
 export async function saveTeam(team: PokemonBuild[], teamName?: string) {
   const session = await auth.api.getSession({
@@ -54,7 +56,11 @@ export async function fetchTeams() {
 
   const userTeams = await prisma.team.findMany({
     where: { userId: session.user.id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      createdAt: true,
+      updatedAt: true,
       members: {
         select: {
           ability: {
@@ -75,5 +81,29 @@ export async function fetchTeams() {
     }
   })
 
-  return userTeams
+  if (!userTeams) throw new Error("Could not fetch user's teams!");
+  
+  // Fetch sprites for all Pokemon in parallel
+  const teamsWithSprites: Team[] = await Promise.all(
+    userTeams.map(async (team) => ({
+      ...team,
+      members: await Promise.all(
+        team.members.map(async (member) => {
+          const sprites = member.pokemon.pokeapiId
+            ? await fetchSprites(member.pokemon.pokeapiId)
+            : undefined
+
+          return {
+            ...member,
+            pokemon: {
+              ...member.pokemon,
+              sprites: sprites ?? ({} as PokemonSprites),
+            },
+          }
+        }),
+      ),
+    })),
+  )
+
+  return teamsWithSprites
 }
