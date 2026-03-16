@@ -8,10 +8,13 @@ import { fetchTeams } from "@/app/actions/teams"
 import Link from "next/link"
 import { Team } from "@/types/team"
 import TeamDisplay from "./ViewTeamsComponents/TeamDisplay"
+import { motion } from "motion/react"
+import Image from "next/image"
 
 export default function ViewTeams() {
   const [isOpen, setIsOpen] = useState(false)
   const [userTeams, setUserTeams] = useState<Team[]>([])
+  const [loading, setLoading] = useState(true)
 
   // Getting user session
   const { data: session, isPending } = useSession()
@@ -23,11 +26,12 @@ export default function ViewTeams() {
       setUserTeams(data)
     }
     loadTeams()
+    setLoading(false)
   }, [session])
 
   return (
     <div className="flex flex-col justify-center items-center mt-10 gap-5">
-      {!session && (
+      {!session && !loading && (
         <Link href={"/login"}>
           <h1 className="text-red-500 text-xl my-5">
             Login/Register To Start Building Teams!
@@ -43,9 +47,29 @@ export default function ViewTeams() {
         New Team
       </button>
 
-      {userTeams.map((team) => (
-        <TeamDisplay key={team.id} team={team} />
-      ))}
+      {loading && (
+        <div className="flex justify-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 0.3,
+              ease: "linear",
+              repeat: Infinity,
+              repeatDelay: 1,
+            }}
+          >
+            <Image
+              src={"/pixel-great-ball.png"}
+              width={50}
+              height={50}
+              alt="pixel-great-ball-loading"
+            />
+          </motion.div>
+        </div>
+      )}
+
+      {!loading &&
+        userTeams.map((team) => <TeamDisplay key={team.id} team={team} />)}
 
       <BuildTeam isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </div>
