@@ -63,6 +63,7 @@ export async function fetchTeams() {
       updatedAt: true,
       members: {
         select: {
+          id: true,
           ability: {
             select: {id: true, name: true}
           },

@@ -28,6 +28,7 @@ export interface Team {
 }
 
 export interface TeamMember {
+  id: number,
   ability: PokemonAbility
   pokemon: TeamPokemon
   moves: TeamMemberMove[]

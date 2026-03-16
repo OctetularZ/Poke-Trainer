@@ -26,7 +26,7 @@ export default function ViewTeams() {
   }, [session])
 
   return (
-    <div className="flex flex-col justify-center items-center mt-10 gap-3">
+    <div className="flex flex-col justify-center items-center mt-10 gap-5">
       {!session && (
         <Link href={"/login"}>
           <h1 className="text-red-500 text-xl my-5">
@@ -44,7 +44,7 @@ export default function ViewTeams() {
       </button>
 
       {userTeams.map((team) => (
-        <TeamDisplay team={team} />
+        <TeamDisplay key={team.id} team={team} />
       ))}
 
       <BuildTeam isOpen={isOpen} onClose={() => setIsOpen(false)} />
