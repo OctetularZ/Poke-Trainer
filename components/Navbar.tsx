@@ -23,6 +23,9 @@ const Navbar = () => {
         <li>
           <Link href="/team-builder">Team Builder</Link>
         </li>
+        <li>
+          <Link href="/battle">Battle!</Link>
+        </li>
       </ul>
       <Link href="/">
         <h1 className="flex items-center justify-center justify-self-center text-bold text-4xl">

@@ -30,7 +30,7 @@ export default function ViewTeams() {
   }, [session])
 
   return (
-    <div className="flex flex-col justify-center items-center mt-10 gap-5">
+    <div className="flex flex-col justify-center items-center mt-10 gap-5 mb-20">
       {!session && !loading && (
         <Link href={"/login"}>
           <h1 className="text-red-500 text-xl my-5">
