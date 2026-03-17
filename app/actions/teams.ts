@@ -64,6 +64,7 @@ export async function fetchTeams() {
       members: {
         select: {
           id: true,
+          slot: true,
           ability: {
             select: {id: true, name: true}
           },
@@ -107,4 +108,82 @@ export async function fetchTeams() {
   )
 
   return teamsWithSprites
+}
+
+export async function fetchUserTeam() {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized')
+  }
+
+  const userTeam = await prisma.team.findFirst({
+    where: { userId: session.user.id },
+    select: {
+      id: true,
+      name: true,
+      members: {
+        select: {
+          id: true,
+          slot: true,
+          nature: true,
+          evHp: true,
+          evAtk: true,
+          evSpAtk: true,
+          evDef: true,
+          evSpDef: true,
+          evSpeed: true,
+          ability: {
+            select: {id: true, name: true}
+          },
+          pokemon: {
+            select: {
+              id: true,
+              name: true,
+              pokeapiId: true,
+              hpBase: true,
+              attackBase: true,
+              spAtkBase: true,
+              defenseBase: true,
+              spDefBase: true,
+              speedBase: true,
+              types: { select: { name: true} }
+            }
+          },
+          moves: {
+            select: {id: true, slot: true, gameMove: {
+              select: {move: {
+                select: {id: true, name: true, type: true, category: true, power: true, accuracy: true}
+              }}
+            }}
+          }
+        }
+      }
+    }
+  })
+
+  if (!userTeam) throw new Error("Could not fetch user's team!");
+  
+  const teamWithSprites = {
+    ...userTeam,
+    members: await Promise.all(
+      userTeam.members.map(async (member) => {
+        const sprites = member.pokemon.pokeapiId
+          ? await fetchSprites(member.pokemon.pokeapiId)
+          : undefined
+
+        return {
+          ...member,
+          pokemon: {
+            ...member.pokemon,
+            sprites: sprites ?? ({} as PokemonSprites),
+          },
+        }
+      }),
+    ),
+  }
+
+  return teamWithSprites
 }

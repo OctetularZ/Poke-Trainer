@@ -22,13 +22,14 @@ export interface EVStats {
 export interface Team {
   id: number
   name: string | null
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
   members: TeamMember[]
 }
 
 export interface TeamMember {
   id: number,
+  slot: number,
   ability: PokemonAbility
   pokemon: TeamPokemon
   moves: TeamMemberMove[]
