@@ -81,6 +81,7 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
           tmNumber: true,
           move: {
             select: {
+              id: true,
               name: true,
               type: true,
               category: true,
@@ -204,6 +205,7 @@ export async function getRandomPokemon(): Promise<Pokemon> {
           tmNumber: true,
           move: {
             select: {
+              id: true,
               name: true,
               type: true,
               category: true,
@@ -442,6 +444,7 @@ export async function getPokemonListFull(
           method: true,
           move: {
             select: {
+              id: true,
               name: true,
               type: true,
               category: true,

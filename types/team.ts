@@ -1,6 +1,7 @@
 import { PokemonAbility } from "./ability"
 import { GameMove, Move } from "./moves"
 import { Pokemon, PokemonSprites } from "./pokemon"
+import { PokemonType } from "./type"
 
 export interface PokemonBuild {
   pokemon: Pokemon
@@ -28,8 +29,15 @@ export interface Team {
 }
 
 export interface TeamMember {
-  id: number,
-  slot: number,
+  id: number
+  slot: number
+  nature?: string
+  evHp?: number
+  evAtk?: number
+  evSpAtk?: number
+  evDef?: number
+  evSpDef?: number
+  evSpeed?: number
   ability: PokemonAbility
   pokemon: TeamPokemon
   moves: TeamMemberMove[]
@@ -40,6 +48,13 @@ export interface TeamPokemon {
   name: string
   pokeapiId: number | null
   sprites: PokemonSprites
+  hpBase?: number
+  attackBase?: number
+  spAtkBase?: number
+  defenseBase?: number
+  spDefBase?: number
+  speedBase?: number
+  types?: PokemonType[]
 }
 
 export interface TeamMemberMove {
@@ -48,8 +63,4 @@ export interface TeamMemberMove {
   gameMove: {
     move: Move
   }
-}
-
-export interface TeamMove extends Move {
-  slot: number
 }

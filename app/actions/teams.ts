@@ -1,6 +1,6 @@
 "use server"
 import prisma from "@/lib/prisma"
-import { PokemonBuild, Team } from "@/types/team"
+import { PokemonBuild, Team, TeamMember } from "@/types/team"
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { PokemonSprites } from "@/types/pokemon"
@@ -110,7 +110,7 @@ export async function fetchTeams() {
   return teamsWithSprites
 }
 
-export async function fetchUserTeam() {
+export async function fetchUserTeam(): Promise<TeamMember[]> {
   const session = await auth.api.getSession({
     headers: await headers()
   })
@@ -185,5 +185,5 @@ export async function fetchUserTeam() {
     ),
   }
 
-  return teamWithSprites
+  return teamWithSprites.members as TeamMember[]
 }

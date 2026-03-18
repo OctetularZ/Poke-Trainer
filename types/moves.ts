@@ -12,6 +12,7 @@ export interface GameMove {
 }
 
 export interface Move {
+  id: number,
   name: string,
   type: string,
   category: string,

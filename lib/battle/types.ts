@@ -1,3 +1,5 @@
+import { PokemonSprites } from "@/types/pokemon"
+
 export type BattleSide = "player" | "ai"
 
 export interface BattleMove {
@@ -25,6 +27,7 @@ export interface BattlePokemon {
   types: string[]
   moves: BattleMove[]
   fainted: boolean
+  sprites?: PokemonSprites
 }
 
 export interface BattleTeam {
