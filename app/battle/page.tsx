@@ -15,7 +15,7 @@ function createPokemon(
   return {
     id: pokemon.id,
     name: pokemon.name,
-    level: pokemon.level ?? 50,
+    level: pokemon.level ?? 100,
     currentHp: pokemon.currentHp ?? 160,
     maxHp: pokemon.maxHp ?? 160,
     attack: pokemon.attack ?? 120,
