@@ -9,12 +9,29 @@ interface StageProps {
 
 const Stage = ({ attackerPokemon, defenderPokemon }: StageProps) => {
   return (
-    <div className="flex justify-center mt-20">
+    <div className="relative flex w-200 h-150 justify-center mt-10 overflow-hidden">
       <Image
         src={"/stages/sand_mines.png"}
-        width={700}
-        height={700}
+        className="object-contain"
+        fill
         alt="sand-mines"
+      />
+
+      <img
+        className="absolute bottom-25 left-40 z-10 w-auto h-40"
+        src={
+          attackerPokemon.sprites?.other.showdown.back_default ||
+          attackerPokemon.sprites?.back_default
+        }
+      />
+
+      <img
+        className="absolute top-45 right-35 z-10 w-auto h-30"
+        // Change this to defenderPokemon when ai Pokemon team set with sprites
+        src={
+          attackerPokemon.sprites?.other.showdown.front_default ||
+          attackerPokemon.sprites?.front_default
+        }
       />
     </div>
   )
