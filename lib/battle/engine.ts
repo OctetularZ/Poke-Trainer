@@ -25,6 +25,15 @@ function hasAvailablePokemon(state: BattleState, side: BattleSide) {
   return state[side].pokemon.some((pokemon) => !pokemon.fainted)
 }
 
+function getAvailableSwitchIndexes(state: BattleState, side: BattleSide) {
+  const team = state[side]
+
+  return team.pokemon
+    .map((pokemon, index) => ({ pokemon, index }))
+    .filter(({ pokemon, index }) => !pokemon.fainted && index !== team.activeIndex)
+    .map(({ index }) => index)
+}
+
 function applySwitch(state: BattleState, side: BattleSide, toIndex: number, events: string[]) {
   const current = state[side]
   const target = current.pokemon[toIndex]
@@ -61,6 +70,7 @@ function applyAttack(state: BattleState, side: BattleSide, moveIndex: number, ev
     defender.fainted = true
   }
 
+  // Haven't accounted for very effective vs super effective (when both Pokemon types are weak to type of move)
   events.push(`${attacker.name} used ${move.name} for ${result.damage} damage.`)
 
   if (result.wasCritical) {
@@ -125,6 +135,20 @@ function resolveAction(state: BattleState, action: BattleAction, events: string[
   applyAttack(state, action.side, action.moveIndex, events)
 }
 
+function forceAiSwitchIfFainted(state: BattleState, events: string[]) {
+  if (state.winner) return
+
+  const activeAiPokemon = getActivePokemon(state, "ai")
+  if (!activeAiPokemon.fainted) return
+
+  const availableSwitches = getAvailableSwitchIndexes(state, "ai")
+  if (availableSwitches.length === 0) return
+
+  const randomIndex = Math.floor(Math.random() * availableSwitches.length)
+  const toIndex = availableSwitches[randomIndex]
+  applySwitch(state, "ai", toIndex, events)
+}
+
 export function resolveTurn(
   currentState: BattleState,
   playerAction: BattleAction,
@@ -150,6 +174,8 @@ export function resolveTurn(
       break
     }
   }
+
+  forceAiSwitchIfFainted(state, events)
 
   state.turn += 1
   state.battleLog = [...state.battleLog, ...events]

@@ -92,6 +92,7 @@ export default function BattlePage() {
 
   return (
     <Stage attackerPokemon={playerActive} defenderPokemon={aiActive} />
+
     // <div className="mx-auto max-w-5xl p-6 text-white">
     //   <h1 className="text-3xl font-bold mb-2">Battle Demo</h1>
     //   <p className="text-gray-300 mb-6">
