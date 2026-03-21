@@ -13,6 +13,16 @@ const minecraft = localFont({
   variable: "--font-minecraft",
 })
 
+const pokemonClassic = localFont({
+  src: [
+    {
+      path: "./fonts/PokemonClassic.woff2",
+      weight: "400",
+    },
+  ],
+  variable: "--font-pokemonClassic",
+})
+
 export const metadata: Metadata = {
   title: "Poké Trainer",
   description: "Train your pokemon skills",
@@ -28,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={minecraft.variable}>
+      <body className={`${minecraft.variable} ${pokemonClassic.variable}`}>
         <Navbar />
         {children}
       </body>

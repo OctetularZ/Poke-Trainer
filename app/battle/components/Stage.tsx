@@ -1,7 +1,7 @@
 import { BattlePokemon } from "@/lib/battle"
 import Image from "next/image"
 import React from "react"
-import HpBar from "./HpBar"
+import HealthBar from "./HealthBar"
 
 interface StageProps {
   attackerPokemon: BattlePokemon
@@ -27,7 +27,7 @@ const Stage = ({ attackerPokemon, defenderPokemon }: StageProps) => {
       />
 
       <div className="absolute bottom-30 right-20 z-10">
-        <HpBar />
+        <HealthBar currentHP={100} maxHP={100} />
       </div>
 
       <img
