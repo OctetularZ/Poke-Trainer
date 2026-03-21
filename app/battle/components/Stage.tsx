@@ -1,6 +1,7 @@
 import { BattlePokemon } from "@/lib/battle"
 import Image from "next/image"
 import React from "react"
+import HpBar from "./HpBar"
 
 interface StageProps {
   attackerPokemon: BattlePokemon
@@ -9,7 +10,7 @@ interface StageProps {
 
 const Stage = ({ attackerPokemon, defenderPokemon }: StageProps) => {
   return (
-    <div className="relative flex w-200 h-150 justify-center mt-10 overflow-hidden">
+    <div className="relative flex w-200 h-150 justify-center mt-10 overflow-hidden border-1 border-amber-100">
       <Image
         src={"/stages/sand_mines.png"}
         className="object-contain"
@@ -24,6 +25,10 @@ const Stage = ({ attackerPokemon, defenderPokemon }: StageProps) => {
           attackerPokemon.sprites?.back_default
         }
       />
+
+      <div className="absolute bottom-30 right-20 z-10">
+        <HpBar />
+      </div>
 
       <img
         className="absolute top-45 right-35 z-10 w-auto h-30"
