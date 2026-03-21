@@ -91,7 +91,11 @@ export default function BattlePage() {
   }
 
   return (
-    <Stage attackerPokemon={playerActive} defenderPokemon={aiActive} />
+    <Stage
+      turnNumber={state.turn}
+      attackerPokemon={playerActive}
+      defenderPokemon={aiActive}
+    />
 
     // <div className="mx-auto max-w-5xl p-6 text-white">
     //   <h1 className="text-3xl font-bold mb-2">Battle Demo</h1>

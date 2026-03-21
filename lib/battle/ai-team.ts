@@ -30,6 +30,7 @@ export function buildDefaultAiTeam(): BattlePokemon[] {
       maxHp: 140,
       currentHp: 140,
       speed: 130,
+      sprites: {other: {showdown: {front_default: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/25.gif"}}},
       moves: [
         {
           id: 9,
