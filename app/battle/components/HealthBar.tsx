@@ -20,8 +20,9 @@ const HealthBar = ({
   maxHP,
   percentageOnLeft = false,
 }: HealthBarProps) => {
-  const percentage = Math.max(0, (currentHP / maxHP) * 100)
-  const color = getHpColor(percentage)
+  const percentage = Math.max(0, Math.min(100, (currentHP / maxHP) * 100))
+  const roundedPercentage = Math.round(percentage)
+  const color = getHpColor(roundedPercentage)
 
   return (
     <div className="flex flex-col items-center">
@@ -33,21 +34,21 @@ const HealthBar = ({
         >
           {pokemonName.toUpperCase()}
         </h4>
-        <div className="relative w-[300px] h-4">
+        <div className="relative w-[300px] h-3">
           {/* Extended background (goes further right) */}
           <div className="absolute inset-y-0 left-0 w-full bg-gray-500 rounded-md" />
 
           {/* Actual HP bar container */}
           <div
-            className={`absolute inset-y-0 z-10 w-[250px] border-t-[1px] border-t-white bg-white border-b-2 border-b-white border-x-1 border-x-white rounded-md overflow-hidden ${
+            className={`absolute inset-y-0 z-10 w-[250px] border-t-1 border-t-white bg-white border-b-1 border-b-white border-x-1 border-x-white rounded-md overflow-hidden ${
               percentageOnLeft ? "right-0" : "left-0"
             }`}
           >
-            <div className="absolute inset-0 border border-neutral-500 pointer-events-none z-10" />
+            <div className="absolute inset-0 border border-neutral-500 rounded-md pointer-events-none z-10" />
 
             <div
               className={`h-full transition-all duration-500 ease-in-out ${color}`}
-              style={{ width: `${percentage}%` }}
+              style={{ width: `${roundedPercentage}%` }}
             />
           </div>
 
@@ -57,7 +58,7 @@ const HealthBar = ({
               percentageOnLeft ? "left-2" : "right-2"
             }`}
           >
-            {percentage}%
+            {roundedPercentage}%
           </h1>
         </div>
       </div>

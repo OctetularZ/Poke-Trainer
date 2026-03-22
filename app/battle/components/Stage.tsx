@@ -15,7 +15,7 @@ const Stage = ({
   defenderPokemon,
 }: StageProps) => {
   return (
-    <div className="relative flex w-200 h-150 justify-center mt-10 overflow-hidden border-1 border-amber-100">
+    <div className="relative flex w-200 h-133 justify-center mt-10 overflow-hidden border-1 border-amber-100">
       <Image
         src={"/stages/sand_mines.png"}
         className="object-contain"
@@ -23,11 +23,11 @@ const Stage = ({
         alt="sand-mines"
       />
 
-      <div className="absolute bg-amber-50 border-3 border-black px-2 font-bold text-2xl rounded-md top-12 left-5">
+      <div className="absolute bg-amber-50 border-3 border-black px-2 font-bold text-2xl rounded-md top-5 left-5">
         <h1>Turn {turnNumber}</h1>
       </div>
 
-      <div className="flex flex-col items-center absolute bottom-25 left-20 z-10 gap-15">
+      <div className="flex flex-col items-center absolute bottom-20 left-20 z-10 gap-15">
         <HealthBar
           pokemonName={attackerPokemon.name}
           currentHP={attackerPokemon.currentHp}
@@ -42,7 +42,7 @@ const Stage = ({
         />
       </div>
 
-      <div className="flex flex-col items-center absolute top-15 right-12 z-10 gap-15">
+      <div className="flex flex-col items-center absolute top-8 right-12 z-10 gap-15">
         <HealthBar
           percentageOnLeft={true}
           pokemonName={defenderPokemon.name}

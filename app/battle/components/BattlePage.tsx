@@ -13,6 +13,7 @@ import {
 } from "@/lib/battle"
 import { fetchUserTeam } from "@/app/actions/teams"
 import Stage from "./Stage"
+import MoveButton from "./MoveButton"
 
 export default function BattlePage() {
   const [state, setState] = useState<BattleState | null>(null)
@@ -91,11 +92,35 @@ export default function BattlePage() {
   }
 
   return (
-    <Stage
-      turnNumber={state.turn}
-      attackerPokemon={playerActive}
-      defenderPokemon={aiActive}
-    />
+    <div className="flex flex-col items-center">
+      <Stage
+        turnNumber={state.turn}
+        attackerPokemon={playerActive}
+        defenderPokemon={aiActive}
+      />
+      <div className="flex flex-col items-start">
+        <h1 className="text-xl text-white mb-3 font-semibold">Moves</h1>
+        <div className="flex flex-row flex-wrap">
+          {playerActive.moves.map((move, index) => (
+            <MoveButton
+              key={move.id}
+              disabled={Boolean(state.winner) || playerActive.fainted}
+              onClick={() =>
+                handlePlayerAction({
+                  type: "move",
+                  side: "player",
+                  moveIndex: index,
+                })
+              }
+              moveName={move.name}
+              moveType={move.type}
+              movePPLeft={8}
+              movePPMax={12}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
 
     // <div className="mx-auto max-w-5xl p-6 text-white">
     //   <h1 className="text-3xl font-bold mb-2">Battle Demo</h1>
@@ -103,52 +128,6 @@ export default function BattlePage() {
     //     Turn {state.turn} •{" "}
     //     {state.winner ? `Winner: ${state.winner.toUpperCase()}` : "In progress"}
     //   </p>
-
-    //   <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-    //     <div className="rounded-lg border border-white/20 p-4">
-    //       <h2 className="text-xl font-semibold">Player Active</h2>
-    //       <p className="text-lg">{playerActive.name}</p>
-    //       <p className="text-sm text-gray-300">
-    //         HP: {playerActive.currentHp}/{playerActive.maxHp}
-    //       </p>
-    //       <p className="text-sm text-gray-300">
-    //         Types: {playerActive.types.join(", ")}
-    //       </p>
-    //     </div>
-
-    //     <div className="rounded-lg border border-white/20 p-4">
-    //       <h2 className="text-xl font-semibold">AI Active</h2>
-    //       <p className="text-lg">{aiActive.name}</p>
-    //       <p className="text-sm text-gray-300">
-    //         HP: {aiActive.currentHp}/{aiActive.maxHp}
-    //       </p>
-    //       <p className="text-sm text-gray-300">
-    //         Types: {aiActive.types.join(", ")}
-    //       </p>
-    //     </div>
-    //   </section>
-
-    //   <section className="rounded-lg border border-white/20 p-4 mb-6">
-    //     <h3 className="text-lg font-semibold mb-3">Choose Move</h3>
-    //     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-    //       {playerActive.moves.map((move, index) => (
-    //         <button
-    //           key={move.id}
-    //           disabled={Boolean(state.winner) || playerActive.fainted}
-    //           onClick={() =>
-    //             handlePlayerAction({
-    //               type: "move",
-    //               side: "player",
-    //               moveIndex: index,
-    //             })
-    //           }
-    //           className="bg-charmander-blue-500 hover:bg-charmander-blue-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all rounded-md px-3 py-2 text-left"
-    //         >
-    //           {move.name} ({move.type})
-    //         </button>
-    //       ))}
-    //     </div>
-    //   </section>
 
     //   <section className="rounded-lg border border-white/20 p-4 mb-6">
     //     <h3 className="text-lg font-semibold mb-3">Switch Pokémon</h3>
