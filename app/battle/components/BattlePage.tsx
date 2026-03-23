@@ -14,6 +14,7 @@ import {
 import { fetchUserTeam } from "@/app/actions/teams"
 import Stage from "./Stage"
 import MoveButton from "./MoveButton"
+import SwitchButton from "./SwitchButton"
 
 export default function BattlePage() {
   const [state, setState] = useState<BattleState | null>(null)
@@ -98,7 +99,7 @@ export default function BattlePage() {
         attackerPokemon={playerActive}
         defenderPokemon={aiActive}
       />
-      <div className="flex flex-col items-start">
+      <div className="flex flex-col items-start gap-5">
         <h1 className="text-xl text-white mb-3 font-semibold">Moves</h1>
         <div className="flex flex-row flex-wrap">
           {playerActive.moves.map((move, index) => (
@@ -116,6 +117,31 @@ export default function BattlePage() {
               moveType={move.type}
               movePPLeft={8}
               movePPMax={12}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col items-start mb-5">
+        <h1 className="text-xl text-white mb-3 font-semibold">
+          Switch Pokemon
+        </h1>
+        <div className="flex flex-row flex-wrap gap-5">
+          {availableSwitches.map(({ pokemon, index }) => (
+            <SwitchButton
+              key={pokemon.id}
+              disabled={Boolean(state.winner) || pokemon.fainted}
+              onClick={() =>
+                handlePlayerAction({
+                  type: "switch",
+                  side: "player",
+                  toIndex: index,
+                })
+              }
+              pokemonName={pokemon.name}
+              pokemonSprites={pokemon.sprites}
+              currentHp={pokemon.currentHp}
+              maxHp={pokemon.maxHp}
             />
           ))}
         </div>
