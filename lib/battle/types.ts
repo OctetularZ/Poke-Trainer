@@ -35,12 +35,18 @@ export interface BattleTeam {
   pokemon: BattlePokemon[]
 }
 
+export interface BattleLogEntry {
+  kind: "turn" | "event"
+  message: string
+  turn: number
+}
+
 export interface BattleState {
   turn: number
   player: BattleTeam
   ai: BattleTeam
   winner: BattleSide | null
-  battleLog: string[]
+  battleLog: BattleLogEntry[]
 }
 
 export interface DamageResult {

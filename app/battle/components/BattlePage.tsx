@@ -15,6 +15,7 @@ import { fetchUserTeam } from "@/app/actions/teams"
 import Stage from "./Stage"
 import MoveButton from "./MoveButton"
 import SwitchButton from "./SwitchButton"
+import BattleLog from "./BattleLog"
 
 export default function BattlePage() {
   const [state, setState] = useState<BattleState | null>(null)
@@ -27,7 +28,14 @@ export default function BattlePage() {
     setState({
       turn: 1,
       winner: null,
-      battleLog: ["Battle started!"],
+      battleLog: [
+        { kind: "turn", message: "Turn 0", turn: 0 },
+        {
+          kind: "event",
+          message: "Battle started!",
+          turn: 0,
+        },
+      ],
       player: { activeIndex: 0, pokemon: playerPokemon },
       ai: { activeIndex: 0, pokemon: aiPokemon },
     })
@@ -93,59 +101,65 @@ export default function BattlePage() {
   }
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <div className="flex flex-col w-full max-w-[50rem] gap-5">
-        <Stage
-          turnNumber={state.turn}
-          attackerPokemon={playerActive}
-          defenderPokemon={aiActive}
-        />
-        <div className="flex flex-col items-start">
-          <h1 className="text-xl text-white mb-3 font-semibold">Moves</h1>
-          <div className="w-full grid grid-cols-4 gap-4">
-            {playerActive.moves.map((move, index) => (
-              <MoveButton
-                key={move.id}
-                disabled={Boolean(state.winner) || playerActive.fainted}
-                onClick={() =>
-                  handlePlayerAction({
-                    type: "move",
-                    side: "player",
-                    moveIndex: index,
-                  })
-                }
-                moveName={move.name}
-                moveType={move.type}
-                movePPLeft={8}
-                movePPMax={12}
-              />
-            ))}
+    <div className="flex flex-col items-center w-full mx-20">
+      <div className="w-full flex flex-row items-start mt-10 gap-5">
+        <div className="flex flex-col w-full max-w-[50rem] gap-5">
+          <Stage
+            turnNumber={state.turn}
+            attackerPokemon={playerActive}
+            defenderPokemon={aiActive}
+          />
+          <div className="flex flex-col items-start">
+            <h1 className="text-xl text-white mb-3 font-semibold">Moves</h1>
+            <div className="w-full grid grid-cols-4 gap-4">
+              {playerActive.moves.map((move, index) => (
+                <MoveButton
+                  key={move.id}
+                  disabled={Boolean(state.winner) || playerActive.fainted}
+                  onClick={() =>
+                    handlePlayerAction({
+                      type: "move",
+                      side: "player",
+                      moveIndex: index,
+                    })
+                  }
+                  moveName={move.name}
+                  moveType={move.type}
+                  movePPLeft={8}
+                  movePPMax={12}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="w-full flex flex-col items-start mb-5">
+            <h1 className="text-xl text-white mb-3 font-semibold">
+              Switch Pokemon
+            </h1>
+            <div className="w-full grid grid-cols-5 gap-3">
+              {availableSwitches.map(({ pokemon, index }) => (
+                <SwitchButton
+                  key={pokemon.id}
+                  disabled={Boolean(state.winner) || pokemon.fainted}
+                  onClick={() =>
+                    handlePlayerAction({
+                      type: "switch",
+                      side: "player",
+                      toIndex: index,
+                    })
+                  }
+                  pokemonName={pokemon.name}
+                  pokemonSprites={pokemon.sprites}
+                  currentHp={pokemon.currentHp}
+                  maxHp={pokemon.maxHp}
+                />
+              ))}
+            </div>
           </div>
         </div>
-
-        <div className="w-full flex flex-col items-start mb-5">
-          <h1 className="text-xl text-white mb-3 font-semibold">
-            Switch Pokemon
-          </h1>
-          <div className="w-full grid grid-cols-5 gap-3">
-            {availableSwitches.map(({ pokemon, index }) => (
-              <SwitchButton
-                key={pokemon.id}
-                disabled={Boolean(state.winner) || pokemon.fainted}
-                onClick={() =>
-                  handlePlayerAction({
-                    type: "switch",
-                    side: "player",
-                    toIndex: index,
-                  })
-                }
-                pokemonName={pokemon.name}
-                pokemonSprites={pokemon.sprites}
-                currentHp={pokemon.currentHp}
-                maxHp={pokemon.maxHp}
-              />
-            ))}
-          </div>
+        <div className="flex flex-col items-start gap-2">
+          <h1 className="text-white text-2xl">Battle Log</h1>
+          <BattleLog battleLog={state.battleLog} />
         </div>
       </div>
     </div>
@@ -156,28 +170,6 @@ export default function BattlePage() {
     //     Turn {state.turn} •{" "}
     //     {state.winner ? `Winner: ${state.winner.toUpperCase()}` : "In progress"}
     //   </p>
-
-    //   <section className="rounded-lg border border-white/20 p-4 mb-6">
-    //     <h3 className="text-lg font-semibold mb-3">Switch Pokémon</h3>
-    //     <div className="flex flex-wrap gap-2">
-    //       {availableSwitches.map(({ pokemon, index }) => (
-    //         <button
-    //           key={pokemon.id}
-    //           disabled={Boolean(state.winner)}
-    //           onClick={() =>
-    //             handlePlayerAction({
-    //               type: "switch",
-    //               side: "player",
-    //               toIndex: index,
-    //             })
-    //           }
-    //           className="bg-gray-700 hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all rounded-md px-3 py-2"
-    //         >
-    //           {pokemon.name} ({pokemon.currentHp}/{pokemon.maxHp})
-    //         </button>
-    //       ))}
-    //     </div>
-    //   </section>
 
     //   <section className="rounded-lg border border-white/20 p-4">
     //     <div className="flex items-center justify-between mb-3">

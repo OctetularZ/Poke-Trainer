@@ -15,7 +15,7 @@ const Stage = ({
   defenderPokemon,
 }: StageProps) => {
   return (
-    <div className="relative flex w-full h-133 justify-center mt-10 overflow-hidden border-1 border-amber-100">
+    <div className="relative flex w-full h-133 justify-center overflow-hidden border-1 border-amber-100">
       <Image
         src={"/stages/sand_mines.png"}
         className="object-contain"

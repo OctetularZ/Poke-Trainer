@@ -1,5 +1,12 @@
 import { calculateDamage } from "./damage"
-import { BattleAction, BattlePokemon, BattleSide, BattleState, TurnResolution } from "./types"
+import {
+  BattleAction,
+  BattleLogEntry,
+  BattlePokemon,
+  BattleSide,
+  BattleState,
+  TurnResolution,
+} from "./types"
 
 function cloneState(state: BattleState): BattleState {
   return {
@@ -155,7 +162,15 @@ export function resolveTurn(
   aiAction: BattleAction,
 ): TurnResolution {
   const state = cloneState(currentState)
+  const currentTurn = state.turn
   const events: string[] = []
+  const turnLogEntries: BattleLogEntry[] = [
+    {
+      kind: "turn",
+      message: `Turn ${currentTurn}`,
+      turn: currentTurn,
+    },
+  ]
 
   const orderedActions = shouldActFirst(state, playerAction, aiAction)
     ? [playerAction, aiAction]
@@ -178,7 +193,14 @@ export function resolveTurn(
   forceAiSwitchIfFainted(state, events)
 
   state.turn += 1
-  state.battleLog = [...state.battleLog, ...events]
+  turnLogEntries.push(
+    ...events.map((event) => ({
+      kind: "event" as const,
+      message: event,
+      turn: currentTurn,
+    })),
+  )
+  state.battleLog = [...state.battleLog, ...turnLogEntries]
 
   return {
     state,
