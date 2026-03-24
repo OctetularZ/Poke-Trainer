@@ -34,7 +34,7 @@ const SwitchButton = ({
     <button
       disabled={disabled}
       onClick={onClick}
-      className="relative flex flex-col items-center bg-gray-500 px-2 py-1 rounded-md hover:scale-105 hover:bg-gray-400 transition-all disabled:opacity-40 disabled:hover:scale-100"
+      className="relative flex flex-col items-start bg-gray-500 py-1 rounded-md hover:scale-105 hover:bg-gray-400 transition-all disabled:opacity-40 disabled:hover:scale-100"
     >
       <div className="flex flex-row items-center">
         <img
@@ -46,10 +46,10 @@ const SwitchButton = ({
           width={50}
           height={50}
         />
-        <h1 className="text-white text-lg">{pokemonName}</h1>
+        <h1 className="text-white text-md">{pokemonName}</h1>
       </div>
 
-      <div className="absolute w-[95%] bottom-1 h-2 bg-white border border-neutral-500 rounded overflow-hidden">
+      <div className="absolute inset-x-1 bottom-1 h-2 bg-white border border-neutral-500 rounded overflow-hidden">
         <div
           className={`h-full transition-all duration-500 ease-in-out ${color}`}
           style={{ width: `${roundedPercentage}%` }}
