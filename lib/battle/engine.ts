@@ -28,8 +28,12 @@ function getActivePokemon(state: BattleState, side: BattleSide): BattlePokemon {
   return team.pokemon[team.activeIndex]
 }
 
+function isPokemonFainted(pokemon: BattlePokemon) {
+  return pokemon.fainted || pokemon.currentHp <= 0
+}
+
 function hasAvailablePokemon(state: BattleState, side: BattleSide) {
-  return state[side].pokemon.some((pokemon) => !pokemon.fainted)
+  return state[side].pokemon.some((pokemon) => !isPokemonFainted(pokemon))
 }
 
 function getAvailableSwitchIndexes(state: BattleState, side: BattleSide) {
@@ -37,7 +41,7 @@ function getAvailableSwitchIndexes(state: BattleState, side: BattleSide) {
 
   return team.pokemon
     .map((pokemon, index) => ({ pokemon, index }))
-    .filter(({ pokemon, index }) => !pokemon.fainted && index !== team.activeIndex)
+    .filter(({ pokemon, index }) => !isPokemonFainted(pokemon) && index !== team.activeIndex)
     .map(({ index }) => index)
 }
 
@@ -45,7 +49,7 @@ function applySwitch(state: BattleState, side: BattleSide, toIndex: number, even
   const current = state[side]
   const target = current.pokemon[toIndex]
 
-  if (!target || target.fainted || toIndex === current.activeIndex) {
+  if (!target || isPokemonFainted(target) || toIndex === current.activeIndex) {
     events.push(`${side} failed to switch.`)
     return
   }
@@ -134,7 +138,7 @@ function resolveAction(state: BattleState, action: BattleAction, events: string[
   }
 
   const actor = getActivePokemon(state, action.side)
-  if (actor.fainted) {
+  if (isPokemonFainted(actor)) {
     events.push(`${actor.name} cannot move because it has fainted.`)
     return
   }
@@ -146,7 +150,7 @@ function forceAiSwitchIfFainted(state: BattleState, events: string[]) {
   if (state.winner) return
 
   const activeAiPokemon = getActivePokemon(state, "ai")
-  if (!activeAiPokemon.fainted) return
+  if (!isPokemonFainted(activeAiPokemon)) return
 
   const availableSwitches = getAvailableSwitchIndexes(state, "ai")
   if (availableSwitches.length === 0) return
@@ -154,6 +158,13 @@ function forceAiSwitchIfFainted(state: BattleState, events: string[]) {
   const randomIndex = Math.floor(Math.random() * availableSwitches.length)
   const toIndex = availableSwitches[randomIndex]
   applySwitch(state, "ai", toIndex, events)
+}
+
+function setWinner(state: BattleState, winner: BattleSide, events: string[]) {
+  if (state.winner) return
+
+  state.winner = winner
+  events.push(winner === "player" ? "Player has won!" : "AI has won!")
 }
 
 export function resolveTurn(
@@ -180,12 +191,12 @@ export function resolveTurn(
     resolveAction(state, action, events)
 
     if (!hasAvailablePokemon(state, "player")) {
-      state.winner = "ai"
+      setWinner(state, "ai", events)
       break
     }
 
     if (!hasAvailablePokemon(state, "ai")) {
-      state.winner = "player"
+      setWinner(state, "player", events)
       break
     }
   }

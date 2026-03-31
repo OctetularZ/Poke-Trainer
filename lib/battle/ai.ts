@@ -5,7 +5,7 @@ function canSwitch(state: BattleState, side: "ai" | "player", toIndex: number) {
   const activeIndex = state[side].activeIndex
   const target = team[toIndex]
 
-  return Boolean(target) && !target.fainted && toIndex !== activeIndex
+  return Boolean(target) && target.currentHp > 0 && !target.fainted && toIndex !== activeIndex
 }
 
 export function chooseRandomAiAction(state: BattleState): BattleAction {
@@ -18,7 +18,7 @@ export function chooseRandomAiAction(state: BattleState): BattleAction {
     .map((_, index) => index)
     .filter((index) => canSwitch(state, "ai", index))
 
-  if (activePokemon.fainted && legalSwitches.length > 0) {
+  if ((activePokemon.fainted || activePokemon.currentHp <= 0) && legalSwitches.length > 0) {
     const toIndex = legalSwitches[Math.floor(Math.random() * legalSwitches.length)]
     return { type: "switch", side: "ai", toIndex }
   }
