@@ -8,7 +8,7 @@ const moveData: ScrapedMove[] = await getMoveDetails();
 const nullableFromDash = (value: string | null | undefined) => {
   if (value == null) return null;
   const trimmed = value.trim();
-  return trimmed === '-' || trimmed === '' ? null : trimmed;
+  return trimmed === '—' || trimmed === "-" || trimmed === '' ? null : trimmed;
 };
 
 async function main() {
