@@ -192,3 +192,144 @@ mark {
   color: white;
   background-color: var(--color-charmander-blue-400);
 }
+
+/* Pokemon Battle Animations */
+
+.battle-switch-sprite {
+  transform-origin: center bottom;
+  will-change: transform, opacity, filter;
+}
+
+.battle-switch-recall-shrink {
+  animation: battle-switch-recall-shrink var(--battle-switch-recall-shrink-ms, 180ms) ease-in forwards;
+}
+
+.battle-switch-recall-fly {
+  animation: battle-switch-recall-fly var(--battle-switch-recall-fly-ms, 240ms) ease-in forwards;
+}
+
+.battle-switch-throw-in {
+  animation: battle-switch-throw-in var(--battle-switch-throw-in-ms, 280ms) cubic-bezier(0.18, 0.8, 0.25, 1) forwards;
+}
+
+.battle-switch-release-grow {
+  animation: battle-switch-release-grow var(--battle-switch-release-grow-ms, 280ms) ease-out forwards;
+}
+
+.battle-switch-top-recall-shrink {
+  animation: battle-switch-top-recall-shrink var(--battle-switch-recall-shrink-ms, 180ms) ease-in forwards;
+}
+
+.battle-switch-top-recall-fly {
+  animation: battle-switch-top-recall-fly var(--battle-switch-recall-fly-ms, 240ms) ease-in forwards;
+}
+
+.battle-switch-top-throw-in {
+  animation: battle-switch-top-throw-in var(--battle-switch-throw-in-ms, 280ms) cubic-bezier(0.18, 0.8, 0.25, 1) forwards;
+}
+
+.battle-switch-top-release-grow {
+  animation: battle-switch-top-release-grow var(--battle-switch-release-grow-ms, 280ms) ease-out forwards;
+}
+
+@keyframes battle-switch-recall-shrink {
+  0% {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  100% {
+    transform: translateX(6px) translateY(12px) scale(0.15);
+    opacity: 0.4;
+    filter: brightness(2);
+  }
+}
+
+@keyframes battle-switch-recall-fly {
+  0% {
+    transform: translateX(8px) translateY(10px) scale(0.18);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-500px) translateY(100px) scale(0.08);
+    opacity: 0;
+  }
+}
+
+@keyframes battle-switch-throw-in {
+  0% {
+    transform: translateX(-190px) translateY(58px) scale(0.08);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(8px) translateY(8px) scale(0.2);
+    opacity: 1;
+  }
+}
+
+@keyframes battle-switch-release-grow {
+  0% {
+    transform: translateX(8px) translateY(8px) scale(0.16);
+    opacity: 0.45;
+    filter: brightness(2);
+  }
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes battle-switch-top-recall-shrink {
+  0% {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  100% {
+    transform: translateX(-6px) translateY(-12px) scale(0.15);
+    opacity: 0.4;
+    filter: brightness(2);
+  }
+}
+
+@keyframes battle-switch-top-recall-fly {
+  0% {
+    transform: translateX(-8px) translateY(-10px) scale(0.18);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(160px) translateY(-56px) scale(0.08);
+    opacity: 0;
+  }
+}
+
+@keyframes battle-switch-top-throw-in {
+  0% {
+    transform: translateX(190px) translateY(-58px) scale(0.08);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-8px) translateY(-8px) scale(0.2);
+    opacity: 1;
+  }
+}
+
+@keyframes battle-switch-top-release-grow {
+  0% {
+    transform: translateX(-8px) translateY(-8px) scale(0.16);
+    opacity: 0.45;
+    filter: brightness(2);
+  }
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
