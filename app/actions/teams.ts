@@ -153,9 +153,26 @@ export async function fetchUserTeam(): Promise<TeamMember[]> {
             }
           },
           moves: {
-            select: {id: true, slot: true, gameMove: {
-              select: {move: {
-                select: {id: true, name: true, type: true, category: true, power: true, accuracy: true}
+            select: {
+              id: true,
+              slot: true,
+              gameMove: {
+                select: {
+                  move: {
+                    select: {
+                      id: true,
+                      name: true,
+                      type: true,
+                      category: true,
+                      power: true,
+                      accuracy: true,
+                      pp: true,
+                      description: true,
+                      priority: true,
+                      effect: true,
+                      target: true,
+                      contact: true
+                    }
               }}
             }}
           }

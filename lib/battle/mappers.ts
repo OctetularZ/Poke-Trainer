@@ -106,6 +106,12 @@ export function mapTeamMemberMoveToBattleMove(memberMove: TeamMember["moves"][nu
     category: toBattleCategory(move.category),
     power: toNullableNumber(move.power),
     accuracy: toNullableNumber(move.accuracy),
+    pp: toNullableNumber(move.pp),
+    priority: toNullableNumber(move.priority),
+    effect: move.effect ?? "",
+    description: move.description ?? "",
+    target: move.target ?? "",
+    contact: move.contact ?? ""
   }
 }
 

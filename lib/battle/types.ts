@@ -9,8 +9,12 @@ export interface BattleMove {
   category: "physical" | "special" | "status"
   power: number | null
   accuracy: number | null
-  pp?: number
-  priority?: number
+  pp: number | null,
+  priority: number | null,
+  effect: string,
+  description: string,
+  target: string,
+  contact: string
 }
 
 export interface BattlePokemon {

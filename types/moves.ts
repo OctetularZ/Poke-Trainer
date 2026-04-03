@@ -17,5 +17,11 @@ export interface Move {
   type: string,
   category: string,
   power: string | null,
-  accuracy: string | null
+  accuracy: string | null,
+  pp?: string | null,
+  description?: string,
+  priority?: string | null,
+  effect?: string,
+  target?: string | null,
+  contact?: string | null
 }
