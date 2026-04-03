@@ -125,8 +125,8 @@ export default function BattlePage() {
                   }
                   moveName={move.name}
                   moveType={move.type}
-                  movePPLeft={8}
-                  movePPMax={12}
+                  movePPLeft={move.remainingPP}
+                  movePPMax={move.maxPP}
                 />
               ))}
             </div>

@@ -9,8 +9,8 @@ interface MoveButtonProps {
   onClick: () => void
   moveName: string
   moveType: string
-  movePPLeft: number
-  movePPMax: number
+  movePPLeft: number | null
+  movePPMax: number | null
 }
 
 const MoveButton = ({
@@ -37,9 +37,11 @@ const MoveButton = ({
       </h1>
       <span className="flex flex-row justify-between text-gray-100 text-lg leading-none">
         <h4>{moveType}</h4>
-        <h4>
-          {movePPLeft}/{movePPMax}
-        </h4>
+        {movePPMax != null && (
+          <h4>
+            {movePPLeft}/{movePPMax}
+          </h4>
+        )}
       </span>
     </button>
   )

@@ -8,8 +8,9 @@ export interface BattleMove {
   type: string
   category: "physical" | "special" | "status"
   power: number | null
-  accuracy: number | null
-  pp: number | null,
+  accuracy: number | null,
+  remainingPP: number | null,
+  maxPP: number | null,
   priority: number | null,
   effect: string,
   description: string,

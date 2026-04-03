@@ -13,11 +13,17 @@ function cloneState(state: BattleState): BattleState {
     ...state,
     player: {
       ...state.player,
-      pokemon: state.player.pokemon.map((p) => ({ ...p })),
+      pokemon: state.player.pokemon.map((p) => ({
+        ...p,
+        moves: p.moves.map((move) => ({ ...move })),
+      })),
     },
     ai: {
       ...state.ai,
-      pokemon: state.ai.pokemon.map((p) => ({ ...p })),
+      pokemon: state.ai.pokemon.map((p) => ({
+        ...p,
+        moves: p.moves.map((move) => ({ ...move })),
+      })),
     },
     battleLog: [...state.battleLog],
   }
@@ -67,6 +73,15 @@ function applyAttack(state: BattleState, side: BattleSide, moveIndex: number, ev
   if (!move) {
     events.push(`${attacker.name} has no move in that slot.`)
     return
+  }
+
+  if (move.remainingPP != null) {
+    if (move.remainingPP <= 0) {
+      events.push(`${attacker.name} has no PP left for ${move.name}.`)
+      return
+    }
+
+    move.remainingPP = Math.max(0, move.remainingPP - 1)
   }
 
   const result = calculateDamage(attacker, defender, move)
