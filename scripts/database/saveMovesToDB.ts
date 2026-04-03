@@ -20,7 +20,8 @@ async function main() {
         effect: m.Effect,
         priority: nullableFromDash(m.Priority),
         description: m.Description,
-        target: m.Target
+        target: m.Target,
+        contact: m['Makes contact?']
       },
       create: {
         name: m.Name,
@@ -32,7 +33,8 @@ async function main() {
         description: m.Description,
         priority: nullableFromDash(m.Priority),
         effect: m.Effect,
-        target: m.Target
+        target: m.Target,
+        contact: m['Makes contact?']
       }
     })
     console.log(`✅ Seeded ${m.Name}`)
