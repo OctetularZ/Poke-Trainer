@@ -1,4 +1,6 @@
 export interface ScrapedMove {
+  'Name': string,
+  'Effect': string,
   'Type': string,
   'Category': string,
   'Power': string,
@@ -7,5 +9,6 @@ export interface ScrapedMove {
   'Priority': string,
   'Makes contact?': string,
   'Introduced': string,
-  'Description': string
+  'Description': string,
+  'Target': string
 }

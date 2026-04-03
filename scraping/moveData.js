@@ -53,6 +53,9 @@ export async function scrapeMoveDetails(url) {
   const moveDescription = $("h2#move-descr").next("div").find("table tbody tr").first()
   details["Description"] = $(moveDescription).find("td").text().trim()
 
+  const moveTarget = $("div.move-target .mt-selected").first()
+  details["Target"] = $(moveTarget).text().trim()
+
   return details
 }
 
@@ -94,7 +97,7 @@ export async function getMoveDetails() {
 
   console.log(`🎉 Scraped ${successful.length} Moves successfully!`);
   // Test Sample
-  console.log(successful.slice(0, 10)); // show first 10 examples
+  console.log(successful.slice(0, 20)); // show first 20 examples
 
   return successful
 };

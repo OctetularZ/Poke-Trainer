@@ -216,6 +216,7 @@ model Move {
   priority    String?
   effect      String?
   target      String?
+  contact     String?
   gameMoves   GameMove[]
 }
 
