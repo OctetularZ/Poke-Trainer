@@ -101,6 +101,7 @@ export default function BattlePage() {
   }
 
   return (
+    // Need to fix margin in the div below - causing overflow on the x-axis
     <div className="flex flex-col items-center w-full mx-20">
       <div className="w-full flex flex-row items-start mt-10 gap-5">
         <div className="flex flex-col w-full max-w-[50rem] gap-5">
@@ -124,6 +125,9 @@ export default function BattlePage() {
                     })
                   }
                   moveName={move.name}
+                  moveEffect={move.effect}
+                  movePower={move.power}
+                  moveAccuracy={move.accuracy}
                   moveType={move.type}
                   movePPLeft={move.remainingPP}
                   movePPMax={move.maxPP}

@@ -21,8 +21,7 @@ export function calculateDamage(
     }
   }
 
-  const accuracyCheck = move.accuracy ?? 100
-  const hit = randomRoll(100) <= accuracyCheck
+  const hit = move.accuracy == null ? true : randomRoll(100) <= move.accuracy
 
   if (!hit) {
     return {
