@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import React from "react"
 import { PokemonType } from "@/types/type"
-import { typeColours, typeColoursHex } from "./typeColours"
+import { typeColoursHex } from "./typeColours"
 import { getPokemonSlug } from "@/lib/pokeapi/helpers/getPokemonSlug"
 
 interface Pokemon {
@@ -52,10 +52,12 @@ const PokeCard = ({
           {types.map((type: PokemonType, index) => (
             <h4
               key={index}
-              className={`text-white text-xl ${
-                typeColours[type.name.toLowerCase() as keyof typeof typeColours]
-              } rounded-lg px-3 shadow-md`}
+              className={`text-white text-xl rounded-lg px-3 shadow-md`}
               style={{
+                backgroundColor:
+                  typeColoursHex[
+                    type.name.toLowerCase() as keyof typeof typeColoursHex
+                  ],
                 filter: `drop-shadow(0 0 8px ${
                   typeColoursHex[
                     type.name.toLowerCase() as keyof typeof typeColoursHex

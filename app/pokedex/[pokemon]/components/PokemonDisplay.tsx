@@ -3,7 +3,7 @@ import Image from "next/image"
 import { motion } from "motion/react"
 import { Pokemon } from "@/types/pokemon"
 import { PokemonType } from "@/types/type"
-import { typeColours, typeColoursHex } from "../../components/typeColours"
+import { typeColoursHex } from "../../components/typeColours"
 import PokeCard from "../../components/PokeCard"
 import { FaChevronDown } from "react-icons/fa"
 
@@ -71,12 +71,12 @@ const PokemonDisplay = ({
                 {pokemonInfo?.types.map((type: PokemonType, index) => (
                   <h4
                     key={index}
-                    className={`text-white text-2xl ${
-                      typeColours[
-                        type.name.toLowerCase() as keyof typeof typeColours
-                      ]
-                    } rounded-lg px-3 shadow-md`}
+                    className={`text-white text-2xl rounded-lg px-3 shadow-md`}
                     style={{
+                      backgroundColor:
+                        typeColoursHex[
+                          type.name.toLowerCase() as keyof typeof typeColoursHex
+                        ],
                       filter: `drop-shadow(0 0 8px ${
                         typeColoursHex[
                           type.name.toLowerCase() as keyof typeof typeColoursHex
@@ -85,7 +85,7 @@ const PokemonDisplay = ({
                     }}
                   >
                     {`${type.name.charAt(0).toUpperCase()}${type.name.slice(
-                      1
+                      1,
                     )}`}
                   </h4>
                 ))}
@@ -123,7 +123,7 @@ const PokemonDisplay = ({
                             unoptimized
                           />
                         </div>
-                      )
+                      ),
                   )
                 : sprites?.map(
                     (sprite) =>
@@ -140,7 +140,7 @@ const PokemonDisplay = ({
                             unoptimized
                           />
                         </div>
-                      )
+                      ),
                   )}
             </div>
           </div>

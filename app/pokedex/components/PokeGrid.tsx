@@ -4,7 +4,7 @@ import PokeCard from "./PokeCard"
 import { Pokemon } from "@/types/pokemon"
 import Image from "next/image"
 import { motion, AnimatePresence } from "motion/react"
-import { typeColours } from "./typeColours"
+import { typeColoursHex } from "./typeColours"
 import TypeFilter from "./TypeFilter"
 import AbilityFilter from "./AbilityFilter"
 import SearchFilter, { namesAndSlugs } from "./SearchFilter"
@@ -12,7 +12,7 @@ import { FaChevronCircleDown } from "react-icons/fa"
 import { PokemonAbility } from "@/types/ability"
 
 const fetchSize = 12
-const types = Object.keys(typeColours)
+const types = Object.keys(typeColoursHex)
 
 const PokeGrid = () => {
   const [pokemon, setPokemon] = useState<Pokemon[]>([])
@@ -159,7 +159,7 @@ const PokeGrid = () => {
               types={types}
               selectedTypes={selectedTypes}
               toggleType={toggleType}
-              typeColours={typeColours}
+              typeColoursHex={typeColoursHex}
             />
           </motion.div>
         )}

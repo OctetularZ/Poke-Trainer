@@ -1,6 +1,6 @@
 import { TypeEffectiveness } from "@/types/type"
 import React from "react"
-import { typeColours } from "../../components/typeColours"
+import { typeColoursHex } from "../../components/typeColours"
 
 interface TypeChartProps {
   typeChart: TypeEffectiveness[]
@@ -46,7 +46,7 @@ function toFraction(num: string) {
 const TypeChart = ({ typeChart, loading }: TypeChartProps) => {
   if (!loading) {
     const effectivenessMap = Object.fromEntries(
-      typeChart.map((te) => [te.attackType, te.multiplier])
+      typeChart.map((te) => [te.attackType, te.multiplier]),
     )
 
     const merged = allTypes.map((type) => ({
@@ -64,11 +64,13 @@ const TypeChart = ({ typeChart, loading }: TypeChartProps) => {
               className="flex flex-col justify-center items-center"
             >
               <div
-                className={`flex w-12 h-12 ${
-                  typeColours[
-                    typeEffectiveness.attackType.toLowerCase() as keyof typeof typeColours
-                  ]
-                } justify-center items-center`}
+                className={`flex w-12 h-12 justify-center items-center`}
+                style={{
+                  backgroundColor:
+                    typeColoursHex[
+                      typeEffectiveness.attackType.toLowerCase() as keyof typeof typeColoursHex
+                    ],
+                }}
               >
                 <h1 className="text-center text-white text-shadow-[0_0_3px_rgb(0_0_0_/_1)]">
                   {typeEffectiveness.attackType.slice(0, 3).toUpperCase()}
@@ -78,7 +80,7 @@ const TypeChart = ({ typeChart, loading }: TypeChartProps) => {
                 className={`flex w-12 h-12 ${
                   valBgColour[
                     toFraction(
-                      typeEffectiveness.multiplier
+                      typeEffectiveness.multiplier,
                     ) as keyof typeof valBgColour
                   ]
                 } justify-center items-center border-t-1`}

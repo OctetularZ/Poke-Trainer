@@ -7,7 +7,7 @@ import {
 } from "@headlessui/react"
 import React, { useState, useMemo, useEffect } from "react"
 import { FaChevronCircleDown } from "react-icons/fa"
-import { typeColours, typeColoursHex } from "../../components/typeColours"
+import { typeColoursHex } from "../../components/typeColours"
 
 interface PokemonMoves {
   loading: boolean
@@ -153,12 +153,12 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
                     <td className="py-5">
                       <h4
                         key={move.move.type}
-                        className={`text-white text-2xl ${
-                          typeColours[
-                            move.move.type.toLowerCase() as keyof typeof typeColours
-                          ]
-                        } rounded-lg shadow-md`}
+                        className={`text-white text-2xl rounded-lg shadow-md`}
                         style={{
+                          backgroundColor:
+                            typeColoursHex[
+                              move.move.type.toLowerCase() as keyof typeof typeColoursHex
+                            ],
                           filter: `drop-shadow(0 0 6px ${
                             typeColoursHex[
                               move.move.type.toLowerCase() as keyof typeof typeColoursHex

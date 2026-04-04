@@ -1,8 +1,5 @@
 import React from "react"
-import {
-  typeColours,
-  typeColoursHex,
-} from "@/app/pokedex/components/typeColours"
+import { typeColoursHex } from "@/app/pokedex/components/typeColours"
 
 interface MoveButtonProps {
   disabled: boolean
@@ -25,8 +22,10 @@ const MoveButton = ({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`flex flex-col gap-0.5 ${typeColours[moveType.toLowerCase() as keyof typeof typeColours]} px-2 py-1 rounded-md border-1 border-amber-50 hover:scale-105 transition-all`}
+      className={`flex flex-col gap-0.5 px-2 py-1 rounded-md border-1 border-amber-50 hover:scale-105 transition-all`}
       style={{
+        backgroundColor:
+          typeColoursHex[moveType.toLowerCase() as keyof typeof typeColoursHex],
         filter: `drop-shadow(0 0 5px ${
           typeColoursHex[moveType.toLowerCase() as keyof typeof typeColoursHex]
         })`,

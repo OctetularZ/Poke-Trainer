@@ -6,14 +6,14 @@ interface TypeFilterProps {
   types: string[]
   selectedTypes: string[]
   toggleType: (type: string) => void
-  typeColours: Record<string, string>
+  typeColoursHex: Record<string, string>
 }
 
 const TypeFilter = ({
   types,
   selectedTypes,
   toggleType,
-  typeColours,
+  typeColoursHex,
 }: TypeFilterProps) => {
   return (
     <div className="flex flex-col items-center">
@@ -27,10 +27,17 @@ const TypeFilter = ({
               key={type}
               onClick={() => toggleType(type)}
               className={`px-3 py-1 rounded-md cursor-pointer font-semibold text-white ${
-                isSelected
-                  ? `${typeColours[type as keyof typeof typeColours]}`
-                  : "bg-gray-700 hover:bg-gray-600"
+                isSelected ? "" : "bg-gray-700 hover:bg-gray-600"
               }`}
+              style={
+                isSelected
+                  ? {
+                      backgroundColor:
+                        typeColoursHex[type as keyof typeof typeColoursHex] ??
+                        "#374151",
+                    }
+                  : undefined
+              }
             >
               {type.charAt(0).toUpperCase() + type.slice(1)}
             </button>

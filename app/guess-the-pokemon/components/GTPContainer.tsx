@@ -5,10 +5,7 @@ import PokemonImage from "./PokemonImage"
 import LetterGrid from "./LetterGrid"
 import GuessDisplay from "./GuessDisplay"
 import { PokemonType } from "@/types/type"
-import {
-  typeColours,
-  typeColoursHex,
-} from "@/app/pokedex/components/typeColours"
+import { typeColoursHex } from "@/app/pokedex/components/typeColours"
 import PopUp from "./PopUp"
 import { addCoins } from "@/app/actions/coins"
 import { useSession } from "@/lib/auth-client"
@@ -247,12 +244,12 @@ const GTPContainer = () => {
               {pokemonInfo?.types.map((type: PokemonType, index) => (
                 <h4
                   key={index}
-                  className={`text-white text-xl ${
-                    typeColours[
-                      type.name.toLowerCase() as keyof typeof typeColours
-                    ]
-                  } rounded-lg px-3 shadow-md`}
+                  className={`text-white text-xl rounded-lg px-3 shadow-md`}
                   style={{
+                    backgroundColor:
+                      typeColoursHex[
+                        type.name.toLowerCase() as keyof typeof typeColoursHex
+                      ],
                     filter: `drop-shadow(0 0 8px ${
                       typeColoursHex[
                         type.name.toLowerCase() as keyof typeof typeColoursHex
