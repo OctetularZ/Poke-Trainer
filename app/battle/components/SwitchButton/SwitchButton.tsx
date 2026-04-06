@@ -1,6 +1,7 @@
 import { BattlePokemon } from "@/lib/battle"
 import { PokemonSprites } from "@/types/pokemon"
 import React from "react"
+import SwitchPopUp from "./SwitchPopUp"
 
 interface SwitchButtonProps {
   disabled: boolean
@@ -25,31 +26,35 @@ const SwitchButton = ({ disabled, onClick, pokemon }: SwitchButtonProps) => {
   const color = getHpColor(roundedPercentage)
 
   return (
-    <button
-      disabled={disabled}
-      onClick={onClick}
-      className="relative flex flex-col items-start bg-gray-500 py-1 rounded-md hover:scale-105 hover:bg-gray-400 transition-all disabled:opacity-40 disabled:hover:scale-100"
-    >
-      <div className="flex flex-row items-center">
-        <img
-          src={
-            pokemon.sprites?.front_default ||
-            pokemon.sprites?.other["official-artwork"].front_default ||
-            "/placeholder.png"
-          }
-          width={50}
-          height={50}
-        />
-        <h1 className="text-white text-md">{pokemon.name}</h1>
-      </div>
+    <div className="group relative">
+      <SwitchPopUp pokemon={pokemon} />
 
-      <div className="absolute inset-x-1 bottom-1 h-2 bg-white border border-neutral-500 rounded overflow-hidden">
-        <div
-          className={`h-full transition-all duration-500 ease-in-out ${color}`}
-          style={{ width: `${roundedPercentage}%` }}
-        />
-      </div>
-    </button>
+      <button
+        disabled={disabled}
+        onClick={onClick}
+        className="relative flex w-full flex-col items-start rounded-md bg-gray-500 py-1 transition-all hover:scale-105 hover:bg-gray-400 disabled:opacity-40 disabled:hover:scale-100"
+      >
+        <div className="flex flex-row items-center">
+          <img
+            src={
+              pokemon.sprites?.front_default ||
+              pokemon.sprites?.other["official-artwork"].front_default ||
+              "/placeholder.png"
+            }
+            width={50}
+            height={50}
+          />
+          <h1 className="text-white text-md">{pokemon.name}</h1>
+        </div>
+
+        <div className="absolute inset-x-1 bottom-1 h-2 overflow-hidden rounded border border-neutral-500 bg-white">
+          <div
+            className={`h-full transition-all duration-500 ease-in-out ${color}`}
+            style={{ width: `${roundedPercentage}%` }}
+          />
+        </div>
+      </button>
+    </div>
   )
 }
 
