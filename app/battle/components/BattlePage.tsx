@@ -8,6 +8,7 @@ import {
   BattleState,
   buildDefaultAiTeam,
   chooseRandomAiAction,
+  getTypeMultiplier,
   mapTeamMembersToBattlePokemon,
   resolveTurn,
 } from "@/lib/battle"
@@ -128,9 +129,16 @@ export default function BattlePage() {
                   moveEffect={move.effect}
                   movePower={move.power}
                   moveAccuracy={move.accuracy}
+                  moveCategory={move.category}
                   moveType={move.type}
                   movePPLeft={move.remainingPP}
                   movePPMax={move.maxPP}
+                  moveEffectiveness={getTypeMultiplier(
+                    move.type,
+                    aiActive.types,
+                  )}
+                  contact={move.contact}
+                  targetPokemon={aiActive.name}
                 />
               ))}
             </div>
@@ -184,12 +192,6 @@ export default function BattlePage() {
     //       >
     //         Reset
     //       </button>
-    //     </div>
-
-    //     <div className="max-h-64 overflow-y-auto space-y-1 text-sm text-gray-200">
-    //       {[...state.battleLog].reverse().map((line, index) => (
-    //         <p key={`${line}-${index}`}>{line}</p>
-    //       ))}
     //     </div>
     //   </section>
     // </div>

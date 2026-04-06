@@ -9,9 +9,13 @@ interface MoveButtonProps {
   moveEffect: string
   movePower: number | null
   moveAccuracy: number | null
+  moveCategory: string
   moveType: string
   movePPLeft: number | null
   movePPMax: number | null
+  moveEffectiveness: number
+  contact: string
+  targetPokemon: string
 }
 
 const MoveButton = ({
@@ -20,9 +24,13 @@ const MoveButton = ({
   moveEffect,
   movePower,
   moveAccuracy,
+  moveCategory,
   moveType,
   movePPLeft,
   movePPMax,
+  moveEffectiveness,
+  contact,
+  targetPokemon,
   onClick,
 }: MoveButtonProps) => {
   return (
@@ -33,12 +41,16 @@ const MoveButton = ({
         moveEffect={moveEffect}
         movePower={movePower}
         moveAccuracy={moveAccuracy}
+        moveCategory={moveCategory}
+        moveEffectiveness={moveEffectiveness}
+        contact={contact}
+        targetPokemon={targetPokemon}
       />
 
       <button
         disabled={disabled}
         onClick={onClick}
-        className={`flex w-full flex-col gap-0.5 rounded-md border-1 border-amber-50 px-2 py-1 transition-all hover:scale-105`}
+        className={`flex w-full flex-col gap-0.5 rounded-md border-1 border-amber-50 px-2 py-1 transition-all hover:scale-105 text-shadow-black text-shadow-xs`}
         style={{
           backgroundColor:
             typeColoursHex[
