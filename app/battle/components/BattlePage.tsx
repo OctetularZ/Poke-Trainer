@@ -14,8 +14,8 @@ import {
 } from "@/lib/battle"
 import { fetchUserTeam } from "@/app/actions/teams"
 import Stage from "./Stage"
-import MoveButton from "./MoveButton"
-import SwitchButton from "./SwitchButton"
+import MoveButton from "./MoveButton/MoveButton"
+import SwitchButton from "./SwitchButton/SwitchButton"
 import BattleLog from "./BattleLog"
 
 export default function BattlePage() {
