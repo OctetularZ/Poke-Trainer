@@ -1,49 +1,28 @@
 import React from "react"
 import { typeColoursHex } from "@/app/pokedex/components/typeColours"
+import { BattleMove } from "@/lib/battle"
 import MovePopUp from "./MovePopUp"
 
 interface MoveButtonProps {
   disabled: boolean
   onClick: () => void
-  moveName: string
-  moveEffect: string
-  movePower: number | null
-  moveAccuracy: number | null
-  moveCategory: string
-  moveType: string
-  movePPLeft: number | null
-  movePPMax: number | null
+  move: BattleMove
   moveEffectiveness: number
-  contact: string
   targetPokemon: string
 }
 
 const MoveButton = ({
   disabled,
-  moveName,
-  moveEffect,
-  movePower,
-  moveAccuracy,
-  moveCategory,
-  moveType,
-  movePPLeft,
-  movePPMax,
+  move,
   moveEffectiveness,
-  contact,
   targetPokemon,
   onClick,
 }: MoveButtonProps) => {
   return (
     <div className="group relative">
       <MovePopUp
-        moveName={moveName}
-        moveType={moveType}
-        moveEffect={moveEffect}
-        movePower={movePower}
-        moveAccuracy={moveAccuracy}
-        moveCategory={moveCategory}
+        move={move}
         moveEffectiveness={moveEffectiveness}
-        contact={contact}
         targetPokemon={targetPokemon}
       />
 
@@ -54,23 +33,23 @@ const MoveButton = ({
         style={{
           backgroundColor:
             typeColoursHex[
-              moveType.toLowerCase() as keyof typeof typeColoursHex
+              move.type.toLowerCase() as keyof typeof typeColoursHex
             ],
           filter: `drop-shadow(0 0 5px ${
             typeColoursHex[
-              moveType.toLowerCase() as keyof typeof typeColoursHex
+              move.type.toLowerCase() as keyof typeof typeColoursHex
             ]
           })`,
         }}
       >
         <h1 className="text-center text-lg leading-none text-white">
-          {moveName}
+          {move.name}
         </h1>
         <span className="flex flex-row justify-between text-lg leading-none text-gray-100">
-          <h4>{moveType}</h4>
-          {movePPMax != null && (
+          <h4>{move.type}</h4>
+          {move.maxPP != null && (
             <h4>
-              {movePPLeft}/{movePPMax}
+              {move.remainingPP}/{move.maxPP}
             </h4>
           )}
         </span>

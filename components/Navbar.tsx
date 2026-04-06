@@ -2,11 +2,18 @@
 import { signOut, useSession } from "@/lib/auth-client"
 import Image from "next/image"
 import Link from "next/link"
-import React from "react"
+import React, { useEffect, useState } from "react"
 
 const Navbar = () => {
   // Getting user session
   const { data: session, isPending } = useSession()
+  const [hasMounted, setHasMounted] = useState(false)
+
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
+  const showAuthState = hasMounted && !isPending
 
   return (
     <nav className="grid grid-cols-[1fr_auto_1fr] items-center justify-center justify-self-center mt-10 bg-charmander-dull-200 w-11/12 pl-5 pr-2 py-2 rounded-4xl text-white shadow-md drop-shadow-[0_0_10px_rgba(41,150,246,0.7)]">
@@ -40,7 +47,11 @@ const Navbar = () => {
           KÉ TRAINER
         </h1>
       </Link>
-      {!session && (
+      {!showAuthState && (
+        <div className="justify-self-end min-h-[44px] min-w-[220px]" />
+      )}
+
+      {showAuthState && !session && (
         <ul className="flex gap-5 justify-self-end items-center text-2xl">
           <li>
             <Link href="/login">Login</Link>
@@ -54,7 +65,7 @@ const Navbar = () => {
           </li>
         </ul>
       )}
-      {session && (
+      {showAuthState && session && (
         <ul className="flex gap-5 justify-self-end items-center text-2xl">
           <li>
             <Link className="underline underline-offset-5" href="/profile">

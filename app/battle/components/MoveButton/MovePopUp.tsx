@@ -3,16 +3,11 @@ import { typeColoursHex } from "@/app/pokedex/components/typeColours"
 import { GiCheckMark } from "react-icons/gi"
 import { BsExclamationDiamondFill } from "react-icons/bs"
 import Image from "next/image"
+import { BattleMove } from "@/lib/battle"
 
 interface MovePopUpProps {
-  moveName: string
-  moveType: string
-  moveEffect: string
-  movePower: number | null
-  moveAccuracy: number | null
-  moveCategory: string
+  move: BattleMove
   moveEffectiveness: number
-  contact: string
   targetPokemon: string
 }
 
@@ -47,24 +42,18 @@ function getEffectivenessMessage(
 }
 
 const MovePopUp = ({
-  moveName,
-  moveType,
-  moveEffect,
-  movePower,
-  moveAccuracy,
-  moveCategory,
+  move,
   moveEffectiveness,
-  contact,
   targetPokemon,
 }: MovePopUpProps) => {
   const typeColor =
-    typeColoursHex[moveType.toLowerCase() as keyof typeof typeColoursHex] ??
+    typeColoursHex[move.type.toLowerCase() as keyof typeof typeColoursHex] ??
     "#6b7280"
 
   const moveCategoryImg =
-    moveCategory.toLowerCase() === "physical"
+    move.category.toLowerCase() === "physical"
       ? "/battling/physical-icon.png"
-      : moveCategory.toLowerCase() === "special"
+      : move.category.toLowerCase() === "special"
         ? "/battling/special-icon.png"
         : "/battling/status-icon.png"
 
@@ -77,13 +66,13 @@ const MovePopUp = ({
     <div className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 w-70 -translate-x-1/2 rounded-md border border-white/30 bg-gray-950/95 p-3 opacity-0 shadow-xl backdrop-blur-sm transition-all duration-150 group-hover:-translate-y-1 group-hover:opacity-100">
       <div className="mb-2 border-b border-white/20 pb-2">
         <h3 className="mb-1 text-base font-bold leading-tight text-white wrap-break-word">
-          {moveName}
+          {move.name}
         </h3>
 
         <div className="flex items-center gap-2">
           <Image
             src={moveCategoryImg}
-            alt={`${moveCategory} move category icon`}
+            alt={`${move.category} move category icon`}
             width={18}
             height={18}
             className="h-[20px] w-auto"
@@ -92,16 +81,16 @@ const MovePopUp = ({
             className="rounded px-1.5 text-sm font-semibold uppercase text-white text-shadow-black text-shadow-xs"
             style={{ backgroundColor: typeColor }}
           >
-            {moveType}
+            {move.type}
           </h1>
         </div>
       </div>
 
       <p className="mb-2 text-sm text-gray-200 leading-tight">
-        {moveEffect?.trim() ? moveEffect : "No additional effect."}
+        {move.effect?.trim() ? move.effect : "No additional effect."}
       </p>
 
-      {contact === "Yes" && (
+      {move.contact === "Yes" && (
         <div className="flex flex-row items-center gap-1 mb-2">
           <GiCheckMark color="white" size={12} />
           <p className="text-xs text-gray-200 leading-tight">
@@ -120,8 +109,8 @@ const MovePopUp = ({
       )}
 
       <div className="flex items-center justify-between border-t border-white/20 pt-2 text-sm text-gray-100">
-        <p>Power: {movePower ?? "-"}</p>
-        <p>Accuracy: {moveAccuracy ? `${moveAccuracy}%` : "∞"}</p>
+        <p>Power: {move.power ?? "-"}</p>
+        <p>Accuracy: {move.accuracy ? `${move.accuracy}%` : "∞"}</p>
       </div>
     </div>
   )

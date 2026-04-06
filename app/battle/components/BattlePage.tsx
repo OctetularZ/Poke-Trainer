@@ -125,19 +125,11 @@ export default function BattlePage() {
                       moveIndex: index,
                     })
                   }
-                  moveName={move.name}
-                  moveEffect={move.effect}
-                  movePower={move.power}
-                  moveAccuracy={move.accuracy}
-                  moveCategory={move.category}
-                  moveType={move.type}
-                  movePPLeft={move.remainingPP}
-                  movePPMax={move.maxPP}
+                  move={move}
                   moveEffectiveness={getTypeMultiplier(
                     move.type,
                     aiActive.types,
                   )}
-                  contact={move.contact}
                   targetPokemon={aiActive.name}
                 />
               ))}
@@ -160,10 +152,7 @@ export default function BattlePage() {
                       toIndex: index,
                     })
                   }
-                  pokemonName={pokemon.name}
-                  pokemonSprites={pokemon.sprites}
-                  currentHp={pokemon.currentHp}
-                  maxHp={pokemon.maxHp}
+                  pokemon={pokemon}
                 />
               ))}
             </div>
