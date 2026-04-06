@@ -128,9 +128,9 @@ const SwitchPopUp = ({ pokemon }: SwitchPopUpProps) => {
       </div>
 
       <div className="border-t border-white/20 pt-2">
-        <p className="mb-1 text-xs font-semibold uppercase text-gray-100">
+        <h1 className="mb-1 text-sm font-semibold uppercase text-gray-100">
           Moves
-        </p>
+        </h1>
         <div className="flex flex-col text-xs text-gray-200">
           {pokemon.moves.map((move, index) => (
             <div key={move.id} className={index === 0 ? "pt-0" : "pt-1"}>
