@@ -118,7 +118,7 @@ function applyAttack(state: BattleState, side: BattleSide, moveIndex: number, ev
   }
 
   if (defender.fainted) {
-    events.push(`${defender.name} fainted!`)
+    events.push(`${defender.name} has fainted!`)
   }
 }
 

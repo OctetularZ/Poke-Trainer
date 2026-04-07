@@ -219,9 +219,24 @@ export default function BattlePage() {
       if (!prev) return finalState
 
       if (finalState.winner) {
+        const winnerMessage =
+          finalState.winner === "player" ? "Player has won!" : "AI has won!"
+        const hasWinnerLog = prev.battleLog.some(
+          (entry) => entry.kind === "winner" && entry.message === winnerMessage,
+        )
+
         return {
           ...finalState,
-          battleLog: prev.battleLog,
+          battleLog: hasWinnerLog
+            ? prev.battleLog
+            : [
+                ...prev.battleLog,
+                {
+                  kind: "winner",
+                  message: winnerMessage,
+                  turn: state.turn,
+                },
+              ],
         }
       }
 

@@ -41,7 +41,7 @@ export interface BattleTeam {
 }
 
 export interface BattleLogEntry {
-  kind: "turn" | "event"
+  kind: "turn" | "event" | "winner"
   message: string
   turn: number
 }
