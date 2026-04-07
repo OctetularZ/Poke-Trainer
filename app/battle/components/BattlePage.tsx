@@ -173,10 +173,9 @@ export default function BattlePage() {
   }
 
   return (
-    // Need to fix margin in the div below - causing overflow on the x-axis
-    <div className="flex flex-col items-center w-full mx-20">
-      <div className="w-full flex flex-row items-start mt-10 gap-5">
-        <div className="flex flex-col w-full max-w-[50rem] gap-5">
+    <div className="w-full">
+      <div className="mx-auto max-w-[80rem] w-full flex flex-row items-start mt-10 px-4 gap-5">
+        <div className="flex flex-col w-full gap-5">
           <Stage
             turnNumber={state.turn}
             attackerPokemon={playerActive}

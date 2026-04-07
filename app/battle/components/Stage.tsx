@@ -224,7 +224,7 @@ const Stage = ({
     <div className="relative flex w-full h-133 justify-center overflow-hidden border-1 border-amber-100">
       <Image
         src={"/stages/sand_mines.png"}
-        className="object-contain"
+        className="object-cover"
         fill
         alt="sand-mines"
       />
