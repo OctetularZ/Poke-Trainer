@@ -24,7 +24,7 @@ const BattleLog = ({ battleLog }: BattleLogProps) => {
         entry.kind === "turn" ? (
           <div
             key={`${entry.message}-${entry.turn}-${index}`}
-            className="border-y-2 border-y-charmander-blue-400 mb-2 py-1"
+            className="border-y-2 border-y-charmander-blue-400 py-1"
           >
             <h1 className="text-charmander-blue-300 text-xl font-bold ml-3">
               {entry.message}
@@ -45,7 +45,7 @@ const BattleLog = ({ battleLog }: BattleLogProps) => {
         ) : (
           <h3
             key={`${entry.message}-${entry.turn}-${index}`}
-            className="text-white ml-3 mb-2"
+            className="text-white ml-3 mb-2 mt-2"
           >
             {entry.message}
           </h3>
