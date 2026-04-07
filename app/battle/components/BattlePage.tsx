@@ -20,6 +20,10 @@ import BattleLog from "./BattleLog"
 
 export default function BattlePage() {
   const [state, setState] = useState<BattleState | null>(null)
+  const [attackEffect, setAttackEffect] = useState<{
+    type: string
+    nonce: number
+  } | null>(null)
 
   const loadBattleState = useCallback(async () => {
     const members = await fetchUserTeam()
@@ -86,12 +90,19 @@ export default function BattlePage() {
   const handlePlayerAction = (playerAction: BattleAction) => {
     if (state.winner) return
 
+    if (playerAction.type === "move") {
+      const selectedMove = playerActive.moves[playerAction.moveIndex]
+
+      if (selectedMove?.type) {
+        setAttackEffect((prev) => ({
+          type: selectedMove.type,
+          nonce: (prev?.nonce ?? 0) + 1,
+        }))
+      }
+    }
+
     const aiAction = chooseRandomAiAction(state)
-    const { state: nextState, events } = resolveTurn(
-      state,
-      playerAction,
-      aiAction,
-    )
+    const { state: nextState } = resolveTurn(state, playerAction, aiAction)
 
     setState(nextState)
   }
@@ -110,6 +121,7 @@ export default function BattlePage() {
             turnNumber={state.turn}
             attackerPokemon={playerActive}
             defenderPokemon={aiActive}
+            attackEffect={attackEffect}
           />
           <div className="flex flex-col items-start">
             <h1 className="text-xl text-white mb-3 font-semibold">Moves</h1>

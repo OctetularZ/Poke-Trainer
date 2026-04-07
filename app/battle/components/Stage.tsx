@@ -4,11 +4,34 @@ import { BattlePokemon } from "@/lib/battle"
 import Image from "next/image"
 import React, { useEffect, useRef, useState } from "react"
 import HealthBar from "./HealthBar"
+import VerticalSpriteEffect from "./VerticalSpriteEffect"
 
 interface StageProps {
   turnNumber: number
   attackerPokemon: BattlePokemon
   defenderPokemon: BattlePokemon
+  attackEffect?: {
+    type: string
+    nonce: number
+  } | null
+}
+
+const ATTACK_EFFECTS: Record<
+  string,
+  { src: string; frames: number; fps: number; scale: number }
+> = {
+  flying: {
+    src: "/battling/attacks/flying.png",
+    frames: 4,
+    fps: 14,
+    scale: 0.55,
+  },
+  poison: {
+    src: "/battling/attacks/poison.png",
+    frames: 4,
+    fps: 12,
+    scale: 4,
+  },
 }
 
 type SwitchAnimPhase =
@@ -50,6 +73,7 @@ const Stage = ({
   turnNumber,
   attackerPokemon,
   defenderPokemon,
+  attackEffect,
 }: StageProps) => {
   const [attackerPhase, setAttackerPhase] = useState<SwitchAnimPhase>("idle")
   const [attackerDisplaySrc, setAttackerDisplaySrc] = useState<string>(
@@ -169,6 +193,10 @@ const Stage = ({
     "--battle-switch-release-grow-ms": `${SWITCH_TIMING_MS.releaseGrow}ms`,
   } as React.CSSProperties
 
+  const attackSpriteConfig = attackEffect
+    ? ATTACK_EFFECTS[attackEffect.type.toLowerCase()]
+    : undefined
+
   return (
     <div className="relative flex w-full h-133 justify-center overflow-hidden border-1 border-amber-100">
       <Image
@@ -181,6 +209,18 @@ const Stage = ({
       <div className="absolute bg-amber-50 border-3 border-black px-2 font-bold text-2xl rounded-md top-5 left-5">
         <h1>Turn {turnNumber}</h1>
       </div>
+
+      {attackSpriteConfig && attackEffect ? (
+        <div className="pointer-events-none absolute left-[42%] top-[48%] z-20 -translate-x-1/2 -translate-y-1/2">
+          <VerticalSpriteEffect
+            src={attackSpriteConfig.src}
+            frames={attackSpriteConfig.frames}
+            fps={attackSpriteConfig.fps}
+            triggerKey={attackEffect.nonce}
+            scale={attackSpriteConfig.scale}
+          />
+        </div>
+      ) : null}
 
       <div className="flex flex-col items-center absolute bottom-20 left-20 z-10 gap-15">
         <HealthBar
