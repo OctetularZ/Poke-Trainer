@@ -3,6 +3,7 @@
 import { BattlePokemon } from "@/lib/battle"
 import Image from "next/image"
 import React, { useEffect, useRef, useState } from "react"
+import { attackEffects } from "../constants/attackEffects"
 import HealthBar from "./HealthBar"
 import VerticalSpriteEffect from "./VerticalSpriteEffect"
 
@@ -14,30 +15,6 @@ interface StageProps {
     type: string
     nonce: number
   } | null
-}
-
-const ATTACK_EFFECTS: Record<
-  string,
-  { src: string; frames: number; fps: number; scale: number }
-> = {
-  flying: {
-    src: "/battling/attacks/flying.png",
-    frames: 4,
-    fps: 14,
-    scale: 3,
-  },
-  poison: {
-    src: "/battling/attacks/poison.png",
-    frames: 4,
-    fps: 12,
-    scale: 3,
-  },
-  fire: {
-    src: "/battling/attacks/fire.png",
-    frames: 7,
-    fps: 12,
-    scale: 3,
-  },
 }
 
 type SwitchAnimPhase =
@@ -200,7 +177,7 @@ const Stage = ({
   } as React.CSSProperties
 
   const attackSpriteConfig = attackEffect
-    ? ATTACK_EFFECTS[attackEffect.type.toLowerCase()]
+    ? attackEffects[attackEffect.type.toLowerCase()]
     : undefined
 
   return (

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 
 interface VerticalSpriteEffectProps {
   src: string
@@ -23,10 +23,27 @@ const VerticalSpriteEffect = ({
 }: VerticalSpriteEffectProps) => {
   const [currentFrame, setCurrentFrame] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [naturalSize, setNaturalSize] = useState<{
     width: number
     height: number
   } | null>(null)
+  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(
+    null,
+  )
+  const [detectedFrames, setDetectedFrames] = useState<
+    Array<{ y: number; height: number }>
+  >([])
+
+  const totalFrames = useMemo(() => {
+    if (detectedFrames.length > 0) {
+      return frames > 0
+        ? Math.min(frames, detectedFrames.length)
+        : detectedFrames.length
+    }
+
+    return frames
+  }, [detectedFrames, frames])
 
   useEffect(() => {
     if (!src) return
@@ -35,11 +52,81 @@ const VerticalSpriteEffect = ({
     image.src = src
     image.onload = () => {
       setNaturalSize({ width: image.naturalWidth, height: image.naturalHeight })
+      setImageElement(image)
+
+      const offscreenCanvas = document.createElement("canvas")
+      offscreenCanvas.width = image.naturalWidth
+      offscreenCanvas.height = image.naturalHeight
+      const context = offscreenCanvas.getContext("2d")
+
+      if (!context) {
+        setDetectedFrames([])
+        return
+      }
+
+      context.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      context.drawImage(image, 0, 0)
+
+      const imageData = context.getImageData(
+        0,
+        0,
+        offscreenCanvas.width,
+        offscreenCanvas.height,
+      )
+
+      const width = imageData.width
+      const height = imageData.height
+      const data = imageData.data
+      const rowThreshold = 3
+      const minFrameHeight = 3
+
+      const frameBands: Array<{ y: number; height: number }> = []
+      let bandStart = -1
+
+      for (let y = 0; y < height; y += 1) {
+        let opaquePixelsInRow = 0
+
+        for (let x = 0; x < width; x += 1) {
+          const alpha = data[(y * width + x) * 4 + 3]
+          if (alpha > 8) {
+            opaquePixelsInRow += 1
+          }
+        }
+
+        const isOpaqueRow = opaquePixelsInRow >= rowThreshold
+
+        if (isOpaqueRow && bandStart === -1) {
+          bandStart = y
+          continue
+        }
+
+        if (!isOpaqueRow && bandStart !== -1) {
+          const bandHeight = y - bandStart
+          if (bandHeight >= minFrameHeight) {
+            frameBands.push({ y: bandStart, height: bandHeight })
+          }
+          bandStart = -1
+        }
+      }
+
+      if (bandStart !== -1) {
+        const bandHeight = height - bandStart
+        if (bandHeight >= minFrameHeight) {
+          frameBands.push({ y: bandStart, height: bandHeight })
+        }
+      }
+
+      setDetectedFrames(frameBands)
+    }
+
+    image.onerror = () => {
+      setImageElement(null)
+      setDetectedFrames([])
     }
   }, [src])
 
   useEffect(() => {
-    if (!triggerKey || triggerKey < 1 || frames < 1) {
+    if (!triggerKey || triggerKey < 1 || totalFrames < 1) {
       return
     }
 
@@ -52,7 +139,7 @@ const VerticalSpriteEffect = ({
     const intervalId = window.setInterval(() => {
       frame += 1
 
-      if (frame >= frames) {
+      if (frame >= totalFrames) {
         window.clearInterval(intervalId)
         setIsPlaying(false)
         onComplete?.()
@@ -65,18 +152,86 @@ const VerticalSpriteEffect = ({
     return () => {
       window.clearInterval(intervalId)
     }
-  }, [triggerKey, frames, fps, onComplete])
+  }, [triggerKey, totalFrames, fps, onComplete])
 
   const frameSize = useMemo(() => {
-    if (!naturalSize || frames < 1) return null
+    if (!naturalSize || totalFrames < 1) return null
 
-    const sourceFrameHeight = Math.floor(naturalSize.height / frames)
+    if (detectedFrames.length > 0) {
+      const limitedFrames =
+        frames > 0 ? detectedFrames.slice(0, totalFrames) : detectedFrames
+      const tallestFrame = Math.max(
+        ...limitedFrames.map((frame) => frame.height),
+      )
+
+      return {
+        width: Math.max(1, naturalSize.width * scale),
+        height: Math.max(1, tallestFrame * scale),
+      }
+    }
+
+    const scaledWidth = naturalSize.width * scale
+    const frameHeight = (naturalSize.height / totalFrames) * scale
 
     return {
-      width: Math.max(1, Math.round(naturalSize.width * scale)),
-      height: Math.max(1, Math.round(sourceFrameHeight * scale)),
+      width: Math.max(1, scaledWidth),
+      height: Math.max(1, frameHeight),
     }
-  }, [naturalSize, frames, scale])
+  }, [naturalSize, totalFrames, detectedFrames, frames, scale])
+
+  useEffect(() => {
+    if (!isPlaying || !frameSize || !naturalSize || !imageElement) {
+      return
+    }
+
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const context = canvas.getContext("2d")
+    if (!context) return
+
+    canvas.width = Math.max(1, Math.round(frameSize.width))
+    canvas.height = Math.max(1, Math.round(frameSize.height))
+    context.clearRect(0, 0, canvas.width, canvas.height)
+
+    let sourceY = 0
+    let sourceHeight = naturalSize.height / totalFrames
+
+    if (detectedFrames.length > 0) {
+      const frameBand = detectedFrames[Math.min(currentFrame, totalFrames - 1)]
+      if (frameBand) {
+        sourceY = frameBand.y
+        sourceHeight = frameBand.height
+      }
+    } else {
+      sourceY = currentFrame * sourceHeight
+    }
+
+    const destinationHeight = sourceHeight * scale
+    const destinationY = Math.round((canvas.height - destinationHeight) / 2)
+
+    context.imageSmoothingEnabled = false
+    context.drawImage(
+      imageElement,
+      0,
+      sourceY,
+      naturalSize.width,
+      sourceHeight,
+      0,
+      destinationY,
+      canvas.width,
+      destinationHeight,
+    )
+  }, [
+    isPlaying,
+    frameSize,
+    naturalSize,
+    imageElement,
+    currentFrame,
+    totalFrames,
+    detectedFrames,
+    scale,
+  ])
 
   if (!isPlaying || !frameSize) {
     return null
@@ -88,18 +243,14 @@ const VerticalSpriteEffect = ({
       style={{
         width: frameSize.width,
         height: frameSize.height,
-        overflow: "hidden",
       }}
       aria-hidden="true"
     >
-      <img
-        src={src}
-        alt=""
+      <canvas
+        ref={canvasRef}
         style={{
           width: frameSize.width,
-          height: frameSize.height * frames,
-          maxWidth: "none",
-          transform: `translateY(-${currentFrame * frameSize.height}px)`,
+          height: frameSize.height,
           imageRendering: "pixelated",
           pointerEvents: "none",
           userSelect: "none",
