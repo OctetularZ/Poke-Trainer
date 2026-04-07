@@ -6,6 +6,8 @@ import {
   BattleSide,
   BattleState,
   TurnResolution,
+  TurnTimelineResolution,
+  TurnTimelineStep,
 } from "./types"
 
 function cloneState(state: BattleState): BattleState {
@@ -230,6 +232,109 @@ export function resolveTurn(
 
   return {
     state,
+    events,
+  }
+}
+
+export function resolveTurnTimeline(
+  currentState: BattleState,
+  playerAction: BattleAction,
+  aiAction: BattleAction,
+): TurnTimelineResolution {
+  const state = cloneState(currentState)
+  const currentTurn = state.turn
+  const events: string[] = []
+  const steps: TurnTimelineStep[] = []
+
+  const orderedActions = shouldActFirst(state, playerAction, aiAction)
+    ? [playerAction, aiAction]
+    : [aiAction, playerAction]
+
+  for (const action of orderedActions) {
+    const previousAiIndex = state.ai.activeIndex
+    const previousPlayerIndex = state.player.activeIndex
+    const eventCountBefore = events.length
+
+    resolveAction(state, action, events)
+    const latestEvents = events.slice(eventCountBefore)
+
+    if (action.type === "move") {
+      const actor = getActivePokemon(state, action.side)
+      const move = actor.moves[action.moveIndex]
+      const wasMoveUsed = latestEvents.some((event) => event.includes(" used "))
+
+      if (wasMoveUsed) {
+        steps.push({
+          kind: "move",
+          side: action.side,
+          moveType: move?.type,
+          events: latestEvents,
+          state: cloneState(state),
+        })
+      }
+    }
+
+    if (action.type === "switch") {
+      const didSwitch =
+        action.side === "ai"
+          ? previousAiIndex !== state.ai.activeIndex
+          : previousPlayerIndex !== state.player.activeIndex
+
+      if (didSwitch) {
+        steps.push({
+          kind: "switch",
+          side: action.side,
+          events: latestEvents,
+          state: cloneState(state),
+        })
+      }
+    }
+
+    if (!hasAvailablePokemon(state, "player")) {
+      setWinner(state, "ai", events)
+      break
+    }
+
+    if (!hasAvailablePokemon(state, "ai")) {
+      setWinner(state, "player", events)
+      break
+    }
+  }
+
+  const previousAiIndex = state.ai.activeIndex
+  const eventCountBeforeForcedSwitch = events.length
+  forceAiSwitchIfFainted(state, events)
+  const forcedSwitchEvents = events.slice(eventCountBeforeForcedSwitch)
+  if (previousAiIndex !== state.ai.activeIndex) {
+    steps.push({
+      kind: "forced-switch",
+      side: "ai",
+      events: forcedSwitchEvents,
+      state: cloneState(state),
+    })
+  }
+
+  const turnLogEntries: BattleLogEntry[] = [
+    {
+      kind: "turn",
+      message: `Turn ${currentTurn}`,
+      turn: currentTurn,
+    },
+  ]
+
+  state.turn += 1
+  turnLogEntries.push(
+    ...events.map((event) => ({
+      kind: "event" as const,
+      message: event,
+      turn: currentTurn,
+    })),
+  )
+  state.battleLog = [...state.battleLog, ...turnLogEntries]
+
+  return {
+    steps,
+    finalState: state,
     events,
   }
 }

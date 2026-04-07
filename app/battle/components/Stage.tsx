@@ -1,6 +1,6 @@
 "use client"
 
-import { BattlePokemon } from "@/lib/battle"
+import { BattlePokemon, BattleSide } from "@/lib/battle"
 import Image from "next/image"
 import React, { useEffect, useRef, useState } from "react"
 import { attackEffects as attackEffectsByType } from "../constants/attackEffects"
@@ -20,6 +20,7 @@ interface StageProps {
   turnNumber: number
   attackerPokemon: BattlePokemon
   defenderPokemon: BattlePokemon
+  winner?: BattleSide | null
   attackEffects?: AttackEffect[]
   onAttackEffectComplete?: (nonce: number) => void
 }
@@ -63,6 +64,7 @@ const Stage = ({
   turnNumber,
   attackerPokemon,
   defenderPokemon,
+  winner,
   attackEffects,
   onAttackEffectComplete,
 }: StageProps) => {
@@ -74,6 +76,8 @@ const Stage = ({
   const [defenderDisplaySrc, setDefenderDisplaySrc] = useState<string>(
     getFrontSprite(defenderPokemon),
   )
+  const [attackerGone, setAttackerGone] = useState(false)
+  const [defenderGone, setDefenderGone] = useState(false)
   const previousAttackerId = useRef(attackerPokemon.id)
   const previousDefenderId = useRef(defenderPokemon.id)
   const attackerTimeoutsRef = useRef<number[]>([])
@@ -124,6 +128,7 @@ const Stage = ({
 
     attackerTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
     attackerTimeoutsRef.current = []
+    setAttackerGone(false)
 
     setAttackerPhase("recall-shrink")
 
@@ -162,6 +167,7 @@ const Stage = ({
 
     defenderTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
     defenderTimeoutsRef.current = []
+    setDefenderGone(false)
 
     setDefenderPhase("recall-shrink")
 
@@ -190,6 +196,62 @@ const Stage = ({
       defenderTimeoutsRef.current = []
     }
   }, [defenderPokemon])
+
+  useEffect(() => {
+    if (winner !== "ai" || !attackerPokemon.fainted || attackerGone) {
+      return
+    }
+
+    attackerTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+    attackerTimeoutsRef.current = []
+
+    setAttackerPhase("recall-shrink")
+
+    const toRecallFly = window.setTimeout(() => {
+      setAttackerDisplaySrc("/battling/pokeball.png")
+      setAttackerPhase("recall-fly")
+    }, RECALL_FLY_START_MS)
+
+    const toGone = window.setTimeout(() => {
+      setAttackerGone(true)
+      setAttackerPhase("idle")
+    }, RECALL_FLY_START_MS + SWITCH_TIMING_MS.recallFly)
+
+    attackerTimeoutsRef.current = [toRecallFly, toGone]
+
+    return () => {
+      attackerTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+      attackerTimeoutsRef.current = []
+    }
+  }, [winner, attackerPokemon.fainted, attackerGone])
+
+  useEffect(() => {
+    if (winner !== "player" || !defenderPokemon.fainted || defenderGone) {
+      return
+    }
+
+    defenderTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+    defenderTimeoutsRef.current = []
+
+    setDefenderPhase("recall-shrink")
+
+    const toRecallFly = window.setTimeout(() => {
+      setDefenderDisplaySrc("/battling/pokeball.png")
+      setDefenderPhase("recall-fly")
+    }, RECALL_FLY_START_MS)
+
+    const toGone = window.setTimeout(() => {
+      setDefenderGone(true)
+      setDefenderPhase("idle")
+    }, RECALL_FLY_START_MS + SWITCH_TIMING_MS.recallFly)
+
+    defenderTimeoutsRef.current = [toRecallFly, toGone]
+
+    return () => {
+      defenderTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+      defenderTimeoutsRef.current = []
+    }
+  }, [winner, defenderPokemon.fainted, defenderGone])
 
   const attackerAnimClass =
     attackerPhase === "recall-shrink"
@@ -240,13 +302,15 @@ const Stage = ({
           maxHP={attackerPokemon.maxHp}
         />
         <div className="relative">
-          <img
-            ref={attackerSpriteRef}
-            className={`w-auto h-50 battle-switch-sprite ${attackerAnimClass}`}
-            src={attackerDisplaySrc}
-            alt={`${attackerPokemon.name} back sprite`}
-            style={switchTimingStyle}
-          />
+          {!attackerGone ? (
+            <img
+              ref={attackerSpriteRef}
+              className={`w-auto h-50 battle-switch-sprite ${attackerAnimClass}`}
+              src={attackerDisplaySrc}
+              alt={`${attackerPokemon.name} back sprite`}
+              style={switchTimingStyle}
+            />
+          ) : null}
 
           {playerTargetEffects.map((effect) => {
             const config = attackEffectsByType[effect.type.toLowerCase()]
@@ -291,13 +355,15 @@ const Stage = ({
           maxHP={defenderPokemon.maxHp}
         />
         <div className="relative">
-          <img
-            ref={defenderSpriteRef}
-            className={`w-auto h-30 battle-switch-sprite ${defenderAnimClass}`}
-            src={defenderDisplaySrc}
-            alt={`${defenderPokemon.name} front sprite`}
-            style={switchTimingStyle}
-          />
+          {!defenderGone ? (
+            <img
+              ref={defenderSpriteRef}
+              className={`w-auto h-30 battle-switch-sprite ${defenderAnimClass}`}
+              src={defenderDisplaySrc}
+              alt={`${defenderPokemon.name} front sprite`}
+              style={switchTimingStyle}
+            />
+          ) : null}
 
           {aiTargetEffects.map((effect) => {
             const config = attackEffectsByType[effect.type.toLowerCase()]

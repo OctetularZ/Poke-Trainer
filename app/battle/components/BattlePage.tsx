@@ -10,7 +10,7 @@ import {
   chooseRandomAiAction,
   getTypeMultiplier,
   mapTeamMembersToBattlePokemon,
-  resolveTurn,
+  resolveTurnTimeline,
 } from "@/lib/battle"
 import { fetchUserTeam } from "@/app/actions/teams"
 import Stage from "./Stage"
@@ -25,11 +25,17 @@ type AttackEffect = {
   toSide: "player" | "ai"
 }
 
+const MOVE_TO_DAMAGE_DELAY_MS = 1000
+const BETWEEN_ACTIONS_DELAY_MS = 500
+const SWITCH_ANIMATION_DELAY_MS = 900
+
 export default function BattlePage() {
   const [state, setState] = useState<BattleState | null>(null)
   const [attackEffects, setAttackEffects] = useState<AttackEffect[]>([])
+  const [isResolvingTurn, setIsResolvingTurn] = useState(false)
   const attackEffectNonceRef = useRef(1)
-  const attackEffectTimeoutsRef = useRef<number[]>([])
+  const pendingTimeoutsRef = useRef<number[]>([])
+  const turnSequenceRef = useRef(0)
 
   const loadBattleState = useCallback(async () => {
     const members = await fetchUserTeam()
@@ -58,9 +64,17 @@ export default function BattlePage() {
 
   useEffect(() => {
     return () => {
-      attackEffectTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
-      attackEffectTimeoutsRef.current = []
+      turnSequenceRef.current += 1
+      pendingTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+      pendingTimeoutsRef.current = []
     }
+  }, [])
+
+  const waitFor = useCallback((ms: number) => {
+    return new Promise<void>((resolve) => {
+      const timeoutId = window.setTimeout(resolve, ms)
+      pendingTimeoutsRef.current.push(timeoutId)
+    })
   }, [])
 
   const availableSwitches = useMemo(() => {
@@ -93,7 +107,7 @@ export default function BattlePage() {
           )
         }, 2200)
 
-        attackEffectTimeoutsRef.current.push(cleanupId)
+        pendingTimeoutsRef.current.push(cleanupId)
       }
 
       if (delayMs <= 0) {
@@ -102,7 +116,7 @@ export default function BattlePage() {
       }
 
       const timeoutId = window.setTimeout(schedule, delayMs)
-      attackEffectTimeoutsRef.current.push(timeoutId)
+      pendingTimeoutsRef.current.push(timeoutId)
     },
     [],
   )
@@ -133,41 +147,105 @@ export default function BattlePage() {
   const playerActive = state.player.pokemon[state.player.activeIndex]
   const aiActive = state.ai.pokemon[state.ai.activeIndex]
 
-  const handlePlayerAction = (playerAction: BattleAction) => {
-    if (state.winner) return
+  const handlePlayerAction = async (playerAction: BattleAction) => {
+    if (state.winner || isResolvingTurn) return
+
+    setIsResolvingTurn(true)
+    const currentSequenceId = turnSequenceRef.current + 1
+    turnSequenceRef.current = currentSequenceId
 
     const aiAction = chooseRandomAiAction(state)
-    const playerMove =
-      playerAction.type === "move"
-        ? playerActive.moves[playerAction.moveIndex]
-        : null
-    const aiMove =
-      aiAction.type === "move" ? aiActive.moves[aiAction.moveIndex] : null
 
-    const { state: nextState, events } = resolveTurn(
+    const { steps, finalState } = resolveTurnTimeline(
       state,
       playerAction,
       aiAction,
     )
 
-    const wasMoveUsed = (pokemonName: string, moveName: string) =>
-      events.some((event) => event.includes(`${pokemonName} used ${moveName}`))
+    const applyStep = (stepState: BattleState, stepEvents: string[]) => {
+      setState((prev) => {
+        if (!prev) return stepState
 
-    if (playerMove?.type && wasMoveUsed(playerActive.name, playerMove.name)) {
-      queueAttackEffect(playerMove.type, "player", "ai")
+        const logEntries = [] as BattleState["battleLog"]
+
+        if (stepEvents.length > 0) {
+          logEntries.push(
+            ...stepEvents.map((message) => ({
+              kind: "event" as const,
+              message,
+              turn: state.turn,
+            })),
+          )
+        }
+
+        return {
+          ...stepState,
+          battleLog: [...prev.battleLog, ...logEntries],
+        }
+      })
     }
 
-    if (aiMove?.type && wasMoveUsed(aiActive.name, aiMove.name)) {
-      queueAttackEffect(aiMove.type, "ai", "player", 140)
+    for (const step of steps) {
+      if (turnSequenceRef.current !== currentSequenceId) return
+
+      if (step.kind === "move") {
+        if (step.moveType) {
+          queueAttackEffect(
+            step.moveType,
+            step.side,
+            step.side === "player" ? "ai" : "player",
+          )
+        }
+
+        await waitFor(MOVE_TO_DAMAGE_DELAY_MS)
+        if (turnSequenceRef.current !== currentSequenceId) return
+
+        applyStep(step.state, step.events)
+        await waitFor(BETWEEN_ACTIONS_DELAY_MS)
+        continue
+      }
+
+      if (step.kind === "switch" || step.kind === "forced-switch") {
+        applyStep(step.state, step.events)
+        await waitFor(SWITCH_ANIMATION_DELAY_MS)
+        if (turnSequenceRef.current !== currentSequenceId) return
+
+        await waitFor(BETWEEN_ACTIONS_DELAY_MS)
+      }
     }
 
-    setState(nextState)
+    if (turnSequenceRef.current !== currentSequenceId) return
+    setState((prev) => {
+      if (!prev) return finalState
+
+      if (finalState.winner) {
+        return {
+          ...finalState,
+          battleLog: prev.battleLog,
+        }
+      }
+
+      return {
+        ...finalState,
+        battleLog: [
+          ...prev.battleLog,
+          {
+            kind: "turn",
+            message: `Turn ${finalState.turn}`,
+            turn: finalState.turn,
+          },
+        ],
+      }
+    })
+    setIsResolvingTurn(false)
   }
 
   const handleReset = () => {
-    attackEffectTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
-    attackEffectTimeoutsRef.current = []
+    turnSequenceRef.current += 1
+    pendingTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+    pendingTimeoutsRef.current = []
     setAttackEffects([])
+    setIsResolvingTurn(false)
     setState(null)
     loadBattleState()
   }
@@ -180,6 +258,7 @@ export default function BattlePage() {
             turnNumber={state.turn}
             attackerPokemon={playerActive}
             defenderPokemon={aiActive}
+            winner={state.winner}
             attackEffects={attackEffects}
             onAttackEffectComplete={(nonce) => {
               setAttackEffects((prev) =>
@@ -193,7 +272,11 @@ export default function BattlePage() {
               {playerActive.moves.map((move, index) => (
                 <MoveButton
                   key={move.id}
-                  disabled={Boolean(state.winner) || playerActive.fainted}
+                  disabled={
+                    Boolean(state.winner) ||
+                    playerActive.fainted ||
+                    isResolvingTurn
+                  }
                   onClick={() =>
                     handlePlayerAction({
                       type: "move",
@@ -220,7 +303,9 @@ export default function BattlePage() {
               {availableSwitches.map(({ pokemon, index }) => (
                 <SwitchButton
                   key={pokemon.id}
-                  disabled={Boolean(state.winner) || pokemon.fainted}
+                  disabled={
+                    Boolean(state.winner) || pokemon.fainted || isResolvingTurn
+                  }
                   onClick={() =>
                     handlePlayerAction({
                       type: "switch",

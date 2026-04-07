@@ -77,3 +77,17 @@ export interface TurnResolution {
   state: BattleState
   events: string[]
 }
+
+export interface TurnTimelineStep {
+  kind: "move" | "switch" | "forced-switch"
+  side: BattleSide
+  moveType?: string
+  events: string[]
+  state: BattleState
+}
+
+export interface TurnTimelineResolution {
+  steps: TurnTimelineStep[]
+  finalState: BattleState
+  events: string[]
+}

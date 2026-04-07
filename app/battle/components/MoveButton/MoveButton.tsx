@@ -29,7 +29,7 @@ const MoveButton = ({
       <button
         disabled={disabled}
         onClick={onClick}
-        className={`flex w-full flex-col gap-0.5 rounded-md border-1 border-amber-50 px-2 py-1 transition-all hover:scale-105 text-shadow-black text-shadow-xs`}
+        className={`flex w-full flex-col gap-0.5 rounded-md border-1 border-amber-50 px-2 py-1 transition-all hover:scale-105 text-shadow-black text-shadow-xs disabled:opacity-70`}
         style={{
           backgroundColor:
             typeColoursHex[
