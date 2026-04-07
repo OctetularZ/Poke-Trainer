@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import { motion } from "motion/react"
 import {
@@ -18,12 +18,18 @@ import MoveButton from "./MoveButton/MoveButton"
 import SwitchButton from "./SwitchButton/SwitchButton"
 import BattleLog from "./BattleLog"
 
+type AttackEffect = {
+  nonce: number
+  type: string
+  fromSide: "player" | "ai"
+  toSide: "player" | "ai"
+}
+
 export default function BattlePage() {
   const [state, setState] = useState<BattleState | null>(null)
-  const [attackEffect, setAttackEffect] = useState<{
-    type: string
-    nonce: number
-  } | null>(null)
+  const [attackEffects, setAttackEffects] = useState<AttackEffect[]>([])
+  const attackEffectNonceRef = useRef(1)
+  const attackEffectTimeoutsRef = useRef<number[]>([])
 
   const loadBattleState = useCallback(async () => {
     const members = await fetchUserTeam()
@@ -50,6 +56,13 @@ export default function BattlePage() {
     loadBattleState()
   }, [loadBattleState])
 
+  useEffect(() => {
+    return () => {
+      attackEffectTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+      attackEffectTimeoutsRef.current = []
+    }
+  }, [])
+
   const availableSwitches = useMemo(() => {
     if (!state) return []
 
@@ -60,6 +73,39 @@ export default function BattlePage() {
           !pokemon.fainted && index !== state.player.activeIndex,
       )
   }, [state])
+
+  const queueAttackEffect = useCallback(
+    (
+      type: string,
+      fromSide: "player" | "ai",
+      toSide: "player" | "ai",
+      delayMs = 0,
+    ) => {
+      const schedule = () => {
+        const nonce = attackEffectNonceRef.current
+        attackEffectNonceRef.current += 1
+
+        setAttackEffects((prev) => [...prev, { nonce, type, fromSide, toSide }])
+
+        const cleanupId = window.setTimeout(() => {
+          setAttackEffects((prev) =>
+            prev.filter((effect) => effect.nonce !== nonce),
+          )
+        }, 2200)
+
+        attackEffectTimeoutsRef.current.push(cleanupId)
+      }
+
+      if (delayMs <= 0) {
+        schedule()
+        return
+      }
+
+      const timeoutId = window.setTimeout(schedule, delayMs)
+      attackEffectTimeoutsRef.current.push(timeoutId)
+    },
+    [],
+  )
 
   if (!state) {
     return (
@@ -90,24 +136,38 @@ export default function BattlePage() {
   const handlePlayerAction = (playerAction: BattleAction) => {
     if (state.winner) return
 
-    if (playerAction.type === "move") {
-      const selectedMove = playerActive.moves[playerAction.moveIndex]
+    const aiAction = chooseRandomAiAction(state)
+    const playerMove =
+      playerAction.type === "move"
+        ? playerActive.moves[playerAction.moveIndex]
+        : null
+    const aiMove =
+      aiAction.type === "move" ? aiActive.moves[aiAction.moveIndex] : null
 
-      if (selectedMove?.type) {
-        setAttackEffect((prev) => ({
-          type: selectedMove.type,
-          nonce: (prev?.nonce ?? 0) + 1,
-        }))
-      }
+    const { state: nextState, events } = resolveTurn(
+      state,
+      playerAction,
+      aiAction,
+    )
+
+    const wasMoveUsed = (pokemonName: string, moveName: string) =>
+      events.some((event) => event.includes(`${pokemonName} used ${moveName}`))
+
+    if (playerMove?.type && wasMoveUsed(playerActive.name, playerMove.name)) {
+      queueAttackEffect(playerMove.type, "player", "ai")
     }
 
-    const aiAction = chooseRandomAiAction(state)
-    const { state: nextState } = resolveTurn(state, playerAction, aiAction)
+    if (aiMove?.type && wasMoveUsed(aiActive.name, aiMove.name)) {
+      queueAttackEffect(aiMove.type, "ai", "player", 140)
+    }
 
     setState(nextState)
   }
 
   const handleReset = () => {
+    attackEffectTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+    attackEffectTimeoutsRef.current = []
+    setAttackEffects([])
     setState(null)
     loadBattleState()
   }
@@ -121,7 +181,12 @@ export default function BattlePage() {
             turnNumber={state.turn}
             attackerPokemon={playerActive}
             defenderPokemon={aiActive}
-            attackEffect={attackEffect}
+            attackEffects={attackEffects}
+            onAttackEffectComplete={(nonce) => {
+              setAttackEffects((prev) =>
+                prev.filter((effect) => effect.nonce !== nonce),
+              )
+            }}
           />
           <div className="flex flex-col items-start">
             <h1 className="text-xl text-white mb-3 font-semibold">Moves</h1>

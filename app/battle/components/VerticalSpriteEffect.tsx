@@ -34,16 +34,35 @@ const VerticalSpriteEffect = ({
   const [detectedFrames, setDetectedFrames] = useState<
     Array<{ y: number; height: number }>
   >([])
+  const onCompleteRef = useRef(onComplete)
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete
+  }, [onComplete])
+
+  const safeConfiguredFrames = useMemo(() => {
+    if (!Number.isFinite(frames) || frames < 1) {
+      return 1
+    }
+
+    return Math.floor(frames)
+  }, [frames])
 
   const totalFrames = useMemo(() => {
     if (detectedFrames.length > 0) {
-      return frames > 0
-        ? Math.min(frames, detectedFrames.length)
-        : detectedFrames.length
+      return detectedFrames.length
     }
 
-    return frames
-  }, [detectedFrames, frames])
+    return safeConfiguredFrames
+  }, [detectedFrames, safeConfiguredFrames])
+
+  const safeFps = useMemo(() => {
+    if (!Number.isFinite(fps) || fps <= 0) {
+      return 12
+    }
+
+    return fps
+  }, [fps])
 
   useEffect(() => {
     if (!src) return
@@ -134,7 +153,7 @@ const VerticalSpriteEffect = ({
     setIsPlaying(true)
 
     let frame = 0
-    const frameDuration = Math.max(16, Math.round(1000 / fps))
+    const frameDuration = Math.max(16, Math.round(1000 / safeFps))
 
     const intervalId = window.setInterval(() => {
       frame += 1
@@ -142,7 +161,7 @@ const VerticalSpriteEffect = ({
       if (frame >= totalFrames) {
         window.clearInterval(intervalId)
         setIsPlaying(false)
-        onComplete?.()
+        onCompleteRef.current?.()
         return
       }
 
@@ -152,16 +171,14 @@ const VerticalSpriteEffect = ({
     return () => {
       window.clearInterval(intervalId)
     }
-  }, [triggerKey, totalFrames, fps, onComplete])
+  }, [triggerKey, totalFrames, safeFps])
 
   const frameSize = useMemo(() => {
     if (!naturalSize || totalFrames < 1) return null
 
     if (detectedFrames.length > 0) {
-      const limitedFrames =
-        frames > 0 ? detectedFrames.slice(0, totalFrames) : detectedFrames
       const tallestFrame = Math.max(
-        ...limitedFrames.map((frame) => frame.height),
+        ...detectedFrames.map((frame) => frame.height),
       )
 
       return {
@@ -177,7 +194,7 @@ const VerticalSpriteEffect = ({
       width: Math.max(1, scaledWidth),
       height: Math.max(1, frameHeight),
     }
-  }, [naturalSize, totalFrames, detectedFrames, frames, scale])
+  }, [naturalSize, totalFrames, detectedFrames, scale])
 
   useEffect(() => {
     if (!isPlaying || !frameSize || !naturalSize || !imageElement) {

@@ -2,19 +2,26 @@
 
 import { BattlePokemon } from "@/lib/battle"
 import Image from "next/image"
-import React, { useCallback, useEffect, useRef, useState } from "react"
-import { attackEffects } from "../constants/attackEffects"
+import React, { useEffect, useRef, useState } from "react"
+import { attackEffects as attackEffectsByType } from "../constants/attackEffects"
 import HealthBar from "./HealthBar"
 import VerticalSpriteEffect from "./VerticalSpriteEffect"
+
+type Side = "player" | "ai"
+
+interface AttackEffect {
+  nonce: number
+  type: string
+  fromSide: Side
+  toSide: Side
+}
 
 interface StageProps {
   turnNumber: number
   attackerPokemon: BattlePokemon
   defenderPokemon: BattlePokemon
-  attackEffect?: {
-    type: string
-    nonce: number
-  } | null
+  attackEffects?: AttackEffect[]
+  onAttackEffectComplete?: (nonce: number) => void
 }
 
 type SwitchAnimPhase =
@@ -56,7 +63,8 @@ const Stage = ({
   turnNumber,
   attackerPokemon,
   defenderPokemon,
-  attackEffect,
+  attackEffects,
+  onAttackEffectComplete,
 }: StageProps) => {
   const [attackerPhase, setAttackerPhase] = useState<SwitchAnimPhase>("idle")
   const [attackerDisplaySrc, setAttackerDisplaySrc] = useState<string>(
@@ -72,44 +80,40 @@ const Stage = ({
   const defenderTimeoutsRef = useRef<number[]>([])
   const attackerSpriteRef = useRef<HTMLImageElement>(null)
   const defenderSpriteRef = useRef<HTMLImageElement>(null)
-  const [attackFlyOffset, setAttackFlyOffset] = useState({ x: -300, y: 100 })
 
-  const updateAttackFlyOffset = useCallback(() => {
-    const attackerSprite = attackerSpriteRef.current
-    const defenderSprite = defenderSpriteRef.current
+  const getFlyOffset = (fromSide: Side, toSide: Side) => {
+    const sourceSprite =
+      fromSide === "player"
+        ? attackerSpriteRef.current
+        : defenderSpriteRef.current
+    const targetSprite =
+      toSide === "player"
+        ? attackerSpriteRef.current
+        : defenderSpriteRef.current
 
-    if (!attackerSprite || !defenderSprite) {
-      return
+    if (!sourceSprite || !targetSprite) {
+      return fromSide === "player" ? { x: -300, y: 100 } : { x: 300, y: -100 }
     }
 
-    const attackerRect = attackerSprite.getBoundingClientRect()
-    const defenderRect = defenderSprite.getBoundingClientRect()
+    const sourceRect = sourceSprite.getBoundingClientRect()
+    const targetRect = targetSprite.getBoundingClientRect()
 
-    const attackerCenterX = attackerRect.left + attackerRect.width / 2
-    const attackerCenterY = attackerRect.top + attackerRect.height / 2
-    const defenderCenterX = defenderRect.left + defenderRect.width / 2
-    const defenderCenterY = defenderRect.top + defenderRect.height / 2
+    const sourceCenterX = sourceRect.left + sourceRect.width / 2
+    const sourceCenterY = sourceRect.top + sourceRect.height / 2
+    const targetCenterX = targetRect.left + targetRect.width / 2
+    const targetCenterY = targetRect.top + targetRect.height / 2
 
-    setAttackFlyOffset({
-      x: attackerCenterX - defenderCenterX,
-      y: attackerCenterY - defenderCenterY,
-    })
-  }, [])
-
-  useEffect(() => {
-    if (!attackEffect) return
-
-    requestAnimationFrame(updateAttackFlyOffset)
-  }, [attackEffect?.nonce, updateAttackFlyOffset])
-
-  useEffect(() => {
-    const handleResize = () => {
-      updateAttackFlyOffset()
+    return {
+      x: sourceCenterX - targetCenterX,
+      y: sourceCenterY - targetCenterY,
     }
+  }
 
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [updateAttackFlyOffset])
+  const effectList = attackEffects ?? []
+  const playerTargetEffects = effectList.filter(
+    (effect) => effect.toSide === "player",
+  )
+  const aiTargetEffects = effectList.filter((effect) => effect.toSide === "ai")
 
   useEffect(() => {
     if (previousAttackerId.current === attackerPokemon.id) {
@@ -216,10 +220,6 @@ const Stage = ({
     "--battle-switch-release-grow-ms": `${SWITCH_TIMING_MS.releaseGrow}ms`,
   } as React.CSSProperties
 
-  const attackSpriteConfig = attackEffect
-    ? attackEffects[attackEffect.type.toLowerCase()]
-    : undefined
-
   return (
     <div className="relative flex w-full h-133 justify-center overflow-hidden border-1 border-amber-100">
       <Image
@@ -239,14 +239,48 @@ const Stage = ({
           currentHP={attackerPokemon.currentHp}
           maxHP={attackerPokemon.maxHp}
         />
-        <img
-          ref={attackerSpriteRef}
-          className={`w-auto h-50 battle-switch-sprite ${attackerAnimClass}`}
-          src={attackerDisplaySrc}
-          alt={`${attackerPokemon.name} back sprite`}
-          style={switchTimingStyle}
-          onLoad={updateAttackFlyOffset}
-        />
+        <div className="relative">
+          <img
+            ref={attackerSpriteRef}
+            className={`w-auto h-50 battle-switch-sprite ${attackerAnimClass}`}
+            src={attackerDisplaySrc}
+            alt={`${attackerPokemon.name} back sprite`}
+            style={switchTimingStyle}
+          />
+
+          {playerTargetEffects.map((effect) => {
+            const config = attackEffectsByType[effect.type.toLowerCase()]
+            if (!config) return null
+
+            const offset = getFlyOffset(effect.fromSide, effect.toSide)
+
+            return (
+              <div
+                key={effect.nonce}
+                className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 opacity-70"
+              >
+                <div
+                  className="battle-attack-fly-to-target"
+                  style={
+                    {
+                      "--attack-fly-from-x": `${offset.x}px`,
+                      "--attack-fly-from-y": `${offset.y}px`,
+                    } as React.CSSProperties
+                  }
+                >
+                  <VerticalSpriteEffect
+                    src={config.src}
+                    frames={config.frames}
+                    fps={config.fps}
+                    triggerKey={effect.nonce}
+                    scale={config.scale}
+                    onComplete={() => onAttackEffectComplete?.(effect.nonce)}
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       <div className="flex flex-col items-center absolute top-8 right-12 z-10 gap-15">
@@ -263,31 +297,40 @@ const Stage = ({
             src={defenderDisplaySrc}
             alt={`${defenderPokemon.name} front sprite`}
             style={switchTimingStyle}
-            onLoad={updateAttackFlyOffset}
           />
 
-          {attackSpriteConfig && attackEffect ? (
-            <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 opacity-70">
+          {aiTargetEffects.map((effect) => {
+            const config = attackEffectsByType[effect.type.toLowerCase()]
+            if (!config) return null
+
+            const offset = getFlyOffset(effect.fromSide, effect.toSide)
+
+            return (
               <div
-                key={attackEffect.nonce}
-                className="battle-attack-fly-to-target"
-                style={
-                  {
-                    "--attack-fly-from-x": `${attackFlyOffset.x}px`,
-                    "--attack-fly-from-y": `${attackFlyOffset.y}px`,
-                  } as React.CSSProperties
-                }
+                key={effect.nonce}
+                className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 opacity-70"
               >
-                <VerticalSpriteEffect
-                  src={attackSpriteConfig.src}
-                  frames={attackSpriteConfig.frames}
-                  fps={attackSpriteConfig.fps}
-                  triggerKey={attackEffect.nonce}
-                  scale={attackSpriteConfig.scale}
-                />
+                <div
+                  className="battle-attack-fly-to-target"
+                  style={
+                    {
+                      "--attack-fly-from-x": `${offset.x}px`,
+                      "--attack-fly-from-y": `${offset.y}px`,
+                    } as React.CSSProperties
+                  }
+                >
+                  <VerticalSpriteEffect
+                    src={config.src}
+                    frames={config.frames}
+                    fps={config.fps}
+                    triggerKey={effect.nonce}
+                    scale={config.scale}
+                    onComplete={() => onAttackEffectComplete?.(effect.nonce)}
+                  />
+                </div>
               </div>
-            </div>
-          ) : null}
+            )
+          })}
         </div>
       </div>
     </div>
