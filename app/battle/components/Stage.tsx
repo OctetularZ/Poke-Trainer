@@ -2,7 +2,7 @@
 
 import { BattlePokemon } from "@/lib/battle"
 import Image from "next/image"
-import React, { useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { attackEffects } from "../constants/attackEffects"
 import HealthBar from "./HealthBar"
 import VerticalSpriteEffect from "./VerticalSpriteEffect"
@@ -70,6 +70,46 @@ const Stage = ({
   const previousDefenderId = useRef(defenderPokemon.id)
   const attackerTimeoutsRef = useRef<number[]>([])
   const defenderTimeoutsRef = useRef<number[]>([])
+  const attackerSpriteRef = useRef<HTMLImageElement>(null)
+  const defenderSpriteRef = useRef<HTMLImageElement>(null)
+  const [attackFlyOffset, setAttackFlyOffset] = useState({ x: -300, y: 100 })
+
+  const updateAttackFlyOffset = useCallback(() => {
+    const attackerSprite = attackerSpriteRef.current
+    const defenderSprite = defenderSpriteRef.current
+
+    if (!attackerSprite || !defenderSprite) {
+      return
+    }
+
+    const attackerRect = attackerSprite.getBoundingClientRect()
+    const defenderRect = defenderSprite.getBoundingClientRect()
+
+    const attackerCenterX = attackerRect.left + attackerRect.width / 2
+    const attackerCenterY = attackerRect.top + attackerRect.height / 2
+    const defenderCenterX = defenderRect.left + defenderRect.width / 2
+    const defenderCenterY = defenderRect.top + defenderRect.height / 2
+
+    setAttackFlyOffset({
+      x: attackerCenterX - defenderCenterX,
+      y: attackerCenterY - defenderCenterY,
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!attackEffect) return
+
+    requestAnimationFrame(updateAttackFlyOffset)
+  }, [attackEffect?.nonce, updateAttackFlyOffset])
+
+  useEffect(() => {
+    const handleResize = () => {
+      updateAttackFlyOffset()
+    }
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [updateAttackFlyOffset])
 
   useEffect(() => {
     if (previousAttackerId.current === attackerPokemon.id) {
@@ -200,10 +240,12 @@ const Stage = ({
           maxHP={attackerPokemon.maxHp}
         />
         <img
+          ref={attackerSpriteRef}
           className={`w-auto h-50 battle-switch-sprite ${attackerAnimClass}`}
           src={attackerDisplaySrc}
           alt={`${attackerPokemon.name} back sprite`}
           style={switchTimingStyle}
+          onLoad={updateAttackFlyOffset}
         />
       </div>
 
@@ -216,21 +258,34 @@ const Stage = ({
         />
         <div className="relative">
           <img
+            ref={defenderSpriteRef}
             className={`w-auto h-30 battle-switch-sprite ${defenderAnimClass}`}
             src={defenderDisplaySrc}
             alt={`${defenderPokemon.name} front sprite`}
             style={switchTimingStyle}
+            onLoad={updateAttackFlyOffset}
           />
 
           {attackSpriteConfig && attackEffect ? (
-            <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 opacity-50">
-              <VerticalSpriteEffect
-                src={attackSpriteConfig.src}
-                frames={attackSpriteConfig.frames}
-                fps={attackSpriteConfig.fps}
-                triggerKey={attackEffect.nonce}
-                scale={attackSpriteConfig.scale}
-              />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 opacity-70">
+              <div
+                key={attackEffect.nonce}
+                className="battle-attack-fly-to-target"
+                style={
+                  {
+                    "--attack-fly-from-x": `${attackFlyOffset.x}px`,
+                    "--attack-fly-from-y": `${attackFlyOffset.y}px`,
+                  } as React.CSSProperties
+                }
+              >
+                <VerticalSpriteEffect
+                  src={attackSpriteConfig.src}
+                  frames={attackSpriteConfig.frames}
+                  fps={attackSpriteConfig.fps}
+                  triggerKey={attackEffect.nonce}
+                  scale={attackSpriteConfig.scale}
+                />
+              </div>
             </div>
           ) : null}
         </div>

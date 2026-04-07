@@ -33,7 +33,7 @@ export const attackEffects: Record<
     scale: 3,
   },
   electric: {
-    src: "/battling/attacks/poison.png",
+    src: "/battling/attacks/electric.png",
     frames: 4,
     fps: 12,
     scale: 3,
@@ -101,6 +101,12 @@ export const attackEffects: Record<
   bug: {
     src: "/battling/attacks/bug.png",
     frames: 9,
+    fps: 12,
+    scale: 3,
+  },
+  dragon: {
+    src: "/battling/attacks/dragon.png",
+    frames: 4,
     fps: 12,
     scale: 3,
   },
