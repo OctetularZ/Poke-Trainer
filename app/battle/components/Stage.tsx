@@ -24,13 +24,19 @@ const ATTACK_EFFECTS: Record<
     src: "/battling/attacks/flying.png",
     frames: 4,
     fps: 14,
-    scale: 0.55,
+    scale: 3,
   },
   poison: {
     src: "/battling/attacks/poison.png",
     frames: 4,
     fps: 12,
-    scale: 4,
+    scale: 3,
+  },
+  fire: {
+    src: "/battling/attacks/fire.png",
+    frames: 7,
+    fps: 12,
+    scale: 3,
   },
 }
 
@@ -210,18 +216,6 @@ const Stage = ({
         <h1>Turn {turnNumber}</h1>
       </div>
 
-      {attackSpriteConfig && attackEffect ? (
-        <div className="pointer-events-none absolute left-[42%] top-[48%] z-20 -translate-x-1/2 -translate-y-1/2">
-          <VerticalSpriteEffect
-            src={attackSpriteConfig.src}
-            frames={attackSpriteConfig.frames}
-            fps={attackSpriteConfig.fps}
-            triggerKey={attackEffect.nonce}
-            scale={attackSpriteConfig.scale}
-          />
-        </div>
-      ) : null}
-
       <div className="flex flex-col items-center absolute bottom-20 left-20 z-10 gap-15">
         <HealthBar
           pokemonName={attackerPokemon.name}
@@ -243,12 +237,26 @@ const Stage = ({
           currentHP={defenderPokemon.currentHp}
           maxHP={defenderPokemon.maxHp}
         />
-        <img
-          className={`w-auto h-30 battle-switch-sprite ${defenderAnimClass}`}
-          src={defenderDisplaySrc}
-          alt={`${defenderPokemon.name} front sprite`}
-          style={switchTimingStyle}
-        />
+        <div className="relative">
+          <img
+            className={`w-auto h-30 battle-switch-sprite ${defenderAnimClass}`}
+            src={defenderDisplaySrc}
+            alt={`${defenderPokemon.name} front sprite`}
+            style={switchTimingStyle}
+          />
+
+          {attackSpriteConfig && attackEffect ? (
+            <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 opacity-50">
+              <VerticalSpriteEffect
+                src={attackSpriteConfig.src}
+                frames={attackSpriteConfig.frames}
+                fps={attackSpriteConfig.fps}
+                triggerKey={attackEffect.nonce}
+                scale={attackSpriteConfig.scale}
+              />
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   )
