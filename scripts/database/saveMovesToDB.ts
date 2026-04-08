@@ -16,12 +16,7 @@ async function main() {
     const move = await prisma.move.upsert({
       where: { name: m.Name },
       update: {
-        pp: nullableFromDash(m.PP),
-        effect: m.Effect,
-        priority: nullableFromDash(m.Priority),
         description: m.Description,
-        target: m.Target,
-        contact: m['Makes contact?']
       },
       create: {
         name: m.Name,

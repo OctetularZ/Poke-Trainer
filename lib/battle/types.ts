@@ -1,3 +1,4 @@
+import { Prisma } from "@/app/generated/prisma/client"
 import { PokemonSprites } from "@/types/pokemon"
 
 export type BattleSide = "player" | "ai"
@@ -14,6 +15,10 @@ export interface BattleMove {
   priority: number | null,
   effect: string,
   description: string,
+  effectCode?: string,
+  effectChance?: number,
+  effectTarget?: string,
+  effectData?: Prisma.JsonValue,
   target: string,
   contact: string
 }

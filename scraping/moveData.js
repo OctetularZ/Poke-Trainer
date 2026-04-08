@@ -50,8 +50,8 @@ export async function scrapeMoveDetails(url) {
     }
   })
 
-  const moveDescription = $("h2#move-descr").next("div").find("table tbody tr").first()
-  details["Description"] = $(moveDescription).find("td").text().trim()
+  const moveDescription = $("h2#move-effects").next("p")
+  details["Description"] = $(moveDescription).text().trim()
 
   const moveTarget = $("div.move-target .mt-selected").first()
   details["Target"] = $(moveTarget).text().trim()

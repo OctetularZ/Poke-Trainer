@@ -205,8 +205,8 @@ model GameMove {
 
 // Good
 model Move {
-  id          Int        @id @default(autoincrement())
-  name        String     @unique
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
   type        String
   category    String
   power       String?
@@ -214,10 +214,17 @@ model Move {
   pp          String?
   description String?
   priority    String?
-  effect      String?
-  target      String?
-  contact     String?
-  gameMoves   GameMove[]
+  effect      String? // Effect description (used on frontend)
+
+  // Battle engine effect fields
+  effectCode   String?
+  effectChance Int?
+  effectTarget String?
+  effectData   Json?
+
+  target    String?
+  contact   String?
+  gameMoves GameMove[]
 }
 
 // Good - Might add more game info later

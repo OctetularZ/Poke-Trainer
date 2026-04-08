@@ -1,5 +1,6 @@
 // import { Machine } from "./machine"
 // import { PokemonStats } from "./stats"
+import type { Prisma } from "@/app/generated/prisma/client"
 import { Game } from "./game"
 
 export interface GameMove {
@@ -22,6 +23,10 @@ export interface Move {
   description?: string,
   priority?: string | null,
   effect?: string,
+  effectCode?: string,
+  effectChance?: number,
+  effectTarget?: string,
+  effectData?: Prisma.JsonValue,
   target?: string | null,
   contact?: string | null
 }
