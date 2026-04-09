@@ -2,6 +2,13 @@ import 'dotenv/config'
 import { ScrapedMove } from "@/scraping/types/move.js";
 import { directPrisma as prisma } from "../../lib/prisma.js";
 import { getMoveDetails } from '../../scraping/moveData.js'
+import { mapMoveEffect } from './effectMapper.js'
+import type { Prisma } from '../../app/generated/prisma/client'
+import {
+  loadShowdownMovesIndex,
+  mapShowdownMoveEffects,
+  toMoveId,
+} from './showdownEffectMapper.js'
 
 const moveData: ScrapedMove[] = await getMoveDetails();
 
@@ -12,11 +19,52 @@ const nullableFromDash = (value: string | null | undefined) => {
 };
 
 async function main() {
+  const showdownIndex = await loadShowdownMovesIndex()
+  let mappedCount = 0
+  let showdownMappedCount = 0
+  let fallbackMappedCount = 0
+
   for (const m of moveData) {
-    const move = await prisma.move.upsert({
+    const showdownMove = showdownIndex.get(toMoveId(m.Name))
+    const mappedFromShowdown = showdownMove ? mapShowdownMoveEffects(showdownMove) : null
+
+    const mapped = mappedFromShowdown?.mapped
+      ? mappedFromShowdown
+      : mapMoveEffect(m.Effect ?? m.Description)
+
+    const effectList = mappedFromShowdown?.mapped
+      ? (mappedFromShowdown.effectList as unknown as Prisma.InputJsonValue)
+      : mapped.mapped
+        ? ([
+            {
+              code: mapped.effectCode,
+              chance: mapped.effectChance,
+              target: mapped.effectTarget,
+              data: mapped.effectData,
+            },
+          ] as unknown as Prisma.InputJsonValue)
+        : undefined
+
+    const mappedEffectData = mapped.effectData as Prisma.InputJsonValue | null
+
+    if (mapped.mapped) {
+      mappedCount += 1
+
+      if (mappedFromShowdown?.mapped) {
+        showdownMappedCount += 1
+      } else {
+        fallbackMappedCount += 1
+      }
+    }
+
+    await prisma.move.upsert({
       where: { name: m.Name },
       update: {
-        description: m.Description,
+        effectCode: mapped.effectCode,
+        effectChance: mapped.effectChance,
+        effectTarget: mapped.effectTarget,
+        effectData: mappedEffectData ?? undefined,
+        effectList,
       },
       create: {
         name: m.Name,
@@ -28,12 +76,21 @@ async function main() {
         description: m.Description,
         priority: nullableFromDash(m.Priority),
         effect: m.Effect,
+        effectCode: mapped.effectCode,
+        effectChance: mapped.effectChance,
+        effectTarget: mapped.effectTarget,
+        effectData: mappedEffectData ?? undefined,
+        effectList,
         target: m.Target,
         contact: m['Makes contact?']
       }
     })
     console.log(`✅ Seeded ${m.Name}`)
   }
+
+  console.log(`Mapped effects for ${mappedCount}/${moveData.length} moves`)
+  console.log(`Showdown mapped: ${showdownMappedCount}`)
+  console.log(`Text fallback mapped: ${fallbackMappedCount}`)
 }
 
 main()

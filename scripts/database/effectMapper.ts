@@ -1,3 +1,6 @@
+// This was my original approach to finding what move effects did for each move.
+// Luckily, I managed to find pokemon showdowns json version which helped out TREMENDOUSLY and saved me hours of coding
+
 type MoveEffectTarget = "self" | "target" | "both" | "field"
 type MoveStatus = "burn" | "poison" | "paralysis" | "sleep" | "freeze"
 type MoveStat = 
@@ -9,6 +12,13 @@ type MoveStat =
 | "accuracy"
 | "evasion"
 
+type StatChange = {
+  stat: MoveStat
+  stages: number
+  direction: "up" | "down"
+  target: MoveEffectTarget
+}
+
 export interface EffectMappingResult {
   effectCode: string | null,
   effectChance: number | null,
@@ -17,17 +27,29 @@ export interface EffectMappingResult {
   mapped: boolean
 }
 
+const EMPTY_RESULT: EffectMappingResult = {
+  effectCode: null,
+  effectChance: null,
+  effectTarget: null,
+  effectData: null,
+  mapped: false,
+}
+
+const statPatterns: Array<{ stat: MoveStat; regex: RegExp }> = [
+  { stat: "specialAttack", regex: /\b(special attack|sp\.?\s*atk|spatk)\b/ },
+  { stat: "specialDefense", regex: /\b(special defense|sp\.?\s*def|spdef)\b/ },
+  { stat: "attack", regex: /\battack\b/ },
+  { stat: "defense", regex: /\bdefense\b/ },
+  { stat: "speed", regex: /\bspeed\b/ },
+  { stat: "accuracy", regex: /\baccuracy\b/ },
+  { stat: "evasion", regex: /\bevasion\b/ },
+]
+
 export function mapMoveEffect(effectText?: string | null) : EffectMappingResult {
   const effect = normaliseMoveEffect(effectText)
 
   if (!effect || /no additional effect/.test(effect)) {
-    return {
-    effectCode: null,
-    effectChance: null,
-    effectTarget: null,
-    effectData: null,
-    mapped: false,
-    }
+    return EMPTY_RESULT
   }
 
   const chance = detectChance(effect)
@@ -39,13 +61,7 @@ export function mapMoveEffect(effectText?: string | null) : EffectMappingResult 
     mapDrainEffect(effect) ??
     mapRecoilEffect(effect) ??
     mapFlinchEffect(effect, chance) ??
-    {
-      effectCode: null,
-      effectChance: null,
-      effectTarget: null,
-      effectData: null,
-      mapped: false
-    }
+    EMPTY_RESULT
   )
 }
 
@@ -111,16 +127,21 @@ function detectStatus(effect: string): MoveStatus | null {
   return null
 }
 
-// Detecting increases/decreases to stat effect
-function detectStat(effect: string): MoveStat | null {
-  if (/special attack|sp\.?\s*atk|spatk/.test(effect)) return "specialAttack"
-  if (/special defense|sp\.?\s*def|spdef/.test(effect)) return "specialDefense"
-  if (/\battack\b/.test(effect)) return "attack"
-  if (/\bdefense\b/.test(effect)) return "defense"
-  if (/\bspeed\b/.test(effect)) return "speed"
-  if (/\baccuracy\b/.test(effect)) return "accuracy"
-  if (/\bevasion\b/.test(effect)) return "evasion"
-  return null
+// Detecting all stat names found in the same clause.
+function detectAllStats(text: string): MoveStat[] {
+  const found = statPatterns
+    .filter(({ regex }) => regex.test(text))
+    .map(({ stat }) => stat)
+
+  return Array.from(new Set(found))
+}
+
+function detectStatTarget(clause: string, direction: "up" | "down"): MoveEffectTarget {
+  if (/\b(user|itself|its own)\b/.test(clause)) return "self"
+  if (/\b(target|opponent|enemy|foe)\b/.test(clause)) return "target"
+
+  // For omitted targets in effect text, boosts are typically self and drops are typically target.
+  return direction === "up" ? "self" : "target"
 }
 
 function detectStages(effect: string): number {
@@ -136,18 +157,46 @@ function detectStages(effect: string): number {
 }
 
 function mapStatStageEffect(effect: string, chance: number | null): EffectMappingResult | null {
-  const stat = detectStat(effect)
-  if(!stat) return null
+  const changes: StatChange[] = []
 
-  const isRaise = /\b(raise|raises|boost|boosts|increase|increases)\b/.test(effect)
-  const isLower = /\b(lower|lowers|drop|drops|decrease|decreases|reduce|reduces)\b/.test(effect)
-  if (!isRaise && !isLower) return null
+  const upRegex = /\b(raise|raises|boost|boosts|increase|increases)\b([^.]*)/g
+  const downRegex = /\b(lower|lowers|drop|drops|decrease|decreases|reduce|reduces)\b([^.]*)/g
+
+  let upMatch: RegExpExecArray | null
+  while ((upMatch = upRegex.exec(effect)) !== null) {
+    const clause = `${upMatch[1]} ${upMatch[2]}`.trim()
+    const stats = detectAllStats(clause)
+    if (stats.length === 0) continue
+
+    const stages = detectStages(clause)
+    const target = detectStatTarget(clause, "up")
+
+    for (const stat of stats) {
+      changes.push({ stat, stages, direction: "up", target })
+    }
+  }
+
+  let downMatch: RegExpExecArray | null
+  while ((downMatch = downRegex.exec(effect)) !== null) {
+    const clause = `${downMatch[1]} ${downMatch[2]}`.trim()
+    const stats = detectAllStats(clause)
+    if (stats.length === 0) continue
+
+    const stages = detectStages(clause)
+    const target = detectStatTarget(clause, "down")
+
+    for (const stat of stats) {
+      changes.push({ stat, stages, direction: "down", target })
+    }
+  }
+
+  if (changes.length === 0) return null
 
   return {
-    effectCode: isRaise ? "stat_up" : "stat_down",
+    effectCode: "stat_changes",
     effectChance: chance,
-    effectTarget: detectTarget(effect),
-    effectData: { stat, stages: detectStages(effect) },
+    effectTarget: null,
+    effectData: { changes },
     mapped: true,
   }
 }

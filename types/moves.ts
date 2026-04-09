@@ -27,6 +27,7 @@ export interface Move {
   effectChance?: number,
   effectTarget?: string,
   effectData?: Prisma.JsonValue,
+  effectList?: Prisma.JsonValue,
   target?: string | null,
   contact?: string | null
 }

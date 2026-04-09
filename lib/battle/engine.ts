@@ -1,14 +1,248 @@
 import { calculateDamage } from "./damage"
 import {
   BattleAction,
+  BattleEffect,
+  BattleEffectTarget,
   BattleLogEntry,
   BattlePokemon,
   BattleSide,
+  BattleStatus,
   BattleState,
   TurnResolution,
   TurnTimelineResolution,
   TurnTimelineStep,
 } from "./types"
+
+const MIN_STAGE = -6
+const MAX_STAGE = 6
+
+function randomPercentRoll() {
+  return Math.floor(Math.random() * 100) + 1
+}
+
+function shouldApplyChance(chance: number | null | undefined) {
+  if (chance == null) return true
+  if (chance <= 0) return false
+  if (chance >= 100) return true
+
+  return randomPercentRoll() <= chance
+}
+
+function getStageMultiplier(stage: number) {
+  if (stage >= 0) {
+    return (2 + stage) / 2
+  }
+
+  return 2 / (2 - stage)
+}
+
+function getEffectiveSpeed(pokemon: BattlePokemon) {
+  const speedStage = pokemon.statStages?.speed ?? 0
+  return Math.floor(pokemon.speed * getStageMultiplier(speedStage))
+}
+
+function getMoveEffects(move: BattlePokemon["moves"][number]): BattleEffect[] {
+  if (move.effectList?.length) {
+    return move.effectList
+  }
+
+  if (!move.effectCode) return []
+
+  return [
+    {
+      code: move.effectCode,
+      chance: move.effectChance ?? null,
+      target: (move.effectTarget as BattleEffectTarget | undefined) ?? null,
+      data:
+        move.effectData && typeof move.effectData === "object" && !Array.isArray(move.effectData)
+          ? (move.effectData as Record<string, unknown>)
+          : null,
+    },
+  ]
+}
+
+function resolveEffectTargets(
+  effectTarget: BattleEffectTarget,
+  attacker: BattlePokemon,
+  defender: BattlePokemon,
+) {
+  if (effectTarget === "both") {
+    return [attacker, defender]
+  }
+
+  if (effectTarget === "target") {
+    return [defender]
+  }
+
+  return [attacker]
+}
+
+function asBattleStatus(value: unknown): BattleStatus | null {
+  if (value === "burn" || value === "poison" || value === "badly_poison") return value
+  if (value === "paralysis" || value === "sleep" || value === "freeze") return value
+  return null
+}
+
+function applyStatusEffect(target: BattlePokemon, status: BattleStatus, events: string[]) {
+  if (isPokemonFainted(target)) return
+
+  if (target.status) {
+    events.push(`${target.name} is already affected by ${target.status}.`)
+    return
+  }
+
+  target.status = status
+  events.push(`${target.name} is now ${status.replace("_", " ")}!`)
+}
+
+function applyStatChanges(
+  target: BattlePokemon,
+  changes: Array<Record<string, unknown>>,
+  events: string[],
+) {
+  if (isPokemonFainted(target)) return
+
+  if (!target.statStages) {
+    target.statStages = {
+      attack: 0,
+      defense: 0,
+      specialAttack: 0,
+      specialDefense: 0,
+      speed: 0,
+      accuracy: 0,
+      evasion: 0,
+    }
+  }
+
+  for (const change of changes) {
+    const stat = change.stat
+    const direction = change.direction
+    const stages = change.stages
+
+    if (
+      typeof stat !== "string" ||
+      typeof direction !== "string" ||
+      typeof stages !== "number" ||
+      !(stat in target.statStages)
+    ) {
+      continue
+    }
+
+    const signedStages = direction === "down" ? -Math.abs(stages) : Math.abs(stages)
+    const current = target.statStages[stat as keyof NonNullable<typeof target.statStages>]
+    const next = Math.max(MIN_STAGE, Math.min(MAX_STAGE, current + signedStages))
+
+    target.statStages[stat as keyof NonNullable<typeof target.statStages>] = next
+
+    if (next === current) continue
+
+    const verb = signedStages > 0 ? "rose" : "fell"
+    events.push(`${target.name}'s ${stat} ${verb}!`)
+  }
+}
+
+function applyMoveEffects(
+  attacker: BattlePokemon,
+  defender: BattlePokemon,
+  move: BattlePokemon["moves"][number],
+  damageDealt: number,
+  events: string[],
+) {
+  const effects = getMoveEffects(move)
+
+  for (const effect of effects) {
+    if (!shouldApplyChance(effect.chance)) continue
+
+    const targets = resolveEffectTargets(effect.target, attacker, defender)
+
+    if (effect.code === "status_apply") {
+      const status = asBattleStatus(effect.data?.status)
+      if (!status) continue
+
+      for (const target of targets) {
+        applyStatusEffect(target, status, events)
+      }
+      continue
+    }
+
+    if (effect.code === "flinch") {
+      for (const target of targets) {
+        if (isPokemonFainted(target)) continue
+        target.flinched = true
+        events.push(`${target.name} flinched!`)
+      }
+      continue
+    }
+
+    if (effect.code === "heal_self") {
+      const ratio = typeof effect.data?.ratio === "number" ? effect.data.ratio : 0.5
+      const healAmount = Math.max(0, Math.floor(attacker.maxHp * ratio))
+
+      if (healAmount <= 0) continue
+
+      const previousHp = attacker.currentHp
+      attacker.currentHp = Math.min(attacker.maxHp, attacker.currentHp + healAmount)
+      const recovered = attacker.currentHp - previousHp
+
+      if (recovered > 0) {
+        events.push(`${attacker.name} restored ${recovered} HP.`)
+      }
+      continue
+    }
+
+    if (effect.code === "drain") {
+      if (damageDealt <= 0) continue
+
+      const ratio = typeof effect.data?.ratio === "number" ? effect.data.ratio : 0.5
+      const drainAmount = Math.max(1, Math.floor(damageDealt * ratio))
+      const previousHp = attacker.currentHp
+      attacker.currentHp = Math.min(attacker.maxHp, attacker.currentHp + drainAmount)
+      const recovered = attacker.currentHp - previousHp
+
+      if (recovered > 0) {
+        events.push(`${attacker.name} drained ${recovered} HP.`)
+      }
+      continue
+    }
+
+    if (effect.code === "recoil") {
+      if (damageDealt <= 0) continue
+
+      const ratio = typeof effect.data?.ratio === "number" ? effect.data.ratio : 0.25
+      const recoilAmount = Math.max(1, Math.floor(damageDealt * ratio))
+      attacker.currentHp = Math.max(0, attacker.currentHp - recoilAmount)
+      events.push(`${attacker.name} was hurt by recoil (${recoilAmount} HP).`)
+
+      if (attacker.currentHp === 0) {
+        attacker.fainted = true
+        events.push(`${attacker.name} has fainted!`)
+      }
+      continue
+    }
+
+    if (effect.code === "stat_changes") {
+      const rawChanges = effect.data?.changes
+      if (!Array.isArray(rawChanges)) continue
+
+      for (const target of targets) {
+        const targetChanges = rawChanges.filter((change) => {
+          if (!change || typeof change !== "object") return false
+          const typed = change as Record<string, unknown>
+          const changeTarget = typed.target
+
+          if (changeTarget === "both") return true
+          if (changeTarget === "self") return target === attacker
+          if (changeTarget === "target") return target === defender
+
+          return true
+        }) as Array<Record<string, unknown>>
+
+        if (targetChanges.length === 0) continue
+        applyStatChanges(target, targetChanges, events)
+      }
+    }
+  }
+}
 
 function cloneState(state: BattleState): BattleState {
   return {
@@ -120,6 +354,8 @@ function applyAttack(state: BattleState, side: BattleSide, moveIndex: number, ev
   if (defender.fainted) {
     events.push(`${defender.name} has fainted!`)
   }
+
+  applyMoveEffects(attacker, defender, move, result.damage, events)
 }
 
 function actionPriority(state: BattleState, action: BattleAction) {
@@ -138,8 +374,8 @@ function shouldActFirst(state: BattleState, first: BattleAction, second: BattleA
     return firstPriority > secondPriority
   }
 
-  const firstSpeed = getActivePokemon(state, first.side).speed
-  const secondSpeed = getActivePokemon(state, second.side).speed
+  const firstSpeed = getEffectiveSpeed(getActivePokemon(state, first.side))
+  const secondSpeed = getEffectiveSpeed(getActivePokemon(state, second.side))
 
   if (firstSpeed !== secondSpeed) {
     return firstSpeed > secondSpeed
@@ -160,7 +396,23 @@ function resolveAction(state: BattleState, action: BattleAction, events: string[
     return
   }
 
+  if (actor.flinched) {
+    actor.flinched = false
+    events.push(`${actor.name} flinched and couldn't move!`)
+    return
+  }
+
   applyAttack(state, action.side, action.moveIndex, events)
+}
+
+function clearTurnVolatileFlags(state: BattleState) {
+  state.player.pokemon.forEach((pokemon) => {
+    pokemon.flinched = false
+  })
+
+  state.ai.pokemon.forEach((pokemon) => {
+    pokemon.flinched = false
+  })
 }
 
 function forceAiSwitchIfFainted(state: BattleState, events: string[]) {
@@ -219,6 +471,7 @@ export function resolveTurn(
   }
 
   forceAiSwitchIfFainted(state, events)
+  clearTurnVolatileFlags(state)
 
   state.turn += 1
   turnLogEntries.push(
@@ -304,6 +557,7 @@ export function resolveTurnTimeline(
   const previousAiIndex = state.ai.activeIndex
   const eventCountBeforeForcedSwitch = events.length
   forceAiSwitchIfFainted(state, events)
+  clearTurnVolatileFlags(state)
   const forcedSwitchEvents = events.slice(eventCountBeforeForcedSwitch)
   if (previousAiIndex !== state.ai.activeIndex) {
     steps.push({

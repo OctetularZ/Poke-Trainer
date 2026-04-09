@@ -7,6 +7,14 @@ function randomRoll(max: number) {
   return Math.floor(Math.random() * max) + 1
 }
 
+function statStageMultiplier(stage: number) {
+  if (stage >= 0) {
+    return (2 + stage) / 2
+  }
+
+  return 2 / (2 - stage)
+}
+
 export function calculateDamage(
   attacker: BattlePokemon,
   defender: BattlePokemon,
@@ -33,8 +41,18 @@ export function calculateDamage(
   }
 
   const isSpecial = move.category === "special"
-  const attackStat = isSpecial ? attacker.specialAttack : attacker.attack
-  const defenseStat = isSpecial ? defender.specialDefense : defender.defense
+  const attackStage = isSpecial
+    ? attacker.statStages?.specialAttack ?? 0
+    : attacker.statStages?.attack ?? 0
+  const defenseStage = isSpecial
+    ? defender.statStages?.specialDefense ?? 0
+    : defender.statStages?.defense ?? 0
+
+  const attackStatBase = isSpecial ? attacker.specialAttack : attacker.attack
+  const defenseStatBase = isSpecial ? defender.specialDefense : defender.defense
+
+  const attackStat = Math.max(1, Math.floor(attackStatBase * statStageMultiplier(attackStage)))
+  const defenseStat = Math.max(1, Math.floor(defenseStatBase * statStageMultiplier(defenseStage)))
 
   const crit = Math.random() < CRIT_CHANCE
   const critMultiplier = crit ? 1.5 : 1

@@ -221,6 +221,7 @@ model Move {
   effectChance Int?
   effectTarget String?
   effectData   Json?
+  effectList   Json?
 
   target    String?
   contact   String?

@@ -2,6 +2,25 @@ import { Prisma } from "@/app/generated/prisma/client"
 import { PokemonSprites } from "@/types/pokemon"
 
 export type BattleSide = "player" | "ai"
+export type BattleEffectTarget = "self" | "target" | "both" | "field" | null
+export type BattleStatus = "burn" | "poison" | "badly_poison" | "paralysis" | "sleep" | "freeze"
+
+export interface BattleEffect {
+  code: string
+  chance: number | null
+  target: BattleEffectTarget
+  data: Record<string, unknown> | null
+}
+
+export interface BattleStatStages {
+  attack: number
+  defense: number
+  specialAttack: number
+  specialDefense: number
+  speed: number
+  accuracy: number
+  evasion: number
+}
 
 export interface BattleMove {
   id: number
@@ -19,6 +38,7 @@ export interface BattleMove {
   effectChance?: number,
   effectTarget?: string,
   effectData?: Prisma.JsonValue,
+  effectList?: BattleEffect[],
   target: string,
   contact: string
 }
@@ -37,6 +57,9 @@ export interface BattlePokemon {
   types: string[]
   moves: BattleMove[]
   fainted: boolean
+  status?: BattleStatus | null
+  flinched?: boolean
+  statStages?: BattleStatStages
   sprites?: PokemonSprites
 }
 

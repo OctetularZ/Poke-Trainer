@@ -1,5 +1,5 @@
 import { TeamMember } from "@/types/team"
-import { BattleMove, BattlePokemon } from "./types"
+import { BattleEffect, BattleMove, BattlePokemon } from "./types"
 
 const DEFAULT_LEVEL = 100
 const DEFAULT_IV = 31
@@ -53,6 +53,48 @@ function toNullableNumber(value: string | null | undefined): number | null {
 
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : null
+}
+
+function toEffectTarget(value: string | null | undefined): BattleEffect["target"] {
+  if (!value) return null
+
+  if (value === "self" || value === "target" || value === "both" || value === "field") {
+    return value
+  }
+
+  return null
+}
+
+function toEffectData(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null
+  return value as Record<string, unknown>
+}
+
+function toEffectList(value: unknown): BattleEffect[] | undefined {
+  if (!Array.isArray(value)) return undefined
+
+  const effects = value
+    .filter((item) => item && typeof item === "object" && !Array.isArray(item))
+    .map((item) => {
+      const raw = item as Record<string, unknown>
+
+      const code = typeof raw.code === "string" ? raw.code : null
+      if (!code) return null
+
+      const chance = typeof raw.chance === "number" ? raw.chance : null
+      const target = toEffectTarget(typeof raw.target === "string" ? raw.target : null)
+      const data = toEffectData(raw.data)
+
+      return {
+        code,
+        chance,
+        target,
+        data,
+      } as BattleEffect
+    })
+    .filter(Boolean) as BattleEffect[]
+
+  return effects.length > 0 ? effects : undefined
 }
 
 function getNatureMultiplier(
@@ -111,6 +153,11 @@ export function mapTeamMemberMoveToBattleMove(memberMove: TeamMember["moves"][nu
     priority: toNullableNumber(move.priority),
     effect: move.effect ?? "",
     description: move.description ?? "",
+    effectCode: move.effectCode ?? undefined,
+    effectChance: move.effectChance ?? undefined,
+    effectTarget: move.effectTarget ?? undefined,
+    effectData: move.effectData ?? undefined,
+    effectList: toEffectList(move.effectList),
     target: move.target ?? "",
     contact: move.contact ?? ""
   }
@@ -166,6 +213,17 @@ export function mapTeamMemberToBattlePokemon(member: TeamMember): BattlePokemon 
       .sort((a, b) => a.slot - b.slot)
       .map((move) => mapTeamMemberMoveToBattleMove(move)),
     fainted: false,
+    status: null,
+    flinched: false,
+    statStages: {
+      attack: 0,
+      defense: 0,
+      specialAttack: 0,
+      specialDefense: 0,
+      speed: 0,
+      accuracy: 0,
+      evasion: 0,
+    },
     sprites: member.pokemon.sprites,
   }
 }
