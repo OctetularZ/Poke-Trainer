@@ -1,10 +1,13 @@
 import React from "react"
+import StatusAilmentBadge from "./StatusBadges/StatusAilmentBadge"
+import { BattleStatus } from "@/lib/battle"
 
 interface HealthBarProps {
   pokemonName: string
   currentHP: number
   maxHP: number
   percentageOnLeft?: boolean
+  ailment?: BattleStatus | null
 }
 
 const getHpColor = (percentage: number) => {
@@ -19,13 +22,14 @@ const HealthBar = ({
   currentHP,
   maxHP,
   percentageOnLeft = false,
+  ailment,
 }: HealthBarProps) => {
   const percentage = Math.max(0, Math.min(100, (currentHP / maxHP) * 100))
   const roundedPercentage = Math.round(percentage)
   const color = getHpColor(roundedPercentage)
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-start">
       <div className="w-[300px]">
         <h4
           className={`w-[250px] text-center text-black text-3xl font-bold [text-shadow:1px_1px_0_#fff,-1px_1px_0_#fff,1px_-1px_0_#fff,-1px_-1px_0_#fff] ${
@@ -38,18 +42,24 @@ const HealthBar = ({
           {/* Extended background (goes further right) */}
           <div className="absolute inset-y-0 left-0 w-full bg-gray-500 rounded-md" />
 
-          {/* Actual HP bar container */}
+          {/* Actual HP bar lane */}
           <div
-            className={`absolute inset-y-0 z-10 w-[250px] border-t-1 border-t-white bg-white border-b-1 border-b-white border-x-1 border-x-white rounded-md overflow-hidden ${
+            className={`absolute inset-y-0 z-10 w-[250px] ${
               percentageOnLeft ? "right-0" : "left-0"
             }`}
           >
-            <div className="absolute inset-0 border border-neutral-500 rounded-md pointer-events-none z-10" />
+            <div className="relative h-full border-t-1 border-t-white bg-white border-b-1 border-b-white border-x-1 border-x-white rounded-md overflow-hidden">
+              <div className="absolute inset-0 border border-neutral-500 rounded-md pointer-events-none z-10" />
 
-            <div
-              className={`h-full transition-all duration-500 ease-in-out ${color}`}
-              style={{ width: `${roundedPercentage}%` }}
-            />
+              <div
+                className={`h-full transition-all duration-500 ease-in-out ${color}`}
+                style={{ width: `${roundedPercentage}%` }}
+              />
+            </div>
+
+            <div className="flex flex-row flex-wrap max-w-full absolute top-full mt-1 left-[2px] z-20">
+              {ailment && <StatusAilmentBadge ailment={ailment} />}
+            </div>
           </div>
 
           {/* HP text in the extended area */}
