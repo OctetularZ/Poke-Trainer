@@ -38,9 +38,9 @@ const StatusAilmentBadge = ({ ailment }: StatusAilmentBadgeProps) => {
         backgroundColor: ailmentColourMapper[ailment],
       }}
     >
-      <h1 className="text-center text-white leading-none text-shadow-black text-shadow-xs">
+      <h5 className="text-xs text-center text-white text-shadow-black text-shadow-xs">
         {ailmentCodeMapper[ailment]}
-      </h1>
+      </h5>
     </div>
   )
 }
