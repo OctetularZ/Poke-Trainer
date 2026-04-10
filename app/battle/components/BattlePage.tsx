@@ -6,13 +6,12 @@ import { motion } from "motion/react"
 import {
   BattleAction,
   BattleState,
-  buildDefaultAiTeam,
   chooseRandomAiAction,
   getTypeMultiplier,
   mapTeamMembersToBattlePokemon,
   resolveTurnTimeline,
 } from "@/lib/battle"
-import { fetchUserTeam } from "@/app/actions/teams"
+import { fetchAiTeam, fetchUserTeam } from "@/app/actions/teams"
 import Stage from "./Stage"
 import MoveButton from "./MoveButton/MoveButton"
 import SwitchButton from "./SwitchButton/SwitchButton"
@@ -40,7 +39,8 @@ export default function BattlePage() {
   const loadBattleState = useCallback(async () => {
     const members = await fetchUserTeam()
     const playerPokemon = mapTeamMembersToBattlePokemon(members)
-    const aiPokemon = buildDefaultAiTeam()
+    const aiMembers = await fetchAiTeam()
+    const aiPokemon = mapTeamMembersToBattlePokemon(aiMembers)
 
     setState({
       turn: 1,
