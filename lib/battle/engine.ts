@@ -108,7 +108,12 @@ function applyStatusEffect(target: BattlePokemon, status: BattleStatus, events: 
   }
 
   target.status = status
-  events.push(`${target.name} is now ${status.replace("_", " ")}!`)
+  if (status === "badly_poison") {
+    events.push(`${target.name} is now badly poisoned!`)
+  }
+  else {
+    events.push(`${target.name} is now affected by ${status}!`)
+  }
 }
 
 function applyStatChanges(

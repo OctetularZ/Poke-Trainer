@@ -12,6 +12,8 @@ const statMapper: Record<string, string> = {
   specialAttack: "SPA",
   specialDefense: "SPD",
   speed: "SPE",
+  accuracy: "ACC",
+  evasion: "EVA",
 }
 
 const StatChangeBadge = ({ stat, stage }: StatChangeBadgeProps) => {
