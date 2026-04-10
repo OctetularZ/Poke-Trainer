@@ -79,6 +79,7 @@ export interface BattleState {
   player: BattleTeam
   ai: BattleTeam
   winner: BattleSide | null
+  pendingForcedSwitchSide?: BattleSide | null
   battleLog: BattleLogEntry[]
 }
 

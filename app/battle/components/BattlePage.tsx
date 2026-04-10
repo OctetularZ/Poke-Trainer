@@ -9,6 +9,7 @@ import {
   chooseRandomAiAction,
   getTypeMultiplier,
   mapTeamMembersToBattlePokemon,
+  resolveForcedSwitchTimeline,
   resolveTurnTimeline,
 } from "@/lib/battle"
 import { fetchAiTeam, fetchUserTeam } from "@/app/actions/teams"
@@ -154,15 +155,11 @@ export default function BattlePage() {
     const currentSequenceId = turnSequenceRef.current + 1
     turnSequenceRef.current = currentSequenceId
 
-    const aiAction = chooseRandomAiAction(state)
-
-    const { steps, finalState } = resolveTurnTimeline(
-      state,
-      playerAction,
-      aiAction,
-    )
-
-    const applyStep = (stepState: BattleState, stepEvents: string[]) => {
+    const applyStep = (
+      stepState: BattleState,
+      stepEvents: string[],
+      turnForLogs: number,
+    ) => {
       setState((prev) => {
         if (!prev) return stepState
 
@@ -173,7 +170,7 @@ export default function BattlePage() {
             ...stepEvents.map((message) => ({
               kind: "event" as const,
               message,
-              turn: state.turn,
+              turn: turnForLogs,
             })),
           )
         }
@@ -185,36 +182,90 @@ export default function BattlePage() {
       })
     }
 
-    for (const step of steps) {
-      if (turnSequenceRef.current !== currentSequenceId) return
-
-      if (step.kind === "move") {
-        if (step.moveType) {
-          queueAttackEffect(
-            step.moveType,
-            step.side,
-            step.side === "player" ? "ai" : "player",
-          )
+    const runTimelineSteps = async (
+      steps: Awaited<ReturnType<typeof resolveTurnTimeline>>["steps"],
+      turnForLogs: number,
+    ) => {
+      for (const step of steps) {
+        if (turnSequenceRef.current !== currentSequenceId) {
+          return false
         }
 
-        await waitFor(MOVE_TO_DAMAGE_DELAY_MS)
-        if (turnSequenceRef.current !== currentSequenceId) return
+        if (step.kind === "move") {
+          if (step.moveType) {
+            queueAttackEffect(
+              step.moveType,
+              step.side,
+              step.side === "player" ? "ai" : "player",
+            )
+          }
 
-        applyStep(step.state, step.events)
-        await waitFor(BETWEEN_ACTIONS_DELAY_MS)
-        continue
+          await waitFor(MOVE_TO_DAMAGE_DELAY_MS)
+          if (turnSequenceRef.current !== currentSequenceId) {
+            return false
+          }
+
+          applyStep(step.state, step.events, turnForLogs)
+          await waitFor(BETWEEN_ACTIONS_DELAY_MS)
+          continue
+        }
+
+        if (step.kind === "switch" || step.kind === "forced-switch") {
+          applyStep(step.state, step.events, turnForLogs)
+          await waitFor(SWITCH_ANIMATION_DELAY_MS)
+          if (turnSequenceRef.current !== currentSequenceId) {
+            return false
+          }
+
+          await waitFor(BETWEEN_ACTIONS_DELAY_MS)
+        }
       }
 
-      if (step.kind === "switch" || step.kind === "forced-switch") {
-        applyStep(step.state, step.events)
-        await waitFor(SWITCH_ANIMATION_DELAY_MS)
-        if (turnSequenceRef.current !== currentSequenceId) return
-
-        await waitFor(BETWEEN_ACTIONS_DELAY_MS)
-      }
+      return true
     }
 
-    if (turnSequenceRef.current !== currentSequenceId) return
+    if (state.pendingForcedSwitchSide === "player") {
+      if (playerAction.type !== "switch") {
+        setIsResolvingTurn(false)
+        return
+      }
+
+      const { steps, finalState } = resolveForcedSwitchTimeline(
+        state,
+        "player",
+        playerAction.toIndex,
+      )
+
+      const completedForcedSwitch = await runTimelineSteps(steps, state.turn)
+      if (
+        !completedForcedSwitch ||
+        turnSequenceRef.current !== currentSequenceId
+      ) {
+        setIsResolvingTurn(false)
+        return
+      }
+
+      setState((prev) =>
+        prev ? { ...finalState, battleLog: prev.battleLog } : finalState,
+      )
+      setIsResolvingTurn(false)
+      return
+    }
+
+    const aiAction = chooseRandomAiAction(state)
+
+    const { steps, finalState } = resolveTurnTimeline(
+      state,
+      playerAction,
+      aiAction,
+    )
+
+    const completed = await runTimelineSteps(steps, state.turn)
+    if (!completed || turnSequenceRef.current !== currentSequenceId) {
+      setIsResolvingTurn(false)
+      return
+    }
+
     setState((prev) => {
       if (!prev) return finalState
 
@@ -274,6 +325,7 @@ export default function BattlePage() {
             attackerPokemon={playerActive}
             defenderPokemon={aiActive}
             winner={state.winner}
+            pendingForcedSwitchSide={state.pendingForcedSwitchSide}
             attackEffects={attackEffects}
             onAttackEffectComplete={(nonce) => {
               setAttackEffects((prev) =>
@@ -290,7 +342,8 @@ export default function BattlePage() {
                   disabled={
                     Boolean(state.winner) ||
                     playerActive.fainted ||
-                    isResolvingTurn
+                    isResolvingTurn ||
+                    state.pendingForcedSwitchSide === "player"
                   }
                   onClick={() =>
                     handlePlayerAction({

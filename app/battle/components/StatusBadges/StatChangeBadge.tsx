@@ -24,7 +24,7 @@ const StatChangeBadge = ({ stat, stage }: StatChangeBadgeProps) => {
       <h5
         className={`text-xs text-center text-shadow-black text-shadow-xs ${stage < 0 ? "text-red-800" : "text-emerald-800"}`}
       >
-        {`${stage * 0.5}x ${statMapper[stat]}`}
+        {`${stage * 0.5 + 1}x ${statMapper[stat]}`}
       </h5>
     </div>
   )

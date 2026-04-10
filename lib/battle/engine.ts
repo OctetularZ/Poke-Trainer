@@ -162,9 +162,25 @@ function applyStatChanges(
   }
 }
 
+function handleForcedSwitch(currentState: BattleState, side: BattleSide, toIndex: number) {
+  const state = cloneState(currentState)
+  const events: string[] = []
+  const prevIndex = state[side].activeIndex
+  applySwitch(state, side, toIndex, events)
+
+  if (state[side].activeIndex !== prevIndex) {
+    state.pendingForcedSwitchSide = null
+  }
+
+  return {state, events}
+}
+
 function applyMoveEffects(
   attacker: BattlePokemon,
   defender: BattlePokemon,
+  state: BattleState,
+  attckerSide: BattleSide,
+  defenderSide: BattleSide,
   move: BattlePokemon["moves"][number],
   damageDealt: number,
   events: string[],
@@ -236,6 +252,9 @@ function applyMoveEffects(
 
       if (attacker.currentHp === 0) {
         attacker.fainted = true
+        if (hasAvailablePokemon(state, attckerSide)) {
+          state.pendingForcedSwitchSide = attckerSide
+        }
         events.push(`${attacker.name} has fainted!`)
       }
       continue
@@ -355,6 +374,10 @@ function applyAttack(state: BattleState, side: BattleSide, moveIndex: number, ev
   defender.currentHp = Math.max(0, defender.currentHp - result.damage)
   if (defender.currentHp === 0) {
     defender.fainted = true
+
+  if (hasAvailablePokemon(state, defenderSide)) {
+    state.pendingForcedSwitchSide = defenderSide
+  }
   }
 
   // Haven't accounted for very effective vs super effective (when both Pokemon types are weak to type of move)
@@ -380,7 +403,7 @@ function applyAttack(state: BattleState, side: BattleSide, moveIndex: number, ev
     events.push(`${defender.name} has fainted!`)
   }
 
-  applyMoveEffects(attacker, defender, move, result.damage, events)
+  applyMoveEffects(attacker, defender, state, side, defenderSide, move, result.damage, events)
 }
 
 function actionPriority(state: BattleState, action: BattleAction) {
@@ -451,7 +474,12 @@ function forceAiSwitchIfFainted(state: BattleState, events: string[]) {
 
   const randomIndex = Math.floor(Math.random() * availableSwitches.length)
   const toIndex = availableSwitches[randomIndex]
+  const previousAiIndex = state.ai.activeIndex
   applySwitch(state, "ai", toIndex, events)
+
+  if (state.ai.activeIndex !== previousAiIndex && state.pendingForcedSwitchSide === "ai") {
+    state.pendingForcedSwitchSide = null
+  }
 }
 
 function setWinner(state: BattleState, winner: BattleSide, events: string[]) {
@@ -493,9 +521,15 @@ export function resolveTurn(
       setWinner(state, "player", events)
       break
     }
+
+    if(state.pendingForcedSwitchSide) {
+      break
+    }
   }
 
-  forceAiSwitchIfFainted(state, events)
+  if (state.pendingForcedSwitchSide !== "player") {
+    forceAiSwitchIfFainted(state, events)
+  }
   clearTurnVolatileFlags(state)
 
   state.turn += 1
@@ -577,11 +611,17 @@ export function resolveTurnTimeline(
       setWinner(state, "player", events)
       break
     }
+
+    if(state.pendingForcedSwitchSide) {
+      break
+    }
   }
 
   const previousAiIndex = state.ai.activeIndex
   const eventCountBeforeForcedSwitch = events.length
-  forceAiSwitchIfFainted(state, events)
+  if (state.pendingForcedSwitchSide !== "player") {
+    forceAiSwitchIfFainted(state, events)
+  }
   clearTurnVolatileFlags(state)
   const forcedSwitchEvents = events.slice(eventCountBeforeForcedSwitch)
   if (previousAiIndex !== state.ai.activeIndex) {
@@ -615,5 +655,28 @@ export function resolveTurnTimeline(
     steps,
     finalState: state,
     events,
+  }
+}
+
+export function resolveForcedSwitchTimeline(currentState: BattleState, side: BattleSide, toIndex: number): TurnTimelineResolution {
+  const prevIndex = currentState[side].activeIndex
+  const {state, events} = handleForcedSwitch(currentState, side, toIndex)
+
+  const didSwitch = state[side].activeIndex !== prevIndex
+
+  const steps: TurnTimelineStep[] = didSwitch
+  ? [
+    {
+      kind: "forced-switch",
+      side,
+      events,
+      state: cloneState(state)
+    }
+  ] : []
+
+  return {
+    steps,
+    finalState: state,
+    events
   }
 }
