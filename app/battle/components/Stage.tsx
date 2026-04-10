@@ -301,6 +301,7 @@ const Stage = ({
           currentHP={attackerPokemon.currentHp}
           maxHP={attackerPokemon.maxHp}
           ailment={attackerPokemon.status}
+          statChanges={attackerPokemon.statStages}
         />
         <div className="relative">
           {!attackerGone ? (
@@ -355,6 +356,7 @@ const Stage = ({
           currentHP={defenderPokemon.currentHp}
           maxHP={defenderPokemon.maxHp}
           ailment={defenderPokemon.status}
+          statChanges={defenderPokemon.statStages}
         />
         <div className="relative">
           {!defenderGone ? (

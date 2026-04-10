@@ -3,16 +3,6 @@ import "./globals.css"
 import Navbar from "@/components/Navbar"
 import localFont from "next/font/local"
 
-const minecraft = localFont({
-  src: [
-    {
-      path: "./fonts/Minecraft 2.woff2",
-      weight: "400",
-    },
-  ],
-  variable: "--font-minecraft",
-})
-
 const pokemonClassic = localFont({
   src: [
     {
@@ -38,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${minecraft.variable} ${pokemonClassic.variable}`}>
+      <body className={`${pokemonClassic.variable}`}>
         <Navbar />
         {children}
       </body>

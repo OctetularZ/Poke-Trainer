@@ -171,7 +171,12 @@ export async function fetchUserTeam(): Promise<TeamMember[]> {
                       priority: true,
                       effect: true,
                       target: true,
-                      contact: true
+                      contact: true,
+                      effectCode: true,
+                      effectChance: true,
+                      effectTarget: true,
+                      effectData: true,
+                      effectList: true,
                     }
               }}
             }}
@@ -258,7 +263,12 @@ export async function fetchAiTeam(): Promise<TeamMember[]> {
                       priority: true,
                       effect: true,
                       target: true,
-                      contact: true
+                      contact: true,
+                      effectCode: true,
+                      effectChance: true,
+                      effectTarget: true,
+                      effectData: true,
+                      effectList: true,
                     }
               }}
             }}

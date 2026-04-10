@@ -1,6 +1,7 @@
 import React from "react"
 import StatusAilmentBadge from "./StatusBadges/StatusAilmentBadge"
-import { BattleStatus } from "@/lib/battle"
+import { BattleStatStages, BattleStatus } from "@/lib/battle"
+import StatChangeBadge from "./StatusBadges/StatChangeBadge"
 
 interface HealthBarProps {
   pokemonName: string
@@ -8,6 +9,7 @@ interface HealthBarProps {
   maxHP: number
   percentageOnLeft?: boolean
   ailment?: BattleStatus | null
+  statChanges: BattleStatStages | undefined
 }
 
 const getHpColor = (percentage: number) => {
@@ -23,6 +25,7 @@ const HealthBar = ({
   maxHP,
   percentageOnLeft = false,
   ailment,
+  statChanges,
 }: HealthBarProps) => {
   const percentage = Math.max(0, Math.min(100, (currentHP / maxHP) * 100))
   const roundedPercentage = Math.round(percentage)
@@ -57,8 +60,15 @@ const HealthBar = ({
               />
             </div>
 
-            <div className="flex flex-row flex-wrap max-w-full absolute top-full mt-1 left-[2px] z-20">
+            <div className="flex flex-row flex-wrap gap-1 max-w-full absolute top-full mt-1 left-[2px] z-20">
               {ailment && <StatusAilmentBadge ailment={ailment} />}
+              {statChanges &&
+                Object.entries(statChanges).map(([stat, stage]) => {
+                  if (stage > 0 || stage < 0)
+                    return (
+                      <StatChangeBadge key={stat} stat={stat} stage={stage} />
+                    )
+                })}
             </div>
           </div>
 

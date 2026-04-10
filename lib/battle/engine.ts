@@ -11,10 +11,20 @@ import {
   TurnResolution,
   TurnTimelineResolution,
   TurnTimelineStep,
+  BattleStatStages,
 } from "./types"
 
 const MIN_STAGE = -6
 const MAX_STAGE = 6
+const DEFAULT_STAT_STAGES: BattleStatStages = {
+  attack: 0,
+  defense: 0,
+  specialAttack: 0,
+  specialDefense: 0,
+  speed: 0,
+  accuracy: 0,
+  evasion: 0
+}
 
 function randomPercentRoll() {
   return Math.floor(Math.random() * 100) + 1
@@ -77,6 +87,7 @@ function resolveEffectTargets(
   return [attacker]
 }
 
+// Resolve status effects
 function asBattleStatus(value: unknown): BattleStatus | null {
   if (value === "burn" || value === "poison" || value === "badly_poison") return value
   if (value === "paralysis" || value === "sleep" || value === "freeze") return value
@@ -87,7 +98,12 @@ function applyStatusEffect(target: BattlePokemon, status: BattleStatus, events: 
   if (isPokemonFainted(target)) return
 
   if (target.status) {
-    events.push(`${target.name} is already affected by ${target.status}.`)
+    if (target.status === "badly_poison") {
+      events.push(`${target.name} is already badly poisoned.`)
+    }
+    else {
+      events.push(`${target.name} is already affected by ${target.status}.`)
+    }
     return
   }
 
@@ -289,6 +305,10 @@ function getAvailableSwitchIndexes(state: BattleState, side: BattleSide) {
 
 function applySwitch(state: BattleState, side: BattleSide, toIndex: number, events: string[]) {
   const current = state[side]
+  const active = current.pokemon[current.activeIndex]
+  if (active) {
+    active.statStages = { ...DEFAULT_STAT_STAGES }
+  }
   const target = current.pokemon[toIndex]
 
   if (!target || isPokemonFainted(target) || toIndex === current.activeIndex) {
