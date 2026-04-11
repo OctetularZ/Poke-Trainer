@@ -367,12 +367,15 @@ export default function BattlePage() {
             <h1 className="text-xl text-white mb-3 font-semibold">
               Switch Pokemon
             </h1>
-            <div className="w-full grid grid-cols-5 gap-3">
-              {availableSwitches.map(({ pokemon, index }) => (
+            <div className="w-full grid grid-cols-6 gap-1">
+              {state.player.pokemon.map((pokemon, index) => (
                 <SwitchButton
                   key={pokemon.id}
                   disabled={
-                    Boolean(state.winner) || pokemon.fainted || isResolvingTurn
+                    Boolean(state.winner) ||
+                    pokemon.fainted ||
+                    isResolvingTurn ||
+                    index === state.player.activeIndex
                   }
                   onClick={() =>
                     handlePlayerAction({

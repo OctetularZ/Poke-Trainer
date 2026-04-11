@@ -158,7 +158,15 @@ function applyStatChanges(
     if (next === current) continue
 
     const verb = signedStages > 0 ? "rose" : "fell"
-    events.push(`${target.name}'s ${stat} ${verb}!`)
+    if (stat === "specialAttack") {
+      events.push(`${target.name}'s special attack ${verb}!`)
+    }
+    else if (stat === "specialDefense") {
+      events.push(`${target.name}'s special defense ${verb}!`)
+    }
+    else {
+      events.push(`${target.name}'s ${stat} ${verb}!`)
+    }
   }
 }
 
