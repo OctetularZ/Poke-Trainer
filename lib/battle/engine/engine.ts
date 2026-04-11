@@ -17,6 +17,7 @@ import {
   trySetWinnerIfNoPokemon,
 } from "./turn"
 import { handleForcedSwitch } from "./switch"
+import { applyEndOfTurnStatus } from "./status"
 
 export function resolveTurn(
   currentState: BattleState,
@@ -48,6 +49,11 @@ export function resolveTurn(
     if(state.pendingForcedSwitchSide) {
       break
     }
+  }
+
+  if (!state.pendingForcedSwitchSide && !state.winner) {
+    applyEndOfTurnStatus(state, events)
+    trySetWinnerIfNoPokemon(state, events)
   }
 
   if (state.pendingForcedSwitchSide !== "player") {
@@ -132,6 +138,11 @@ export function resolveTurnTimeline(
     if(state.pendingForcedSwitchSide) {
       break
     }
+  }
+
+  if (!state.pendingForcedSwitchSide && !state.winner) {
+    applyEndOfTurnStatus(state, events)
+    trySetWinnerIfNoPokemon(state, events)
   }
 
   const previousAiIndex = state.ai.activeIndex
