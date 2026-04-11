@@ -218,6 +218,12 @@ export default function BattlePage() {
           }
 
           await waitFor(BETWEEN_ACTIONS_DELAY_MS)
+          continue
+        }
+
+        if (step.kind === "status") {
+          applyStep(step.state, step.events, turnForLogs)
+          await waitFor(BETWEEN_ACTIONS_DELAY_MS)
         }
       }
 

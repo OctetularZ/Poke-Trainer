@@ -141,8 +141,19 @@ export function resolveTurnTimeline(
   }
 
   if (!state.pendingForcedSwitchSide && !state.winner) {
+    const eventCountBeforeStatus = events.length
     applyEndOfTurnStatus(state, events)
     trySetWinnerIfNoPokemon(state, events)
+    const statusEvents = events.slice(eventCountBeforeStatus)
+
+    if (statusEvents.length > 0) {
+      steps.push({
+        kind: "status",
+        side: "player",
+        events: statusEvents,
+        state: cloneState(state),
+      })
+    }
   }
 
   const previousAiIndex = state.ai.activeIndex

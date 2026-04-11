@@ -108,7 +108,7 @@ export interface TurnResolution {
 }
 
 export interface TurnTimelineStep {
-  kind: "move" | "switch" | "forced-switch"
+  kind: "move" | "switch" | "forced-switch" | "status"
   side: BattleSide
   moveType?: string
   events: string[]
