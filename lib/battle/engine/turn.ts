@@ -1,5 +1,5 @@
 import { BattleAction, BattlePokemon, BattleSide, BattleState } from "../types"
-import { getStageMultiplier } from "./effects"
+import { getStageMultiplier, shouldApplyChance } from "./effects"
 import { getActivePokemon, hasAvailablePokemon, isPokemonFainted } from "./pokemon"
 import { applySwitch, getAvailableSwitchIndexes } from "./switch"
 import { applyAttack } from "./move"
@@ -51,6 +51,26 @@ export function resolveAction(state: BattleState, action: BattleAction, events: 
     actor.flinched = false
     events.push(`${actor.name} flinched and couldn't move!`)
     return
+  }
+
+  if (actor.status === "paralysis") {
+    const isFullyParalyzed = shouldApplyChance(25) // 25% chance to have turn skipped with paralysis.
+    if (isFullyParalyzed) {
+      events.push(`${actor.name} is paralyzed and can cannot move!`)
+      return
+    }
+  }
+
+  if (actor.status === "freeze") {
+    const isStillFrozen = shouldApplyChance(80) // 80% chance to stay frozen, and 20% to thaw out each turn.
+    if (isStillFrozen) {
+      events.push(`${actor.name} is frozen solid and cannot move!`)
+      return
+    }
+    else {
+      actor.status = null
+      events.push(`${actor.name} thawed out!`)
+    }
   }
 
   applyAttack(state, action.side, action.moveIndex, events)

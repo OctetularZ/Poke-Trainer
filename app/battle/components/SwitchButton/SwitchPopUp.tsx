@@ -6,6 +6,33 @@ interface SwitchPopUpProps {
   pokemon: BattlePokemon
 }
 
+interface StatValueProps {
+  label: string
+  baseStat: number
+  stage?: number
+  getDisplayedStat: (baseStat: number, stage: number) => number
+  getStageColorClass: (stage?: number) => string
+}
+
+const StatValue = ({
+  label,
+  baseStat,
+  stage,
+  getDisplayedStat,
+  getStageColorClass,
+}: StatValueProps) => {
+  const safeStage = stage ?? 0
+
+  return (
+    <p className="text-gray-200">
+      {label}:{" "}
+      <span className={getStageColorClass(stage)}>
+        {getDisplayedStat(baseStat, safeStage)}
+      </span>
+    </p>
+  )
+}
+
 const SwitchPopUp = ({ pokemon }: SwitchPopUpProps) => {
   const popupRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState({ left: 8, top: 8 })
@@ -73,6 +100,22 @@ const SwitchPopUp = ({ pokemon }: SwitchPopUpProps) => {
         )
       : 0
 
+  const getStageMultiplier = (stage: number) => {
+    if (stage >= 0) return (2 + stage) / 2
+    return 2 / (2 - stage)
+  }
+
+  const getDisplayedStat = (baseStat: number, stage: number) => {
+    return Math.floor(baseStat * getStageMultiplier(stage))
+  }
+
+  const getStageColorClass = (stage: number | undefined) => {
+    if (!stage) return "text-gray-200"
+    if (stage > 0) return "text-green-400 font-bold"
+    if (stage < 0) return "text-red-400 font-bold"
+    return "text-gray-200"
+  }
+
   return (
     <div
       ref={popupRef}
@@ -111,20 +154,50 @@ const SwitchPopUp = ({ pokemon }: SwitchPopUpProps) => {
         <p>Ability: Unknown</p>
       </div>
 
-      <div className="mb-2 grid grid-cols-[max-content_auto_max-content_auto_max-content_auto_max-content_auto_max-content] items-center gap-x-1 gap-y-1 border-t border-white/20 pt-2 text-xs text-gray-200">
-        <p>Atk: {pokemon.attack}</p>
+      <div className="mb-2 grid grid-cols-[max-content_auto_max-content_auto_max-content_auto_max-content_auto_max-content] items-center gap-x-1 gap-y-1 border-t border-white/20 pt-2 text-xs">
+        <StatValue
+          label="Atk"
+          baseStat={pokemon.attack}
+          stage={pokemon.statStages?.attack}
+          getDisplayedStat={getDisplayedStat}
+          getStageColorClass={getStageColorClass}
+        />
         <span className="justify-self-center text-white/80">/</span>
 
-        <p>Def: {pokemon.defense}</p>
+        <StatValue
+          label="Def"
+          baseStat={pokemon.defense}
+          stage={pokemon.statStages?.defense}
+          getDisplayedStat={getDisplayedStat}
+          getStageColorClass={getStageColorClass}
+        />
         <span className="justify-self-center text-white/80">/</span>
 
-        <p>SpA: {pokemon.specialAttack}</p>
+        <StatValue
+          label="SpA"
+          baseStat={pokemon.specialAttack}
+          stage={pokemon.statStages?.specialAttack}
+          getDisplayedStat={getDisplayedStat}
+          getStageColorClass={getStageColorClass}
+        />
         <span className="justify-self-center text-white/80">/</span>
 
-        <p>SpD: {pokemon.specialDefense}</p>
+        <StatValue
+          label="SpD"
+          baseStat={pokemon.specialDefense}
+          stage={pokemon.statStages?.specialDefense}
+          getDisplayedStat={getDisplayedStat}
+          getStageColorClass={getStageColorClass}
+        />
         <span className="justify-self-center text-white/80">/</span>
 
-        <p>Spe: {pokemon.speed}</p>
+        <StatValue
+          label="Spe"
+          baseStat={pokemon.speed}
+          stage={pokemon.statStages?.speed}
+          getDisplayedStat={getDisplayedStat}
+          getStageColorClass={getStageColorClass}
+        />
       </div>
 
       <div className="border-t border-white/20 pt-2">
