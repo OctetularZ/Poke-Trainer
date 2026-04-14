@@ -395,6 +395,23 @@ const Stage = ({
           />
 
           {playerTargetEffects.map((effect) => {
+            if (effect.type === "stat-up" || effect.type === "stat-down") {
+              return (
+                <img
+                  key={effect.nonce}
+                  src={attackerDisplaySrc}
+                  alt={`${attackerPokemon.name} stat change effect`}
+                  className={`pointer-events-none absolute inset-0 h-full w-full object-contain ${
+                    effect.type === "stat-up"
+                      ? "battle-stat-up-shake"
+                      : "battle-stat-down-shake"
+                  }`}
+                  style={{ imageRendering: "pixelated" }}
+                  onAnimationEnd={() => onAttackEffectComplete?.(effect.nonce)}
+                />
+              )
+            }
+
             const config = attackEffectsByType[effect.type.toLowerCase()]
             if (!config) return null
 
@@ -448,6 +465,23 @@ const Stage = ({
           />
 
           {aiTargetEffects.map((effect) => {
+            if (effect.type === "stat-up" || effect.type === "stat-down") {
+              return (
+                <img
+                  key={effect.nonce}
+                  src={defenderDisplaySrc}
+                  alt={`${defenderPokemon.name} stat change effect`}
+                  className={`pointer-events-none absolute inset-0 h-full w-full object-contain ${
+                    effect.type === "stat-up"
+                      ? "battle-stat-up-shake"
+                      : "battle-stat-down-shake"
+                  }`}
+                  style={{ imageRendering: "pixelated" }}
+                  onAnimationEnd={() => onAttackEffectComplete?.(effect.nonce)}
+                />
+              )
+            }
+
             const config = attackEffectsByType[effect.type.toLowerCase()]
             if (!config) return null
 

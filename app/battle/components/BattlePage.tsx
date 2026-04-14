@@ -29,6 +29,38 @@ const MOVE_TO_DAMAGE_DELAY_MS = 1000
 const BETWEEN_ACTIONS_DELAY_MS = 500
 const SWITCH_ANIMATION_DELAY_MS = 900
 
+function queueStatStageEffects(
+  stepEvents: string[],
+  queueAttackEffect: (
+    type: string,
+    fromSide: "player" | "ai",
+    toSide: "player" | "ai",
+    delayMs?: number,
+  ) => void,
+) {
+  const seen = new Set<string>()
+
+  for (const message of stepEvents) {
+    const rose = message.endsWith(" rose!")
+    const fell = message.endsWith(" fell!")
+    if (!rose && !fell) continue
+
+    const side = message.startsWith("Your ")
+      ? "player"
+      : message.startsWith("Opposing ")
+        ? "ai"
+        : null
+    if (!side) continue
+
+    const type = rose ? "stat-up" : "stat-down"
+    const key = `${type}:${side}`
+    if (seen.has(key)) continue
+
+    seen.add(key)
+    queueAttackEffect(type, side, side)
+  }
+}
+
 export default function BattlePage() {
   const [state, setState] = useState<BattleState | null>(null)
   const [attackEffects, setAttackEffects] = useState<AttackEffect[]>([])
@@ -192,13 +224,15 @@ export default function BattlePage() {
         }
 
         if (step.kind === "move") {
-          if (step.moveType) {
+          if (step.moveType && step.moveCategory !== "status") {
             queueAttackEffect(
               step.moveType,
               step.side,
               step.side === "player" ? "ai" : "player",
             )
           }
+
+          queueStatStageEffects(step.events, queueAttackEffect)
 
           await waitFor(MOVE_TO_DAMAGE_DELAY_MS)
           if (turnSequenceRef.current !== currentSequenceId) {

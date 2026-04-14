@@ -109,6 +109,7 @@ export function resolveTurnTimeline(
           kind: "move",
           side: action.side,
           moveType: move?.type,
+          moveCategory: move?.category,
           events: latestEvents,
           state: cloneState(state),
         })

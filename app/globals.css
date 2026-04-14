@@ -239,6 +239,14 @@ mark {
   will-change: transform, opacity;
 }
 
+.battle-stat-up-shake {
+  animation: battle-stat-up-shake 620ms ease-in-out forwards;
+}
+
+.battle-stat-down-shake {
+  animation: battle-stat-down-shake 620ms ease-in-out forwards;
+}
+
 @keyframes battle-switch-recall-shrink {
   0% {
     transform: translateX(0) translateY(0) scale(1);
@@ -349,5 +357,71 @@ mark {
   100% {
     transform: translateX(0) translateY(0) scale(1);
     opacity: 1;
+  }
+}
+
+@keyframes battle-stat-up-shake {
+  0% {
+    transform: translateX(0) scale(1);
+  }
+  10% {
+    transform: translateX(-4px) scale(1.16);
+  }
+  20% {
+    transform: translateX(4px) scale(1);
+  }
+  30% {
+    transform: translateX(-4px) scale(1.16);
+  }
+  40% {
+    transform: translateX(4px) scale(1);
+  }
+  50% {
+    transform: translateX(-3px) scale(1.12);
+  }
+  60% {
+    transform: translateX(3px) scale(1);
+  }
+  70% {
+    transform: translateX(-2px) scale(1.08);
+  }
+  80% {
+    transform: translateX(2px) scale(1);
+  }
+  100% {
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes battle-stat-down-shake {
+  0% {
+    transform: translateX(0) scale(1);
+  }
+  10% {
+    transform: translateX(-4px) scale(0.84);
+  }
+  20% {
+    transform: translateX(4px) scale(1);
+  }
+  30% {
+    transform: translateX(-4px) scale(0.84);
+  }
+  40% {
+    transform: translateX(4px) scale(1);
+  }
+  50% {
+    transform: translateX(-3px) scale(0.88);
+  }
+  60% {
+    transform: translateX(3px) scale(1);
+  }
+  70% {
+    transform: translateX(-2px) scale(0.92);
+  }
+  80% {
+    transform: translateX(2px) scale(1);
+  }
+  100% {
+    transform: translateX(0) scale(1);
   }
 }

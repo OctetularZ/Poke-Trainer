@@ -112,6 +112,7 @@ export interface TurnTimelineStep {
   kind: "move" | "switch" | "forced-switch" | "status"
   side: BattleSide
   moveType?: string
+  moveCategory?: BattleMove["category"]
   events: string[]
   state: BattleState
 }
