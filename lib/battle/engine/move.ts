@@ -9,6 +9,10 @@ import {
   shouldApplyChance,
 } from "./effects"
 
+export function getPokemonLabel(side: BattleSide, name: string) {
+  return side === "player" ? `Your ${name}` : `Opposing ${name}`
+}
+
 function applyMoveEffects(
   attacker: BattlePokemon,
   defender: BattlePokemon,
@@ -20,6 +24,7 @@ function applyMoveEffects(
   events: string[],
 ) {
   const effects = getMoveEffects(move)
+  const attackerLabel = getPokemonLabel(attackerSide, attacker.name)
 
   for (const effect of effects) {
     if (!shouldApplyChance(effect.chance)) continue
@@ -31,7 +36,9 @@ function applyMoveEffects(
       if (!status) continue
 
       for (const target of targets) {
-        applyStatusEffect(target, status, events)
+        const targetSide = target === attacker ? attackerSide : defenderSide
+        const targetLabel = getPokemonLabel(targetSide, target.name)
+        applyStatusEffect(target, status, events, targetLabel)
       }
       continue
     }
@@ -39,8 +46,10 @@ function applyMoveEffects(
     if (effect.code === "flinch") {
       for (const target of targets) {
         if (isPokemonFainted(target)) continue
+        const targetSide = target === attacker ? attackerSide : defenderSide
+        const targetLabel = getPokemonLabel(targetSide, target.name)
         target.flinched = true
-        events.push(`${target.name} flinched!`)
+        events.push(`${targetLabel} flinched!`)
       }
       continue
     }
@@ -56,7 +65,7 @@ function applyMoveEffects(
       const recovered = attacker.currentHp - previousHp
 
       if (recovered > 0) {
-        events.push(`${attacker.name} restored ${recovered} HP.`)
+        events.push(`${attackerLabel} restored ${recovered} HP.`)
       }
       continue
     }
@@ -71,7 +80,7 @@ function applyMoveEffects(
       const recovered = attacker.currentHp - previousHp
 
       if (recovered > 0) {
-        events.push(`${attacker.name} drained ${recovered} HP.`)
+        events.push(`${attackerLabel} drained ${recovered} HP.`)
       }
       continue
     }
@@ -82,14 +91,14 @@ function applyMoveEffects(
       const ratio = typeof effect.data?.ratio === "number" ? effect.data.ratio : 0.25
       const recoilAmount = Math.max(1, Math.floor(damageDealt * ratio))
       attacker.currentHp = Math.max(0, attacker.currentHp - recoilAmount)
-      events.push(`${attacker.name} was hurt by recoil (${recoilAmount} HP).`)
+      events.push(`${attackerLabel} was hurt by recoil (${recoilAmount} HP).`)
 
       if (attacker.currentHp === 0) {
         attacker.fainted = true
         if (hasAvailablePokemon(state, attackerSide)) {
           state.pendingForcedSwitchSide = attackerSide
         }
-        events.push(`${attacker.name} has fainted!`)
+        events.push(`${attackerLabel} has fainted!`)
       }
       continue
     }
@@ -112,7 +121,9 @@ function applyMoveEffects(
         }) as Array<Record<string, unknown>>
 
         if (targetChanges.length === 0) continue
-        applyStatChanges(target, targetChanges, events)
+        const targetSide = target === attacker ? attackerSide : defenderSide
+        const targetLabel = getPokemonLabel(targetSide, target.name)
+        applyStatChanges(target, targetChanges, events, targetLabel)
       }
     }
   }
@@ -149,14 +160,17 @@ export function applyAttack(
   const defender = getActivePokemon(state, defenderSide)
   const move = attacker.moves[moveIndex]
 
+  const actorLabel = getPokemonLabel(side, attacker.name)
+  const defenderLabel = getPokemonLabel(defenderSide, defender.name)
+
   if (!move) {
-    events.push(`${attacker.name} has no move in that slot.`)
+    events.push(`${actorLabel} has no move in that slot.`)
     return
   }
 
   if (move.remainingPP != null) {
     if (move.remainingPP <= 0) {
-      events.push(`${attacker.name} has no PP left for ${move.name}.`)
+      events.push(`${actorLabel} has no PP left for ${move.name}.`)
       return
     }
 
@@ -166,7 +180,7 @@ export function applyAttack(
   const result = calculateDamage(attacker, defender, move)
 
   if (!result.hit) {
-    events.push(`${attacker.name} used ${move.name}, but it missed!`)
+    events.push(`${actorLabel} used ${move.name}, but it missed!`)
     return
   }
 
@@ -179,7 +193,7 @@ export function applyAttack(
     }
   }
 
-  events.push(`${attacker.name} used ${move.name} for ${result.damage} damage.`)
+  events.push(`${actorLabel} used ${move.name} for ${result.damage} damage.`)
 
   if (result.wasCritical) {
     events.push("A critical hit!")
@@ -198,7 +212,7 @@ export function applyAttack(
   }
 
   if (defender.fainted) {
-    events.push(`${defender.name} has fainted!`)
+    events.push(`${defenderLabel} has fainted!`)
   }
 
   applyMoveEffects(attacker, defender, state, side, defenderSide, move, result.damage, events)

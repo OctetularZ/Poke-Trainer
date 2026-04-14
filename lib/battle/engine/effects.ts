@@ -34,6 +34,7 @@ export function applyStatChanges(
   target: BattlePokemon,
   changes: Array<Record<string, unknown>>,
   events: string[],
+  targetLabel?: string,
 ) {
   if (isPokemonFainted(target)) return
 
@@ -72,37 +73,52 @@ export function applyStatChanges(
     if (next === current) continue
 
     const verb = signedStages > 0 ? "rose" : "fell"
+    const label = targetLabel ?? target.name
+
     if (stat === "specialAttack") {
-      events.push(`${target.name}'s special attack ${verb}!`)
+      events.push(`${label}'s special attack ${verb}!`)
     }
     else if (stat === "specialDefense") {
-      events.push(`${target.name}'s special defense ${verb}!`)
+      events.push(`${label}'s special defense ${verb}!`)
     }
     else {
-      events.push(`${target.name}'s ${stat} ${verb}!`)
+      events.push(`${label}'s ${stat} ${verb}!`)
     }
   }
 }
 
-export function applyStatusEffect(target: BattlePokemon, status: BattleStatus, events: string[]) {
+export function applyStatusEffect(
+  target: BattlePokemon,
+  status: BattleStatus,
+  events: string[],
+  targetLabel?: string,
+) {
   if (isPokemonFainted(target)) return
+
+  const label = targetLabel ?? target.name
 
   if (target.status) {
     if (target.status === "badly_poison") {
-      events.push(`${target.name} is already badly poisoned.`)
+      events.push(`${label} is already badly poisoned.`)
+    }
+    else if (target.status === "sleep") {
+      events.push(`${label} is already fast asleep.`)
     }
     else {
-      events.push(`${target.name} is already affected by ${target.status}.`)
+      events.push(`${label} is already affected by ${target.status}.`)
     }
     return
   }
 
   target.status = status
   if (status === "badly_poison") {
-    events.push(`${target.name} is now badly poisoned!`)
+    events.push(`${label} is now badly poisoned!`)
+  }
+  else if (status === "sleep") {
+    events.push(`${label} is fast asleep...`)
   }
   else {
-    events.push(`${target.name} is now affected by ${status}!`)
+    events.push(`${label} is now affected by ${status}!`)
   }
 }
 

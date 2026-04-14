@@ -225,6 +225,7 @@ export function mapTeamMemberToBattlePokemon(member: TeamMember): BattlePokemon 
       evasion: 0,
     },
     sprites: member.pokemon.sprites,
+    sleepTurnsElapsed: 0
   }
 }
 

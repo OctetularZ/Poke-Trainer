@@ -27,6 +27,7 @@ export function handleForcedSwitch(currentState: BattleState, side: BattleSide, 
 
 export function applySwitch(state: BattleState, side: BattleSide, toIndex: number, events: string[]) {
   const current = state[side]
+  const sideLabel = side === "player" ? "You" : "AI"
   const active = current.pokemon[current.activeIndex]
   if (active) {
     active.statStages = { ...DEFAULT_STAT_STAGES }
@@ -34,12 +35,12 @@ export function applySwitch(state: BattleState, side: BattleSide, toIndex: numbe
   const target = current.pokemon[toIndex]
 
   if (!target || isPokemonFainted(target) || toIndex === current.activeIndex) {
-    events.push(`${side} failed to switch.`)
+    events.push(`${sideLabel} failed to switch.`)
     return
   }
 
   current.activeIndex = toIndex
-  events.push(`${side} switched to ${target.name}.`)
+  events.push(`${sideLabel} switched to ${target.name}.`)
 }
 
 export function getAvailableSwitchIndexes(state: BattleState, side: BattleSide) {

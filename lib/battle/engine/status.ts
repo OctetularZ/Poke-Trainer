@@ -1,5 +1,6 @@
 import { BattleSide, BattleState } from "../types"
 import { getActivePokemon, hasAvailablePokemon, isPokemonFainted } from "./pokemon"
+import { getPokemonLabel } from "./move"
 
 function getResidualDamage(maxHp: number, divisor: number) {
   return Math.max(1, Math.floor(maxHp / divisor))
@@ -10,6 +11,7 @@ export function applyEndOfTurnStatus(state: BattleState, events: string[]) {
 
   for (const side of sides) {
     const activePokemon = getActivePokemon(state, side)
+    const actorLabel = getPokemonLabel(side, activePokemon.name)
     if (isPokemonFainted(activePokemon)) continue
 
     const status = activePokemon.status
@@ -35,12 +37,12 @@ export function applyEndOfTurnStatus(state: BattleState, events: string[]) {
     const dealt = previousHp - activePokemon.currentHp
 
     if (dealt > 0) {
-      events.push(`${activePokemon.name} was hurt by ${sourceLabel}.`)
+      events.push(`${actorLabel} was hurt by ${sourceLabel}.`)
     }
 
     if (activePokemon.currentHp === 0) {
       activePokemon.fainted = true
-      events.push(`${activePokemon.name} has fainted!`)
+      events.push(`${actorLabel} has fainted!`)
 
       if (hasAvailablePokemon(state, side)) {
         if (!state.pendingForcedSwitchSide || side === "player") {

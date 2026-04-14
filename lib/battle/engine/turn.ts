@@ -2,11 +2,16 @@ import { BattleAction, BattlePokemon, BattleSide, BattleState } from "../types"
 import { getStageMultiplier, shouldApplyChance } from "./effects"
 import { getActivePokemon, hasAvailablePokemon, isPokemonFainted } from "./pokemon"
 import { applySwitch, getAvailableSwitchIndexes } from "./switch"
-import { applyAttack } from "./move"
+import { applyAttack, getPokemonLabel } from "./move"
 
 export function getEffectiveSpeed(pokemon: BattlePokemon) {
   const speedStage = pokemon.statStages?.speed ?? 0
   return Math.floor(pokemon.speed * getStageMultiplier(speedStage))
+}
+
+export function wakeUpChance(sleepTurnsElapsed: number){
+  const safeTurns = Math.max(0, sleepTurnsElapsed)
+  return Math.min(100, (safeTurns / 3) * 100)
 }
 
 export function actionPriority(state: BattleState, action: BattleAction) {
@@ -42,21 +47,22 @@ export function resolveAction(state: BattleState, action: BattleAction, events: 
   }
 
   const actor = getActivePokemon(state, action.side)
+  const actorLabel = getPokemonLabel(action.side, actor.name)
   if (isPokemonFainted(actor)) {
-    events.push(`${actor.name} cannot move because it has fainted.`)
+    events.push(`${actorLabel} couldn't move because it has fainted.`)
     return
   }
 
   if (actor.flinched) {
     actor.flinched = false
-    events.push(`${actor.name} flinched and couldn't move!`)
+    events.push(`${actorLabel} flinched and couldn't move!`)
     return
   }
 
   if (actor.status === "paralysis") {
     const isFullyParalyzed = shouldApplyChance(25) // 25% chance to have turn skipped with paralysis.
     if (isFullyParalyzed) {
-      events.push(`${actor.name} is paralyzed and can cannot move!`)
+      events.push(`${actorLabel} is paralyzed and couldn't move!`)
       return
     }
   }
@@ -64,12 +70,28 @@ export function resolveAction(state: BattleState, action: BattleAction, events: 
   if (actor.status === "freeze") {
     const isStillFrozen = shouldApplyChance(80) // 80% chance to stay frozen, and 20% to thaw out each turn.
     if (isStillFrozen) {
-      events.push(`${actor.name} is frozen solid and cannot move!`)
+      events.push(`${actorLabel} is frozen solid and couldn't move!`)
       return
     }
     else {
       actor.status = null
-      events.push(`${actor.name} thawed out!`)
+      events.push(`${actorLabel} thawed out!`)
+    }
+  }
+
+  if (actor.status === "sleep") {
+    const chance = wakeUpChance(actor.sleepTurnsElapsed ?? 0)
+    const wokeUp = shouldApplyChance(chance)
+
+    if (wokeUp) {
+      actor.status = null
+      actor.sleepTurnsElapsed = 0
+      events.push(`${actorLabel} woke up!`)
+    }
+    else {
+      actor.sleepTurnsElapsed = (actor.sleepTurnsElapsed ?? 0) + 1
+      events.push(`${actorLabel} is fast asleep...`)
+      return
     }
   }
 
@@ -112,7 +134,7 @@ export function setWinner(state: BattleState, winner: BattleSide, events: string
   if (state.winner) return
 
   state.winner = winner
-  events.push(winner === "player" ? "Player has won!" : "AI has won!")
+  events.push(winner === "player" ? "You won!" : "Opponent has won!")
 }
 
 export function trySetWinnerIfNoPokemon(state: BattleState, events: string[]) {

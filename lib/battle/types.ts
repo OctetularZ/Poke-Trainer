@@ -61,6 +61,7 @@ export interface BattlePokemon {
   flinched?: boolean
   statStages?: BattleStatStages
   sprites?: PokemonSprites
+  sleepTurnsElapsed?: number
 }
 
 export interface BattleTeam {
