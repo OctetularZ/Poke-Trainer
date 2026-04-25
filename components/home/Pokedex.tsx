@@ -72,14 +72,15 @@ const Pokedex = () => {
         <div className="flex flex-col justify-center items-center max-w-150">
           <h1 className="text-white text-5xl pb-5">Pokédex</h1>
           <h2 className="text-white/60 text-xl text-center text-highlight">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor
-            quidem ratione enim. Voluptatum officiis quaerat omnis eaque
-            tempore! Autem, praesentium ut. Sunt fugiat aliquid expedita a
-            cupiditate iusto ex exercitationem. Quos possimus doloribus ea ullam
-            veritatis! <mark>Placeat enim beatae</mark> fugit sed tempora
-            mollitia, modi deleniti cupiditate optio corporis voluptatum
-            officiis dignissimos error itaque laboriosam ipsa quam reiciendis
-            ullam facere deserunt?
+            Explore all Pokémon species in one place with the Pokédex. Search by
+            name, type, or abilities and instantly pull up the information you
+            are looking for. This Pokédex includes{" "}
+            <mark>over 900+ Pokémon</mark>, from{" "}
+            <span className="text-white">gen 1 to gen 9</span>, and provides
+            each Pokémon's moves, abilities, type effectiveness, and more, to
+            help you learn faster and build stronger teams. Hunt for your
+            favourites, study counters, or discover new additions to your teams.{" "}
+            <mark>Your next MVP might be one scroll away.</mark>
           </h2>
           <div className="flex flex-row gap-3 mt-10 justify-center items-center">
             <Link href={"/pokedex"}>
@@ -91,7 +92,7 @@ const Pokedex = () => {
                   color: "white",
                   transition: { color: { delay: 0.1 } },
                 }}
-                className="py-2 px-5 rounded-md bg-white cursor-pointer"
+                className="py-2 px-5 rounded-md bg-white cursor-pointer text-lg"
               >
                 Visit Pokédex
               </motion.button>

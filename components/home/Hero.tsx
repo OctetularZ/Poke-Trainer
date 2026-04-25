@@ -46,13 +46,11 @@ const Hero = () => {
               KÉ TRAINER!
             </span>
           </h1>
-          <h2 className="text-white/50 text-center text-xl">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur alias <span className="text-white">placeat fugit</span>
-            , debitis excepturi doloribus laudantium unde cum libero. Quo,
-            temporibus ipsa{" "}
-            <span className="text-white">voluptates ratione distinctio</span>{" "}
-            dignissimos odio reprehenderit aperiam mollitia.
+          <h2 className="text-white text-center text-xl">
+            A free, accessible platform where you can craft strong Pokémon
+            teams, save them, engage in strategic battles with them, search a
+            Pokédex for any Pokémon you desire, and more. All in one web-based
+            platform. Accessible anywhere, anytime, for free!
           </h2>
         </div>
       </div>
@@ -64,7 +62,7 @@ const Hero = () => {
               color: "white",
               transition: { color: { delay: 0.1 } },
             }}
-            className="py-2 px-5 rounded-md bg-white cursor-pointer"
+            className="py-2 px-5 rounded-md bg-white cursor-pointer text-lg"
           >
             Learn More
           </motion.button>

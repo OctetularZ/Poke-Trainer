@@ -163,6 +163,7 @@ export function mapTeamMemberMoveToBattleMove(memberMove: TeamMember["moves"][nu
   }
 }
 
+// Converts Team Members to Battle Pokémon
 export function mapTeamMemberToBattlePokemon(member: TeamMember): BattlePokemon {
   const level = DEFAULT_LEVEL
   const maxHp = calcHpStat(member.pokemon.hpBase, member.evHp, level)
