@@ -59,6 +59,7 @@ export async function fetchTeams() {
     select: {
       id: true,
       name: true,
+      active: true,
       createdAt: true,
       updatedAt: true,
       members: {
@@ -124,6 +125,7 @@ export async function fetchUserTeam(): Promise<TeamMember[]> {
     select: {
       id: true,
       name: true,
+      active: true,
       members: {
         select: {
           id: true,
@@ -300,4 +302,26 @@ export async function fetchAiTeam(): Promise<TeamMember[]> {
   }
 
   return teamWithSprites.members as TeamMember[]
+}
+
+export async function setActiveTeam(teamId: number) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized')
+  }
+
+  const setAllInactive = await prisma.team.updateMany({
+    where: { userId: session.user.id},
+    data: {active: false}
+  })
+
+  const setTeamToActive = await prisma.team.update({
+    where: {id: teamId, userId: session.user.id},
+    data: {active: true}
+  })
+
+  return { success: true, teamId: teamId }
 }

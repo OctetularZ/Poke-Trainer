@@ -4,7 +4,7 @@ import { FaPlusCircle } from "react-icons/fa"
 import BuildTeam from "./BuildTeam"
 import { useEffect, useState } from "react"
 import { useSession } from "@/lib/auth-client"
-import { fetchTeams } from "@/app/actions/teams"
+import { fetchTeams, setActiveTeam } from "@/app/actions/teams"
 import Link from "next/link"
 import { Team } from "@/types/team"
 import TeamDisplay from "./ViewTeamsComponents/TeamDisplay"
@@ -15,6 +15,17 @@ export default function ViewTeams() {
   const [isOpen, setIsOpen] = useState(false)
   const [userTeams, setUserTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
+
+  const handleSetActive = async (teamId: number) => {
+    setUserTeams((userTeams) =>
+      userTeams.map((team) =>
+        team.id === teamId
+          ? { ...team, active: true }
+          : { ...team, active: false },
+      ),
+    )
+    await setActiveTeam(teamId)
+  }
 
   // Getting user session
   const { data: session, isPending } = useSession()
@@ -69,7 +80,9 @@ export default function ViewTeams() {
       )}
 
       {!loading &&
-        userTeams.map((team) => <TeamDisplay key={team.id} team={team} />)}
+        userTeams.map((team) => (
+          <TeamDisplay key={team.id} onClick={handleSetActive} team={team} />
+        ))}
 
       <BuildTeam isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </div>

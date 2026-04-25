@@ -46,7 +46,7 @@ const Hero = () => {
               KÉ TRAINER!
             </span>
           </h1>
-          <h2 className="text-white text-center text-xl">
+          <h2 className="text-white/90 text-center text-xl">
             A free, accessible platform where you can craft strong Pokémon
             teams, save them, engage in strategic battles with them, search a
             Pokédex for any Pokémon you desire, and more. All in one web-based

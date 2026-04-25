@@ -23,6 +23,7 @@ export interface EVStats {
 export interface Team {
   id: number
   name: string | null
+  active: boolean
   createdAt?: Date
   updatedAt?: Date
   members: TeamMember[]

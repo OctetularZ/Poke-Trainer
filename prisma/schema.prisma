@@ -262,6 +262,7 @@ model PokemonTranslation {
 model Team {
   id        Int          @id @default(autoincrement())
   name      String?
+  active    Boolean      @default(false)
   userId    String
   user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   members   TeamMember[]
