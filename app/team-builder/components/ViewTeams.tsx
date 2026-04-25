@@ -4,7 +4,7 @@ import { FaPlusCircle } from "react-icons/fa"
 import BuildTeam from "./BuildTeam"
 import { useEffect, useState } from "react"
 import { useSession } from "@/lib/auth-client"
-import { fetchTeams, setActiveTeam } from "@/app/actions/teams"
+import { deleteTeam, fetchTeams, setActiveTeam } from "@/app/actions/teams"
 import Link from "next/link"
 import { Team } from "@/types/team"
 import TeamDisplay from "./ViewTeamsComponents/TeamDisplay"
@@ -15,6 +15,7 @@ export default function ViewTeams() {
   const [isOpen, setIsOpen] = useState(false)
   const [userTeams, setUserTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>("")
 
   const handleSetActive = async (teamId: number) => {
     setUserTeams((userTeams) =>
@@ -27,6 +28,12 @@ export default function ViewTeams() {
     await setActiveTeam(teamId)
   }
 
+  const handleTeamDelete = async (teamId: number) => {
+    await deleteTeam(teamId)
+    const updatedTeams = await fetchTeams()
+    setUserTeams(updatedTeams)
+  }
+
   const refreshTeams = async () => {
     setIsOpen(false)
     const updatedTeams = await fetchTeams()
@@ -37,14 +44,24 @@ export default function ViewTeams() {
   const { data: session, isPending } = useSession()
 
   useEffect(() => {
-    if (!session) return
-    const loadTeams = async () => {
-      const data = await fetchTeams()
-      setUserTeams(data)
+    if (!session) setError("You must be logged in to create and save teams!")
+    else {
+      const loadTeams = async () => {
+        const data = await fetchTeams()
+        setUserTeams(data)
+      }
+      loadTeams()
+      setLoading(false)
     }
-    loadTeams()
-    setLoading(false)
   }, [session])
+
+  if (error) {
+    return (
+      <div className="items-center flex flex-col flex-wrap mt-10">
+        <h1 className="text-center text-wrap text-red-500 text-2xl">{error}</h1>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col justify-center items-center mt-10 gap-5 mb-20">
@@ -87,7 +104,12 @@ export default function ViewTeams() {
 
       {!loading &&
         userTeams.map((team) => (
-          <TeamDisplay key={team.id} onClick={handleSetActive} team={team} />
+          <TeamDisplay
+            key={team.id}
+            onSetAcive={handleSetActive}
+            onDelete={handleTeamDelete}
+            team={team}
+          />
         ))}
 
       <BuildTeam isOpen={isOpen} onClose={refreshTeams} />

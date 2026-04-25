@@ -65,30 +65,44 @@ export default function BattlePage() {
   const [state, setState] = useState<BattleState | null>(null)
   const [attackEffects, setAttackEffects] = useState<AttackEffect[]>([])
   const [isResolvingTurn, setIsResolvingTurn] = useState(false)
+  const [error, setError] = useState<string | null>("")
   const attackEffectNonceRef = useRef(1)
   const pendingTimeoutsRef = useRef<number[]>([])
   const turnSequenceRef = useRef(0)
 
   const loadBattleState = useCallback(async () => {
-    const members = await fetchUserTeam()
-    const playerPokemon = mapTeamMembersToBattlePokemon(members)
-    const aiMembers = await fetchAiTeam()
-    const aiPokemon = mapTeamMembersToBattlePokemon(aiMembers)
+    try {
+      const members = await fetchUserTeam()
+      const playerPokemon = mapTeamMembersToBattlePokemon(members)
+      const aiMembers = await fetchAiTeam()
+      const aiPokemon = mapTeamMembersToBattlePokemon(aiMembers)
 
-    setState({
-      turn: 1,
-      winner: null,
-      battleLog: [
-        { kind: "turn", message: "Turn 0", turn: 0 },
-        {
-          kind: "event",
-          message: "Battle started!",
-          turn: 0,
-        },
-      ],
-      player: { activeIndex: 0, pokemon: playerPokemon },
-      ai: { activeIndex: 0, pokemon: aiPokemon },
-    })
+      setState({
+        turn: 1,
+        winner: null,
+        battleLog: [
+          { kind: "turn", message: "Turn 0", turn: 0 },
+          {
+            kind: "event",
+            message: "Battle started!",
+            turn: 0,
+          },
+        ],
+        player: { activeIndex: 0, pokemon: playerPokemon },
+        ai: { activeIndex: 0, pokemon: aiPokemon },
+      })
+    } catch (err) {
+      if (err instanceof Error) {
+        if (err.message === "Unauthorized")
+          setError("You must be logged in to battle!")
+        else
+          setError(
+            "You need to set an active team in the team builder page before battling.",
+          )
+      } else {
+        setError("Something Went Wrong!")
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -153,6 +167,14 @@ export default function BattlePage() {
     },
     [],
   )
+
+  if (error) {
+    return (
+      <div className="flex flex-col flex-wrap items-center mt-10">
+        <h1 className="text-red-500 text-center text-2xl text-wrap">{error}</h1>
+      </div>
+    )
+  }
 
   if (!state) {
     return (
@@ -346,16 +368,6 @@ export default function BattlePage() {
     setIsResolvingTurn(false)
   }
 
-  const handleReset = () => {
-    turnSequenceRef.current += 1
-    pendingTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
-    pendingTimeoutsRef.current = []
-    setAttackEffects([])
-    setIsResolvingTurn(false)
-    setState(null)
-    loadBattleState()
-  }
-
   return (
     <div className="w-full">
       <div className="mx-auto max-w-[80rem] w-full flex flex-row items-start mt-10 px-4 gap-5">
@@ -436,25 +448,5 @@ export default function BattlePage() {
         </div>
       </div>
     </div>
-
-    // <div className="mx-auto max-w-5xl p-6 text-white">
-    //   <h1 className="text-3xl font-bold mb-2">Battle Demo</h1>
-    //   <p className="text-gray-300 mb-6">
-    //     Turn {state.turn} •{" "}
-    //     {state.winner ? `Winner: ${state.winner.toUpperCase()}` : "In progress"}
-    //   </p>
-
-    //   <section className="rounded-lg border border-white/20 p-4">
-    //     <div className="flex items-center justify-between mb-3">
-    //       <h3 className="text-lg font-semibold">Battle Log</h3>
-    //       <button
-    //         onClick={handleReset}
-    //         className="bg-gray-700 hover:bg-gray-600 rounded-md px-3 py-1 transition-all"
-    //       >
-    //         Reset
-    //       </button>
-    //     </div>
-    //   </section>
-    // </div>
   )
 }

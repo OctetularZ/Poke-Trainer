@@ -3,11 +3,12 @@ import { Team } from "@/types/team"
 import React from "react"
 
 interface TeamDisplayProps {
-  onClick: (teamId: number) => void
+  onDelete: (teamId: number) => void
+  onSetAcive: (teamId: number) => void
   team: Team
 }
 
-const TeamDisplay = ({ onClick, team }: TeamDisplayProps) => {
+const TeamDisplay = ({ onSetAcive, onDelete, team }: TeamDisplayProps) => {
   return (
     <div className="flex flex-col items-start px-3 py-3 bg-charmander-blue-900 border-charmander-blue-500 border-2 rounded-lg">
       <div className="w-full flex flex-row items-center justify-between">
@@ -17,7 +18,7 @@ const TeamDisplay = ({ onClick, team }: TeamDisplayProps) => {
         <div className="flex flex-row gap-2">
           {!team.active ? (
             <button
-              onClick={() => onClick(team.id)}
+              onClick={() => onSetAcive(team.id)}
               className="bg-charmander-blue-500 py-1 px-3 text-white rounded-md hover:bg-charmander-blue-400 hover:scale-105 transition-all"
             >
               Set Active
@@ -30,8 +31,11 @@ const TeamDisplay = ({ onClick, team }: TeamDisplayProps) => {
               Active
             </button>
           )}
-          <button className="bg-charmander-blue-500 py-1 px-3 text-white rounded-md hover:bg-charmander-blue-400 hover:scale-105 transition-all">
-            Edit
+          <button
+            onClick={() => onDelete(team.id)}
+            className="bg-red-500 py-1 px-3 text-white rounded-md hover:bg-red-700 hover:scale-105 transition-all"
+          >
+            Delete
           </button>
         </div>
       </div>

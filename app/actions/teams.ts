@@ -127,7 +127,7 @@ export async function fetchUserTeam(): Promise<TeamMember[]> {
   }
 
   const userTeam = await prisma.team.findFirst({
-    where: { userId: session.user.id },
+    where: { userId: session.user.id, active: true },
     select: {
       id: true,
       name: true,
@@ -327,6 +327,22 @@ export async function setActiveTeam(teamId: number) {
   const setTeamToActive = await prisma.team.update({
     where: {id: teamId, userId: session.user.id},
     data: {active: true}
+  })
+
+  return { success: true, teamId: teamId }
+}
+
+export async function deleteTeam(teamId: number) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized')
+  }
+
+  const deletedTeam = await prisma.team.delete({
+    where: {userId: session.user.id, id: teamId}
   })
 
   return { success: true, teamId: teamId }
