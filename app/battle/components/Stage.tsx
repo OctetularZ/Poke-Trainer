@@ -78,6 +78,43 @@ const Stage = ({
   const [defenderDisplaySrc, setDefenderDisplaySrc] = useState<string>(
     getFrontSprite(defenderPokemon),
   )
+  const [initialSwitchIn, setInitialSwitchIn] = useState(true)
+  // Initial switch-in animation for both player and AI
+  useEffect(() => {
+    if (!initialSwitchIn) return
+
+    setAttackerDisplaySrc("/battling/pokeball.png")
+    setAttackerPhase("throw-in")
+
+    const playerRelease = window.setTimeout(() => {
+      setAttackerDisplaySrc(getBackSprite(attackerPokemon))
+      setAttackerPhase("release-grow")
+    }, SWITCH_TIMING_MS.throwIn)
+
+    const aiThrowIn = window.setTimeout(() => {
+      setDefenderDisplaySrc("/battling/pokeball.png")
+      setDefenderPhase("throw-in")
+
+      const aiRelease = window.setTimeout(() => {
+        setDefenderDisplaySrc(getFrontSprite(defenderPokemon))
+        setDefenderPhase("release-grow")
+        setTimeout(() => {
+          setAttackerPhase("idle")
+          setDefenderPhase("idle")
+          setInitialSwitchIn(false)
+        }, SWITCH_TIMING_MS.releaseGrow)
+      }, SWITCH_TIMING_MS.throwIn)
+
+      defenderTimeoutsRef.current.push(aiRelease)
+    }, SWITCH_TIMING_MS.throwIn + 200)
+
+    attackerTimeoutsRef.current.push(playerRelease, aiThrowIn)
+
+    return () => {
+      attackerTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+      defenderTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+    }
+  }, [])
   const [attackerGone, setAttackerGone] = useState(false)
   const [defenderGone, setDefenderGone] = useState(false)
   const previousAttackerId = useRef(attackerPokemon.id)
@@ -122,6 +159,7 @@ const Stage = ({
   const aiTargetEffects = effectList.filter((effect) => effect.toSide === "ai")
 
   useEffect(() => {
+    if (initialSwitchIn) return
     if (previousAttackerId.current === attackerPokemon.id) {
       return
     }
@@ -180,9 +218,10 @@ const Stage = ({
       attackerTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
       attackerTimeoutsRef.current = []
     }
-  }, [attackerPokemon])
+  }, [attackerPokemon, initialSwitchIn])
 
   useEffect(() => {
+    if (initialSwitchIn) return
     if (previousDefenderId.current === defenderPokemon.id) {
       return
     }
@@ -241,7 +280,7 @@ const Stage = ({
       defenderTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
       defenderTimeoutsRef.current = []
     }
-  }, [defenderPokemon])
+  }, [defenderPokemon, initialSwitchIn])
 
   useEffect(() => {
     if (winner) {
@@ -386,13 +425,15 @@ const Stage = ({
           statChanges={attackerPokemon.statStages}
         />
         <div className="relative">
-          <img
-            ref={attackerSpriteRef}
-            className={`w-auto h-50 battle-switch-sprite ${attackerAnimClass} ${attackerGone ? "opacity-0" : "opacity-100"}`}
-            src={attackerDisplaySrc}
-            alt={`${attackerPokemon.name} back sprite`}
-            style={switchTimingStyle}
-          />
+          {!(initialSwitchIn && attackerPhase === "idle") && (
+            <img
+              ref={attackerSpriteRef}
+              className={`w-auto h-50 battle-switch-sprite ${attackerAnimClass} ${attackerGone ? "opacity-0" : "opacity-100"}`}
+              src={attackerDisplaySrc}
+              alt={`${attackerPokemon.name} back sprite`}
+              style={switchTimingStyle}
+            />
+          )}
 
           {playerTargetEffects.map((effect) => {
             if (effect.type === "stat-up" || effect.type === "stat-down") {
@@ -456,13 +497,15 @@ const Stage = ({
           statChanges={defenderPokemon.statStages}
         />
         <div className="relative">
-          <img
-            ref={defenderSpriteRef}
-            className={`w-auto h-30 battle-switch-sprite ${defenderAnimClass} ${defenderGone ? "opacity-0" : "opacity-100"}`}
-            src={defenderDisplaySrc}
-            alt={`${defenderPokemon.name} front sprite`}
-            style={switchTimingStyle}
-          />
+          {!(initialSwitchIn && defenderPhase === "idle") && (
+            <img
+              ref={defenderSpriteRef}
+              className={`w-auto h-30 battle-switch-sprite ${defenderAnimClass} ${defenderGone ? "opacity-0" : "opacity-100"}`}
+              src={defenderDisplaySrc}
+              alt={`${defenderPokemon.name} front sprite`}
+              style={switchTimingStyle}
+            />
+          )}
 
           {aiTargetEffects.map((effect) => {
             if (effect.type === "stat-up" || effect.type === "stat-down") {
