@@ -27,6 +27,12 @@ export default function ViewTeams() {
     await setActiveTeam(teamId)
   }
 
+  const refreshTeams = async () => {
+    setIsOpen(false)
+    const updatedTeams = await fetchTeams()
+    setUserTeams(updatedTeams)
+  }
+
   // Getting user session
   const { data: session, isPending } = useSession()
 
@@ -84,7 +90,7 @@ export default function ViewTeams() {
           <TeamDisplay key={team.id} onClick={handleSetActive} team={team} />
         ))}
 
-      <BuildTeam isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <BuildTeam isOpen={isOpen} onClose={refreshTeams} />
     </div>
   )
 }

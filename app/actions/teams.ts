@@ -15,10 +15,16 @@ export async function saveTeam(team: PokemonBuild[], teamName?: string) {
     throw new Error('Unauthorized')
   }
 
+  const setAllInactive = await prisma.team.updateMany({
+    where: { userId: session.user.id},
+    data: {active: false}
+  })
+
   const savedTeam = await prisma.team.create({
     data: {
       userId: session.user.id,
       name: teamName ?? null,
+      active: true,
       members: {
         create: team.map((build, index) => ({
           slot: index + 1,
