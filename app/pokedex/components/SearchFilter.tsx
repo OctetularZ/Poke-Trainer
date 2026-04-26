@@ -16,7 +16,7 @@ const SearchFilter = ({ allPokemon }: SearchFilterProps) => {
   const [inputFocused, setInputFocused] = useState(false)
 
   const filteredPokemon = allPokemon.filter((pokemon) =>
-    pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
+    pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   return (

@@ -31,11 +31,11 @@ const AbilityFilter = ({
   )
 
   return (
-    <div className="flex flex-col items-center my-4 w-60 text-white">
+    <div className="flex flex-col items-center my-4 w-60 max-xs:w-50 text-white">
       <h1 className="text-white text-xl mb-2">Ability:</h1>
       <Listbox value={selectedAbility} onChange={setSelectedAbility}>
         <div className="relative w-full">
-          <ListboxButton className="flex flex-row justify-between items-center w-60 px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer focus:outline-none">
+          <ListboxButton className="flex flex-row justify-between items-center w-60 max-xs:w-50 px-2 py-1 rounded border border-gray-300 bg-charmander-dull-200 cursor-pointer focus:outline-none">
             {selectedAbility
               ? (() => {
                   const ability = abilities.find(
