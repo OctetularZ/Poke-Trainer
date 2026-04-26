@@ -25,8 +25,8 @@ const PokemonDisplay = ({
   const [shiny, setShiny] = useState(false)
 
   return (
-    <div className="flex flex-row h-160 mb-20">
-      <div className="relative flex flex-col justify-center items-center bg-charmander-dull-200 w-200 h-full rounded-xl">
+    <div className="flex flex-row max-xl:flex-col max-xl:items-center xl:h-160 mb-20">
+      <div className="relative flex flex-col justify-center items-center max-xl:pt-10 bg-charmander-dull-200 w-200 max-mlg:w-150 max-md:w-100 max-sm:w-75 h-full rounded-xl">
         {loading ? (
           <motion.div
             animate={{ rotate: 360 }}
@@ -64,9 +64,6 @@ const PokemonDisplay = ({
                   #{pokemonInfo?.nationalNumber.toString().padStart(4, "0")}
                 </h1>
               </div>
-              {/* <h2 className="text-white text-center tracking-wide text-lg text-wrap max-w-10/12">
-                {pokemonInfo?.species.flavor_text_entries[0].flavor_text}
-              </h2> */}
               <div className="flex flex-row gap-5 mt-3">
                 {pokemonInfo?.types.map((type: PokemonType, index) => (
                   <h4
@@ -91,7 +88,7 @@ const PokemonDisplay = ({
                 ))}
               </div>
               <Image
-                className="relative -translate-x-15 mt-15"
+                className="relative md:-translate-x-15 mt-15 max-md:mt-5 max-xs:w-auto max-xs:h-70"
                 src={
                   shiny
                     ? pokemonInfo?.sprites.other["official-artwork"]
@@ -105,7 +102,7 @@ const PokemonDisplay = ({
                 unoptimized
               />
             </div>
-            <div className="absolute bottom-2 right-2 px-2 max-h-[calc(70%-0.5rem)] overflow-y-scroll">
+            <div className="absolute bottom-2 right-2 px-2 max-h-[calc(70%-0.5rem)] overflow-y-scroll max-md:hidden">
               <h2 className="text-white text-center text-xl mb-2">Sprites :</h2>
               {shiny
                 ? shinySprites?.map(
@@ -147,8 +144,8 @@ const PokemonDisplay = ({
         )}
       </div>
       {!loading && pokemonInfo.forms && (
-        <div className="relative ml-5 max-h-full">
-          <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex flex-row gap-2 justify-center items-center">
+        <div className="relative xl:ml-5 max-xl:mt-10 max-h-full">
+          <div className="xl:absolute max-xl:relative max-xl:mb-5 xl:-top-10 xl:left-1/2 xl:-translate-x-1/2 flex flex-row gap-2 justify-center items-center">
             <h2 className="text-white text-xl text-center">Forms</h2>
             <motion.div
               initial={{ y: 0 }}
@@ -165,7 +162,7 @@ const PokemonDisplay = ({
               <FaChevronDown color="white" />
             </motion.div>
           </div>
-          <div className="flex flex-col gap-5 items-center max-h-full overflow-y-scroll">
+          <div className="flex flex-col max-xl:flex-row max-lg:flex-col gap-5 items-center max-h-full overflow-y-scroll max-xl:overflow-x-scroll max-lg:overflow-y-scroll max-xl:px-20 max-sm:px-5">
             {pokemonInfo.forms?.map((pokemon) => (
               <PokeCard
                 key={pokemon.id}

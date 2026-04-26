@@ -36,7 +36,7 @@ const StatBar = ({ statName, baseStat }: StatBarProps) => {
   return (
     <div className="flex flex-row gap-5">
       <h2 className="text-lg text-white">{statNameMap[statName]}</h2>
-      <div className={`bg-amber-50 w-100 rounded-lg`}>
+      <div className={`bg-amber-50 w-100 max-sm:w-50 rounded-lg`}>
         <div
           className={`rounded-lg text-white p-1 ${colorClass}`}
           style={{ width: `${barPercentage}%` }}

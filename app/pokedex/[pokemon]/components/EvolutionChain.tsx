@@ -1,6 +1,6 @@
 import React from "react"
 import PokeCard from "../../components/PokeCard"
-import { HiArrowLongRight } from "react-icons/hi2"
+import { HiArrowLongRight, HiArrowLongDown } from "react-icons/hi2"
 import { EvolutionTree, Evolution } from "@/types/evolution"
 import { capitalizeWords } from "@/lib/pokeapi/helpers/other"
 
@@ -77,11 +77,14 @@ const EvolutionNode = ({ node }: EvolutionNodeProps) => {
   const evolutionGroups = groupEvolutions(node.evolutions)
 
   return (
-    <div className="flex flex-row items-center gap-3">
+    <div className="flex flex-row max-xl:flex-col items-center gap-3">
       <div className="flex flex-col gap-10">
         {/* Render each group separately with its own parent Pokemon */}
         {evolutionGroups.map((group, groupIdx) => (
-          <div key={groupIdx} className="flex flex-row items-center gap-3">
+          <div
+            key={groupIdx}
+            className="flex flex-row max-xl:flex-col items-center gap-3"
+          >
             {/* Parent Pokemon for each group */}
             <PokeCard
               id={node.id}
@@ -99,9 +102,19 @@ const EvolutionNode = ({ node }: EvolutionNodeProps) => {
             {/* Show evolutions in this group */}
             <div className="flex flex-col gap-5">
               {group.map((evo, idx) => (
-                <div key={idx} className="flex flex-row items-center gap-1">
-                  <div className="flex flex-row items-center w-max gap-3 mx-5">
-                    <HiArrowLongRight className="h-8 w-8" color="white" />
+                <div
+                  key={idx}
+                  className="flex flex-row max-xl:flex-col items-center gap-1"
+                >
+                  <div className="flex flex-row max-xl:flex-col items-center w-max gap-3 mx-5 max-xl:my-3">
+                    <HiArrowLongRight
+                      className="h-8 w-8 block max-xl:hidden"
+                      color="white"
+                    />
+                    <HiArrowLongDown
+                      className="h-8 w-8 hidden max-xl:block"
+                      color="white"
+                    />
                     <h2 className="text-white text-lg text-center max-w-50">
                       {capitalizeWords(evo.method)}
                     </h2>

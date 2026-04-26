@@ -55,9 +55,9 @@ const TypeChart = ({ typeChart, loading }: TypeChartProps) => {
     }))
 
     return (
-      <div className="flex flex-col items-start">
+      <div className="flex flex-col items-start max-md:items-center">
         <h1 className="text-white text-2xl border-b-2 mb-10">Type Defenses</h1>
-        <div className="flex flex-row flex-wrap max-w-115 gap-0.25">
+        <div className="flex flex-row flex-wrap max-w-115 max-sm:max-w-90 gap-0.25 max-md:justify-center">
           {merged.map((typeEffectiveness) => (
             <div
               key={typeEffectiveness.attackType}

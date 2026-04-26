@@ -11,7 +11,7 @@ const PokemonStatsSection = ({ loading, stats }: PokemonStatsProps) => {
   return (
     !loading && (
       <div className="flex flex-col gap-5 justify-center items-end mb-20">
-        <h1 className="text-white text-2xl self-start mb-5 border-b-2">
+        <h1 className="text-white text-2xl self-start max-sm:self-center mb-5 border-b-2">
           Base Stats
         </h1>
         {Object.entries(stats)

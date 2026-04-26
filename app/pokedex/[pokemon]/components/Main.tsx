@@ -58,7 +58,7 @@ const Main = ({ pokemon }: Props) => {
         sprites={sprites!}
         shinySprites={shinySprites!}
       />
-      <div className="flex flex-row flex-wrap justify-center items-start gap-30">
+      <div className="flex flex-row max-xl:flex-col max-sm:px-2 flex-wrap justify-center items-start max-sm:items-center gap-30 max-xl:gap-0 max-xl:mb-20">
         <PokemonStatsSection loading={loading} stats={pokemonInfo?.stats!} />
         <TypeChart loading={loading} typeChart={pokemonInfo?.typeChart!} />
       </div>

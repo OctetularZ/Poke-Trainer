@@ -45,7 +45,7 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
 
   return (
     !loading && (
-      <div className="flex flex-col justify-center items-center w-200">
+      <div className="flex flex-col justify-center items-center w-200 max-mlg:w-150 max-md:w-100 max-sm:w-75">
         <h2 className="text-white text-center text-2xl border-b-2 mb-10">
           Moves
         </h2>
@@ -109,7 +109,7 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
           <thead>
             <tr className="divide-x">
               {selectedMoveFilter === "level-up" && (
-                <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
+                <th className="bg-charmander-dull-200 border-t-1 max-md:border-l-1 border-b-1 py-2">
                   Level
                 </th>
               )}
@@ -124,13 +124,13 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
               <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
                 Type
               </th>
-              <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
+              <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2 max-sm:hidden">
                 Category
               </th>
-              <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
+              <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2 max-md:hidden">
                 Power
               </th>
-              <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2">
+              <th className="bg-charmander-dull-200 border-t-1 border-b-1 py-2 max-md:hidden">
                 Accuracy
               </th>
             </tr>
@@ -169,9 +169,13 @@ const Moves = ({ loading, pokemonMoves }: PokemonMoves) => {
                         {move.move.type}
                       </h4>
                     </td>
-                    <td className="py-5">{move.move.category}</td>
-                    <td className="py-5">{move.move.power || "-"}</td>
-                    <td className="py-5">{move.move.accuracy || "-"}</td>
+                    <td className="py-5 max-sm:hidden">{move.move.category}</td>
+                    <td className="py-5 max-md:hidden">
+                      {move.move.power || "-"}
+                    </td>
+                    <td className="py-5 max-md:hidden">
+                      {move.move.accuracy || "-"}
+                    </td>
                   </tr>
                 ),
             )}
