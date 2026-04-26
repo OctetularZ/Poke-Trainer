@@ -40,6 +40,7 @@ const SWITCH_TIMING_MS = {
   releaseGrow: 250,
 } as const
 
+// Set animation timings
 const RECALL_FLY_START_MS = SWITCH_TIMING_MS.recallShrink
 const THROW_IN_START_MS = RECALL_FLY_START_MS + SWITCH_TIMING_MS.recallFly
 const RELEASE_GROW_START_MS = THROW_IN_START_MS + SWITCH_TIMING_MS.throwIn
@@ -124,6 +125,8 @@ const Stage = ({
   const attackerSpriteRef = useRef<HTMLImageElement>(null)
   const defenderSpriteRef = useRef<HTMLImageElement>(null)
 
+  // Get offsets for animations based on positiontings
+  // The rest below is just sorting out animation timings and positionings
   const getFlyOffset = (fromSide: Side, toSide: Side) => {
     const sourceSprite =
       fromSide === "player"

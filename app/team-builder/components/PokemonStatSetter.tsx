@@ -152,6 +152,7 @@ export default function PokemonStatSetter({
 
   return (
     <div className="flex flex-col items-center w-full overflow-y-auto h-full gap-6">
+      {/* This is displayed if the data is still being loaded */}
       {isLoading ? (
         <div className="flex items-center justify-center h-full">
           <motion.div
@@ -228,6 +229,7 @@ export default function PokemonStatSetter({
                 </div>
               </div>
 
+              {/* Ev Sliders for setting Pokémon stats */}
               <div className="flex flex-col gap-4">
                 <EVSlider
                   statName="HP"

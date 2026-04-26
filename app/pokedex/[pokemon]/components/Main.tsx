@@ -18,6 +18,7 @@ const Main = ({ pokemon }: Props) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Fetches pokemon info pokémon's page
   const fetchPokemonInfo = async () => {
     try {
       const res = await fetch(`/api/pokemon/${pokemon}`)

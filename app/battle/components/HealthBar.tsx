@@ -12,6 +12,7 @@ interface HealthBarProps {
   statChanges: BattleStatStages | undefined
 }
 
+// Get Hp bar colour based on percentage
 const getHpColor = (percentage: number) => {
   if (percentage > 50)
     return "bg-gradient-to-t from-green-800 via-green-500 to-green-300"

@@ -16,10 +16,13 @@ const AbilitySearchFilter = ({
   const [searchTerm, setSearchTerm] = useState(value)
   const [inputFocused, setInputFocused] = useState(false)
 
+  // Filters abilities for duplicates if any
   const filteredAbilities = allAbilities.filter((ability) =>
     ability.name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
+  // Handles selection of abilities
+  // Sets it in filter
   const handleSelect = (ability: PokemonAbility) => {
     setSearchTerm(ability.name)
     onSelect(ability)

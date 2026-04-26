@@ -17,6 +17,7 @@ export default function ViewTeams() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>("")
 
+  // Sets the user team to active when the user presses the active button
   const handleSetActive = async (teamId: number) => {
     setUserTeams((userTeams) =>
       userTeams.map((team) =>
@@ -28,12 +29,14 @@ export default function ViewTeams() {
     await setActiveTeam(teamId)
   }
 
+  // Deletes the team when the user selects the delete button for a team
   const handleTeamDelete = async (teamId: number) => {
     await deleteTeam(teamId)
     const updatedTeams = await fetchTeams()
     setUserTeams(updatedTeams)
   }
 
+  // Refreshes the team data when a new team is created
   const refreshTeams = async () => {
     setIsOpen(false)
     const updatedTeams = await fetchTeams()
@@ -43,6 +46,7 @@ export default function ViewTeams() {
   // Getting user session
   const { data: session, isPending } = useSession()
 
+  // Checks if the user is logged in and loads the user's teams
   useEffect(() => {
     if (isPending) return
     if (!session) setError("You must be logged in to create and save teams!")

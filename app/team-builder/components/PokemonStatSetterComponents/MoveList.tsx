@@ -35,6 +35,8 @@ export default function MoveList({
       (move) => !selectedMoves.some((sm) => sm.move?.name === move.move?.name),
     )
 
+  // Handles when a move is selected.
+  // Added to selected move array
   const handleMoveSelect = (move: GameMove) => {
     if (selectedMoves.length < 4 && move) {
       const updated = [...selectedMoves, move]

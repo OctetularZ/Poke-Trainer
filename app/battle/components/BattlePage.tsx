@@ -70,6 +70,8 @@ export default function BattlePage() {
   const pendingTimeoutsRef = useRef<number[]>([])
   const turnSequenceRef = useRef(0)
 
+  // Sets the initial teams, states, and more for initiating battle
+  // More timings also configured/calculated below
   const loadBattleState = useCallback(async () => {
     try {
       const members = await fetchUserTeam()

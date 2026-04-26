@@ -21,6 +21,7 @@ const StatBar = ({ statName, baseStat }: StatBarProps) => {
 
   let colorClass = "bg-green-500"
 
+  // Determine colour of bar based on bar percentage
   if (baseStat < 25) {
     colorClass = "bg-red-500"
   } else if (baseStat >= 25 && baseStat < 50) {

@@ -1,3 +1,5 @@
+// Constants for attack animation effects. Sprite sheets info.
+
 export const attackEffects: Record<
   string,
   { src: string; frames: number; fps: number; scale: number }

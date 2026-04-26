@@ -19,6 +19,8 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [teamName, setTeamName] = useState("")
 
+  // Handles what happens when a user adds a character to the team they are currently building.
+  // Adds the new character to the building team
   const handleAddToTeam = (build: PokemonBuild) => {
     if (editingIndex !== null) {
       setTeam((prev) => prev.map((b, i) => (i === editingIndex ? build : b)))

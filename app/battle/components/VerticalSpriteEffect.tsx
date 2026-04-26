@@ -2,6 +2,13 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react"
 
+/**
+ * Renders a vertical sprite sheet animation using a canvas element.
+ *
+ * Frames can either be evenly divided or automatically detected based on
+ * non-transparent pixel regions. This allows support for irregular sprite sheets.
+ */
+
 interface VerticalSpriteEffectProps {
   src: string
   frames: number
@@ -40,6 +47,7 @@ const VerticalSpriteEffect = ({
     onCompleteRef.current = onComplete
   }, [onComplete])
 
+  // Ensures a valid frame count is always used, preventing invalid animation states.
   const safeConfiguredFrames = useMemo(() => {
     if (!Number.isFinite(frames) || frames < 1) {
       return 1
@@ -48,6 +56,7 @@ const VerticalSpriteEffect = ({
     return Math.floor(frames)
   }, [frames])
 
+  // Uses detected frame bands if available, otherwise falls back to configured frame count.
   const totalFrames = useMemo(() => {
     if (detectedFrames.length > 0) {
       return detectedFrames.length
@@ -56,6 +65,7 @@ const VerticalSpriteEffect = ({
     return safeConfiguredFrames
   }, [detectedFrames, safeConfiguredFrames])
 
+  // Normalises FPS to avoid invalid or too fast animation speeds.
   const safeFps = useMemo(() => {
     if (!Number.isFinite(fps) || fps <= 0) {
       return 12
@@ -64,6 +74,7 @@ const VerticalSpriteEffect = ({
     return fps
   }, [fps])
 
+  // Loads the sprite image and dynamically detects frame boundaries using pixel transparency.
   useEffect(() => {
     if (!src) return
 
@@ -102,6 +113,7 @@ const VerticalSpriteEffect = ({
       const frameBands: Array<{ y: number; height: number }> = []
       let bandStart = -1
 
+      // Groups consecutive non-transparent rows into frame regions.
       for (let y = 0; y < height; y += 1) {
         let opaquePixelsInRow = 0
 
@@ -144,6 +156,7 @@ const VerticalSpriteEffect = ({
     }
   }, [src])
 
+  // Starts animation playback when triggerKey changes.
   useEffect(() => {
     if (!triggerKey || triggerKey < 1 || totalFrames < 1) {
       return
@@ -173,6 +186,7 @@ const VerticalSpriteEffect = ({
     }
   }, [triggerKey, totalFrames, safeFps])
 
+  // Calculates display size based on either detected frames or evenly split frames.
   const frameSize = useMemo(() => {
     if (!naturalSize || totalFrames < 1) return null
 
@@ -196,6 +210,7 @@ const VerticalSpriteEffect = ({
     }
   }, [naturalSize, totalFrames, detectedFrames, scale])
 
+  // Draws the current frame onto the canvas using calculated source coordinates.
   useEffect(() => {
     if (!isPlaying || !frameSize || !naturalSize || !imageElement) {
       return
@@ -250,6 +265,7 @@ const VerticalSpriteEffect = ({
     scale,
   ])
 
+  // Returns null when not animating to avoid unnecessary DOM rendering.
   if (!isPlaying || !frameSize) {
     return null
   }

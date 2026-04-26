@@ -37,6 +37,8 @@ const ProfileForm = () => {
     }
   }, [session?.user.id])
 
+  // Handles submission of data
+  // Updates user profile
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setErrors({})

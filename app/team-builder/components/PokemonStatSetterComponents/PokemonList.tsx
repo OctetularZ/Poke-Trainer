@@ -60,6 +60,7 @@ export default function PokemonList({
   const [typeFilterOpen, setTypeFilterOpen] = useState(false)
   const [abilityFilterOpen, setAbilityFilterOpen] = useState(false)
 
+  // Fetch all the names of Pokémon to be used in filters
   const fetchNames = async () => {
     try {
       const res = await fetch("/api/names")
@@ -86,6 +87,7 @@ export default function PokemonList({
     loadNames()
   }, [])
 
+  // Fetches all abilities to be used in filters
   const fetchAbilities = async () => {
     try {
       const res = await fetch("/api/abilities")
@@ -112,6 +114,7 @@ export default function PokemonList({
     loadAbilities()
   }, [])
 
+  // Fetches the selected Pokémon from the DB
   useEffect(() => {
     if (!selectedName) return
 
@@ -135,6 +138,7 @@ export default function PokemonList({
     fetchPokemon()
   }, [selectedName])
 
+  // Defines the list-table used
   const columns = useMemo<ColumnDef<Pokemon>[]>(() => {
     const baseColumns: ColumnDef<Pokemon>[] = [
       {
@@ -289,6 +293,7 @@ export default function PokemonList({
     getCoreRowModel: getCoreRowModel(),
   })
 
+  // Fetches all Pokémon from the DB
   const fetchAllPokemon = async (reset = false) => {
     if (reset) {
       setLoading(true)
@@ -331,6 +336,7 @@ export default function PokemonList({
     fetchAllPokemon(true)
   }, [selectedTypes, selectedAbility])
 
+  // Toggle multi-type selection for filters
   const toggleType = (type: string) => {
     setSelectedTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
