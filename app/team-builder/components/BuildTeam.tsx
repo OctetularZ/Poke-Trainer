@@ -36,19 +36,19 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-200"
           />
 
           <motion.div
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 flex items-center justify-center z-200 p-4"
           >
-            <div className="w-full h-[700px] relative flex flex-col justify-center items-start mt-10 mx-5 border-charmander-blue-400 border-2 rounded-xl p-6">
+            <div className="w-full h-[90%] relative flex flex-col justify-center items-center mt-10 mx-5 border-charmander-blue-400 border-2 rounded-xl p-6">
               <button
                 onClick={onClose}
-                className="absolute top-3 right-5 text-gray-400 hover:text-white hover:scale-105 text-4xl transition-all"
+                className="text-gray-400 hover:text-white hover:scale-105 text-4xl transition-all pb-2 self-end"
               >
                 x
               </button>
@@ -131,22 +131,49 @@ export default function BuildTeam({ isOpen, onClose }: BuildTeamProps) {
                     />
                   </div>
                 </div>
-                <PokemonStatSetter
-                  key={
-                    editingIndex !== null
-                      ? `edit-${editingIndex}`
-                      : `new-${selectedPokemon?.id ?? "none"}`
-                  }
-                  selectedPokemon={selectedPokemon}
-                  isLoading={pokemonLoading}
-                  initialBuild={
-                    editingIndex !== null ? team[editingIndex] : undefined
-                  }
-                  isEditing={editingIndex !== null}
-                  teamFull={team.length >= 6}
-                  onAddToTeam={handleAddToTeam}
-                  onClearSelectedPokemon={() => setSelectedPokemon(null)}
-                />
+                {/* PokemonStatSetter as modal */}
+                <AnimatePresence>
+                  {(selectedPokemon || editingIndex !== null) && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="fixed inset-0 z-300 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                    >
+                      <div className="bg-charmander-dull-200 rounded-xl p-6 border-2 border-charmander-blue-400 max-w-[95vw] max-h-[95vh] overflow-y-scroll overscroll-none shadow-2xl relative">
+                        <button
+                          onClick={() => {
+                            setSelectedPokemon(null)
+                            setEditingIndex(null)
+                          }}
+                          className="absolute top-3 right-5 text-gray-400 hover:text-white hover:scale-105 text-4xl transition-all z-10"
+                        >
+                          x
+                        </button>
+                        <PokemonStatSetter
+                          key={
+                            editingIndex !== null
+                              ? `edit-${editingIndex}`
+                              : `new-${selectedPokemon?.id ?? "none"}`
+                          }
+                          selectedPokemon={selectedPokemon}
+                          isLoading={pokemonLoading}
+                          initialBuild={
+                            editingIndex !== null
+                              ? team[editingIndex]
+                              : undefined
+                          }
+                          isEditing={editingIndex !== null}
+                          teamFull={team.length >= 6}
+                          onAddToTeam={handleAddToTeam}
+                          onClearSelectedPokemon={() =>
+                            setSelectedPokemon(null)
+                          }
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </motion.div>

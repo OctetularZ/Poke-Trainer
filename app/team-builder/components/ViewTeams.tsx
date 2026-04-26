@@ -44,6 +44,7 @@ export default function ViewTeams() {
   const { data: session, isPending } = useSession()
 
   useEffect(() => {
+    if (isPending) return
     if (!session) setError("You must be logged in to create and save teams!")
     else {
       const loadTeams = async () => {

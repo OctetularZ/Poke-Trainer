@@ -3,6 +3,17 @@ import { Pokemon } from "@/types/pokemon"
 import Image from "next/image"
 import { motion, AnimatePresence } from "motion/react"
 import { useState, useEffect, useMemo } from "react"
+// Hook to detect if screen is max-sm
+function useIsSm() {
+  const [isSm, setIsSm] = useState(false)
+  useEffect(() => {
+    const checkScreen = () => setIsSm(window.innerWidth <= 640)
+    checkScreen()
+    window.addEventListener("resize", checkScreen)
+    return () => window.removeEventListener("resize", checkScreen)
+  }, [])
+  return isSm
+}
 import { typeColoursHex } from "@/app/pokedex/components/typeColours"
 import {
   ColumnDef,
@@ -29,6 +40,7 @@ export default function PokemonList({
   onLoadingChange,
   excludedIds = [],
 }: PokemonListProps) {
+  const isSm = useIsSm()
   const [pokemon, setPokemon] = useState<Pokemon[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
@@ -123,11 +135,11 @@ export default function PokemonList({
     fetchPokemon()
   }, [selectedName])
 
-  const columns = useMemo<ColumnDef<Pokemon>[]>(
-    () => [
+  const columns = useMemo<ColumnDef<Pokemon>[]>(() => {
+    const baseColumns: ColumnDef<Pokemon>[] = [
       {
         accessorKey: "sprites",
-        header: () => <div className="px-4 py-3">Sprite</div>,
+        header: () => <div className="px-4 max-sm:px-2 py-3">Sprite</div>,
         cell: ({ row }) => (
           <img
             src={row.original.sprites.front_default}
@@ -139,7 +151,7 @@ export default function PokemonList({
       },
       {
         accessorKey: "nationalNumber",
-        header: () => <div className="px-4 py-3">#</div>,
+        header: () => <div className="px-4 max-sm:px-2 py-3">#</div>,
         cell: ({ getValue }) => (
           <span className="capitalize text-xl">{getValue<string>()}</span>
         ),
@@ -148,7 +160,7 @@ export default function PokemonList({
         accessorKey: "name",
         header: () => (
           <div
-            className="px-4 py-3 flex flex-col gap-1 hover:bg-gray-700 transition-colors cursor-pointer"
+            className="px-4 max-sm:px-2 py-3 flex flex-col gap-1 hover:bg-gray-700 transition-colors cursor-pointer"
             onClick={() => setNameFilterOpen((prev) => !prev)}
           >
             <div className="flex flex-row items-center justify-between">
@@ -175,7 +187,7 @@ export default function PokemonList({
         accessorKey: "types",
         header: () => (
           <div
-            className="relative px-4 py-3 hover:bg-gray-700 transition-colors cursor-pointer"
+            className="relative px-4 max-sm:px-2 py-3 hover:bg-gray-700 transition-colors cursor-pointer"
             onClick={() => setTypeFilterOpen((prev) => !prev)}
           >
             <div className="flex flex-row items-center justify-between">
@@ -222,7 +234,9 @@ export default function PokemonList({
           </div>
         ),
       },
-      {
+    ]
+    if (!isSm) {
+      baseColumns.push({
         accessorKey: "abilities",
         header: () => (
           <div
@@ -250,17 +264,18 @@ export default function PokemonList({
             {row.original.abilities?.map((a) => a.name).join(", ")}
           </span>
         ),
-      },
-    ],
-    [
-      nameFilter,
-      nameFilterOpen,
-      typeFilterOpen,
-      abilityFilterOpen,
-      selectedTypes,
-      abilities,
-    ],
-  )
+      })
+    }
+    return baseColumns
+  }, [
+    nameFilter,
+    nameFilterOpen,
+    typeFilterOpen,
+    abilityFilterOpen,
+    selectedTypes,
+    abilities,
+    isSm,
+  ])
 
   const filteredPokemon = useMemo(
     () => pokemon.filter((p) => !excludedIds.includes(p.id)),
@@ -324,8 +339,8 @@ export default function PokemonList({
   }
 
   return (
-    <div className="flex flex-col justify-center items-center w-[700px] h-full">
-      <div className="min-w-[650px] min-h-[400px] h-full overflow-y-auto mx-5">
+    <div className="flex flex-col justify-center items-center w-full h-full">
+      <div className="h-full overflow-y-auto mx-5">
         <table className="w-full text-white border-collapse">
           <thead className="sticky top-0 bg-gray-900 z-10 text-xl">
             {table.getHeaderGroups().map((headerGroup) => (

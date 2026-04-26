@@ -28,6 +28,7 @@
   --font-poppins: 'Poppins', sans-serif;
 
   --breakpoint-mlg: 900px;
+  --breakpoint-xmd: 500px;
   --breakpoint-xs: 400px;
 }
 

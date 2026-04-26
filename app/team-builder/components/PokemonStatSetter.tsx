@@ -151,7 +151,7 @@ export default function PokemonStatSetter({
   }
 
   return (
-    <div className="flex flex-col items-center w-[600px] overflow-y-auto h-full gap-6">
+    <div className="flex flex-col items-center w-full overflow-y-auto h-full gap-6">
       {isLoading ? (
         <div className="flex items-center justify-center h-full">
           <motion.div
@@ -176,6 +176,7 @@ export default function PokemonStatSetter({
           <>
             <div className="flex flex-col items-center justify-center text-white">
               <img
+                className="max-sm:w-auto max-sm:h-50"
                 src={
                   selectedPokemon.sprites.other.showdown.front_default ||
                   selectedPokemon.sprites.front_default ||
@@ -210,7 +211,7 @@ export default function PokemonStatSetter({
             </div>
 
             {/* Set Pokemon EVs Distribution */}
-            <div className="w-full bg-gray-800 rounded-lg p-6 shadow-lg">
+            <div className="w-full bg-gray-900 rounded-lg p-6 shadow-lg">
               <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold text-white">
                   Stat Distribution
@@ -342,7 +343,7 @@ export default function PokemonStatSetter({
             </div>
 
             {/* Set Pokemon Moves */}
-            <div className="w-full bg-gray-800 rounded-lg p-6 shadow-lg">
+            <div className="w-full bg-gray-900 rounded-lg p-6 shadow-lg">
               <div className="flex flex-col justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold text-white">Moves</h1>
                 {selectedPokemon.moves && (

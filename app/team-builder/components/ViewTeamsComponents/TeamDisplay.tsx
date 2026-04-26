@@ -10,7 +10,7 @@ interface TeamDisplayProps {
 
 const TeamDisplay = ({ onSetAcive, onDelete, team }: TeamDisplayProps) => {
   return (
-    <div className="flex flex-col items-start px-3 py-3 bg-charmander-blue-900 border-charmander-blue-500 border-2 rounded-lg">
+    <div className="flex flex-col items-start px-3 py-3 mx-5 bg-charmander-blue-900 border-charmander-blue-500 border-2 rounded-lg">
       <div className="w-full flex flex-row items-center justify-between">
         <h1 className="text-white text-2xl">
           {team.name || `Untitled 0${team.id}`}
@@ -40,7 +40,7 @@ const TeamDisplay = ({ onSetAcive, onDelete, team }: TeamDisplayProps) => {
         </div>
       </div>
 
-      <div className="flex flex-row gap-3 items-center">
+      <div className="flex flex-row flex-wrap gap-3 items-center">
         {team.members.map((member) => (
           <button key={member.id} className="hover:scale-105 transition-all">
             <img
