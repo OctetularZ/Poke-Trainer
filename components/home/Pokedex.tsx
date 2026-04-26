@@ -68,9 +68,9 @@ const Pokedex = () => {
 
   return (
     <section id={"pokedex"} className="flex flex-col items-center">
-      <div className="flex flex-row flex-wrap justify-center pb-20 gap-40 items-center pt-30">
+      <div className="flex flex-row flex-wrap justify-center pb-20 gap-40 items-center pt-20 px-10 max-xl:gap-15">
         <div className="flex flex-col justify-center items-center max-w-150">
-          <h1 className="text-white text-5xl pb-5">Pokédex</h1>
+          <h1 className="text-white text-center text-5xl pb-5">Pokédex</h1>
           <h2 className="text-white/60 text-xl text-center text-highlight">
             Explore all Pokémon species in one place with the Pokédex. Search by
             name, type, or abilities and instantly pull up the information you
@@ -98,7 +98,7 @@ const Pokedex = () => {
               </motion.button>
             </Link>
             <motion.div
-              className="-z-5"
+              className="-z-5 max-sm:hidden"
               variants={arrowVariants}
               initial="initial"
               animate={hovered ? "hover" : "initial"}

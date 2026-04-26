@@ -14,16 +14,16 @@ const Battle = () => {
 
   return (
     <section id={"battle"} className="flex flex-col items-center">
-      <div className="flex flex-row flex-wrap justify-center pb-20 gap-30 items-center pt-30">
+      <div className="flex flex-row flex-wrap justify-center pb-20 gap-30 items-center pt-20 px-10 max-xl:gap-15">
         <div className="flex flex-col justify-center items-center border-2 border-charmander-blue-400 rounded-lg">
           <img
-            className="w-auto h-125"
+            className="w-auto h-125 max-sm:h-90"
             src={"/home/battle-preview.png"}
             alt="Team Preview Image"
           />
         </div>
         <div className="flex flex-col justify-center items-center max-w-150">
-          <h1 className="text-white text-5xl pb-5">Battle</h1>
+          <h1 className="text-white text-center text-5xl pb-5">Battle</h1>
           <h2 className="text-white/60 text-xl text-center text-highlight">
             <span className="text-white">
               Enter the arena and put your team to the test in 6v6 Pokémon
@@ -52,7 +52,7 @@ const Battle = () => {
               </motion.button>
             </Link>
             <motion.div
-              className="-z-5"
+              className="-z-5 max-sm:hidden"
               variants={arrowVariants}
               initial="initial"
               animate={hovered ? "hover" : "initial"}

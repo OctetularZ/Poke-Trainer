@@ -37,8 +37,8 @@ const GuessThePokemon = () => {
 
   return (
     <section id={"guess-the-pokemon"} className="flex flex-col items-center">
-      <div className="flex flex-row flex-wrap justify-center pb-20 gap-40 items-center pt-30">
-        <div className="flex flex-col justify-center items-center border-2 border-amber-100 bg-gray-700 rounded-xl p-20">
+      <div className="flex flex-row flex-wrap justify-center pb-20 gap-40 items-center pt-20 px-10 max-xl:gap-15">
+        <div className="flex flex-col justify-center items-center border-2 border-amber-100 bg-gray-700 rounded-xl p-20 max-sm:p-15">
           {loading ? (
             <motion.div
               className="mt-5"
@@ -59,7 +59,7 @@ const GuessThePokemon = () => {
             </motion.div>
           ) : (
             <img
-              className="w-auto h-50 brightness-0"
+              className="w-auto h-50 brightness-0 max-sm:h-30"
               src={
                 showcasePokemon?.sprites.other.showdown.front_default ||
                 showcasePokemon?.sprites.front_default ||
@@ -69,7 +69,9 @@ const GuessThePokemon = () => {
           )}
         </div>
         <div className="flex flex-col justify-center items-center max-w-150">
-          <h1 className="text-white text-5xl pb-5">Guess The Pokémon</h1>
+          <h1 className="text-white text-center text-5xl pb-5">
+            Guess The Pokémon
+          </h1>
           <h2 className="text-white/60 text-xl text-center text-highlight">
             <mark>Test your Pokédex knowledge</mark> in the Guess The Pokémon
             mini game. Identify Pokémon from their silhouettes and clues (should
@@ -97,7 +99,7 @@ const GuessThePokemon = () => {
               </motion.button>
             </Link>
             <motion.div
-              className="-z-5"
+              className="-z-5 max-sm:hidden"
               variants={arrowVariants}
               initial="initial"
               animate={hovered ? "hover" : "initial"}

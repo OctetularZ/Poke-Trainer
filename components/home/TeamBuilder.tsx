@@ -15,9 +15,9 @@ const TeamBuilder = () => {
 
   return (
     <section id={"team-builder"} className="flex flex-col items-center">
-      <div className="flex flex-row flex-wrap justify-center pb-20 gap-20 items-center pt-30">
+      <div className="flex flex-row flex-wrap justify-center pb-20 gap-20 items-center pt-20 px-10">
         <div className="flex flex-col justify-center items-center max-w-150">
-          <h1 className="text-white text-5xl pb-5">Team Builder</h1>
+          <h1 className="text-white text-center text-5xl pb-5">Team Builder</h1>
           <h2 className="text-white/60 text-xl text-center text-highlight">
             <span className="text-white">Build your ultimate squad</span> with
             the Team Builder. Pick your favourite Pokémon or simply build the
@@ -45,7 +45,7 @@ const TeamBuilder = () => {
               </motion.button>
             </Link>
             <motion.div
-              className="-z-5"
+              className="-z-5 max-sm:hidden"
               variants={arrowVariants}
               initial="initial"
               animate={hovered ? "hover" : "initial"}
@@ -56,7 +56,7 @@ const TeamBuilder = () => {
         </div>
         <div className="flex flex-col justify-center items-center border-2 border-charmander-blue-400 rounded-lg">
           <img
-            className="w-auto h-75"
+            className="w-auto h-75 max-sm:h-50"
             src={"/home/team-builder-preview.png"}
             alt="Team Preview Image"
           />
