@@ -210,7 +210,7 @@ const GTPContainer = () => {
   }, [wrongGuesses, baseName, formName])
 
   return (
-    <div className="flex w-full h-full flex-row justify-center items-center mt-20 mb-20 gap-10">
+    <div className="flex w-full h-full flex-row max-lg:flex-col justify-center items-center mt-20 mb-20 gap-10">
       <PokemonImage
         loading={loading}
         spriteImageUrl={
@@ -222,8 +222,8 @@ const GTPContainer = () => {
         formNameCompleted={formNameCompleted}
         gameOver={gameOver}
       />
-      <div className="flex flex-col items-center">
-        <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="flex flex-col items-center max-sm:w-75">
+        <div className="grid grid-cols-2 gap-4 mb-4 max-xs:gap-0">
           <div className="flex flex-row gap-2 items-center">
             <h2 className="text-white text-3xl font-bold">Coins: </h2>
             <h4 className="text-white text-4xl font-bold">{coins}</h4>
@@ -267,9 +267,8 @@ const GTPContainer = () => {
         {/* 2nd Hint - Game Description */}
         {wrongGuesses >= 3 && (
           <div className="flex flex-row gap-3 mb-4">
-            <h1 className="text-white text-2xl">Hint 2:</h1>
-            <h2 className="text-white text-2xl max-w-75 line-clamp-2">
-              {pokemonInfo?.gameDescriptions?.[0]?.description || ""}
+            <h2 className="text-white text-2xl max-w-100 line-clamp-2 max-sm:text-center">
+              Hint 2: {pokemonInfo?.gameDescriptions?.[0]?.description || ""}
             </h2>
           </div>
         )}
@@ -277,7 +276,7 @@ const GTPContainer = () => {
         {/* 3rd Hint - Random letter revealed */}
         {wrongGuesses >= 4 && (
           <div className="flex flex-row gap-3 mb-4">
-            <h1 className="text-white text-2xl">
+            <h1 className="text-white text-2xl max-sm:text-center">
               Hint 3: Random Letter Revealed!
             </h1>
           </div>

@@ -15,7 +15,7 @@ const LetterGrid = ({
   gameOver,
 }: LetterGridProps) => {
   return (
-    <div className="flex flex-row flex-wrap justify-center items-center max-w-100 gap-2">
+    <div className="flex flex-row flex-wrap justify-center items-center max-w-100 max-sm:px-3 gap-2">
       {alphabet.map((letter) => (
         <LetterBox
           key={letter}
