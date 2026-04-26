@@ -370,7 +370,7 @@ export default function BattlePage() {
 
   return (
     <div className="w-full">
-      <div className="mx-auto max-w-[80rem] w-full flex flex-row items-start mt-10 px-4 gap-5">
+      <div className="mx-auto max-w-[80rem] w-full flex flex-row max-xl:flex-col max-xl:w-200 items-start max-xl:self-center mt-10 px-4 gap-5">
         <div className="flex flex-col w-full gap-5">
           <Stage
             turnNumber={state.turn}
@@ -442,7 +442,7 @@ export default function BattlePage() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-col items-start gap-2 max-xl:w-full max-xl:mb-10">
           <h1 className="text-white text-2xl">Battle Log</h1>
           <BattleLog battleLog={state.battleLog} />
         </div>

@@ -18,7 +18,7 @@ const BattleLog = ({ battleLog }: BattleLogProps) => {
   return (
     <div
       ref={logRef}
-      className="w-115 h-123 overflow-y-auto border-2 border-charmander-blue-400 rounded"
+      className="w-115 max-xl:w-full h-123 overflow-y-auto border-2 border-charmander-blue-400 rounded"
     >
       {battleLog.map((entry, index) =>
         entry.kind === "turn" ? (
