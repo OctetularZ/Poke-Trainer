@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+// Gets a list of all Pokémon names and slugs from the database
 export async function GET() {
   try {
     const pokemon = await prisma.pokemon.findMany({

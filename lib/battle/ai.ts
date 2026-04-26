@@ -1,5 +1,6 @@
 import { BattleAction, BattleState } from "./types"
 
+// Checks if Pokémon can switch
 function canSwitch(state: BattleState, side: "ai" | "player", toIndex: number) {
   const team = state[side].pokemon
   const activeIndex = state[side].activeIndex

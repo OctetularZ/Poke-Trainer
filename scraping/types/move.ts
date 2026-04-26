@@ -1,3 +1,5 @@
+// TypeScript interfaces for Scraped Moves
+
 export interface ScrapedMove {
   'Name': string,
   'Effect': string,

@@ -63,8 +63,7 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 - [x] Build Pokédex with dynamic routing for Pokémon pages
 - [x] Configure BetterAuth for authentication
 - [x] Integrate Prisma with PostgreSQL
-- [ ] Connect AWS S3 for cloud storage
-- [ ] Implement "Guess the Pokémon" mini-game
-- [ ] Add Pokémon battle simulator with AI logic
+- [x] Implement "Guess the Pokémon" mini-game
+- [x] Add Pokémon battle simulator with AI logic
 - [x] Polish UI with Tailwind CSS
-- [ ] Deploy to Vercel
+- [x] Deploy to Vercel

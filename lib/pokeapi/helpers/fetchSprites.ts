@@ -1,5 +1,6 @@
 import { PokemonSprites } from "@/types/pokemon";
 
+// Fetches a Pokémon's sprites from PokéAPI using its PokéAPI Id
 export async function fetchSprites(pokeapiId: number): Promise<PokemonSprites | undefined> {
   try {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokeapiId}/`);

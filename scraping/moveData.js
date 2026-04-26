@@ -1,6 +1,9 @@
 import axios from "./axiosInstance.js"
 import * as cheerio from "cheerio";
 
+// This file has the exact same function as PokemonData.js but for moves.
+// List of all moves and links are fetched, then their pages are further investigated to fetch all the data, similalry to PokémonData.js.
+
 const url = "https://pokemondb.net/move/all"
 
 export async function getMoveList() {

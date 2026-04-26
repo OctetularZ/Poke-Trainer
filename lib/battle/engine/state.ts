@@ -1,5 +1,6 @@
 import { BattleState } from "../types";
 
+// Clones state (allows it to be edited before applying on frontend)
 export function cloneState(state: BattleState): BattleState {
   return {
     ...state,

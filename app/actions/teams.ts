@@ -6,6 +6,7 @@ import { headers } from 'next/headers'
 import { PokemonSprites } from "@/types/pokemon"
 import { fetchSprites } from "@/lib/pokeapi/helpers/fetchSprites"
 
+// Saves Pokémon Teams to the DB user profile
 export async function saveTeam(team: PokemonBuild[], teamName?: string) {
   const session = await auth.api.getSession({
     headers: await headers()
@@ -15,11 +16,13 @@ export async function saveTeam(team: PokemonBuild[], teamName?: string) {
     throw new Error('Unauthorized')
   }
 
+  // Sets all teams to inactive
   const setAllInactive = await prisma.team.updateMany({
     where: { userId: session.user.id},
     data: {active: false}
   })
 
+  // Saves the new team to DB and also sets the new team to the active team
   const savedTeam = await prisma.team.create({
     data: {
       userId: session.user.id,
@@ -51,6 +54,7 @@ export async function saveTeam(team: PokemonBuild[], teamName?: string) {
   return { success: true, teamId: savedTeam.id }
 }
 
+// Fetches all the user's Pokémon teams
 export async function fetchTeams() {
   const session = await auth.api.getSession({
     headers: await headers()
@@ -117,6 +121,7 @@ export async function fetchTeams() {
   return teamsWithSprites
 }
 
+// Fetches the user's active Pokémon team and returns as TeamMembers
 export async function fetchUserTeam(): Promise<TeamMember[]> {
   const session = await auth.api.getSession({
     headers: await headers()
@@ -218,6 +223,7 @@ export async function fetchUserTeam(): Promise<TeamMember[]> {
   return teamWithSprites.members as TeamMember[]
 }
 
+// Fetches the AI Pokémon team and returns as TeamMembers
 export async function fetchAiTeam(): Promise<TeamMember[]> {
   const userTeam = await prisma.team.findFirst({
     where: { userId: "q2veEcTgqLbp95prC7GjFgWfRvfIS6kh" },
@@ -310,6 +316,7 @@ export async function fetchAiTeam(): Promise<TeamMember[]> {
   return teamWithSprites.members as TeamMember[]
 }
 
+// Sets a user's pokémon to active using Id
 export async function setActiveTeam(teamId: number) {
   const session = await auth.api.getSession({
     headers: await headers()
@@ -319,11 +326,13 @@ export async function setActiveTeam(teamId: number) {
     throw new Error('Unauthorized')
   }
 
+  // Sets all teams to inactive
   const setAllInactive = await prisma.team.updateMany({
     where: { userId: session.user.id},
     data: {active: false}
   })
 
+  // Then sets the new team to active using ID
   const setTeamToActive = await prisma.team.update({
     where: {id: teamId, userId: session.user.id},
     data: {active: true}
@@ -332,6 +341,7 @@ export async function setActiveTeam(teamId: number) {
   return { success: true, teamId: teamId }
 }
 
+// Deletes a user team from the database using ID
 export async function deleteTeam(teamId: number) {
   const session = await auth.api.getSession({
     headers: await headers()

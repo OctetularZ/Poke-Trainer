@@ -27,6 +27,9 @@
 //   speedMax?: number
 // }
 
+
+// TypeScript interfaces for scraped Pokémon
+
 export interface ScrapedPokemon {
   Name: string,
   Forms: string[],

@@ -3,6 +3,8 @@ import { GameMove, Move } from "./moves"
 import { Pokemon, PokemonSprites } from "./pokemon"
 import { PokemonType } from "./type"
 
+// Typesript interfaces for User Pokémon teams
+
 export interface PokemonBuild {
   pokemon: Pokemon
   nature: string

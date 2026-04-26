@@ -4,16 +4,19 @@ import { getActivePokemon, hasAvailablePokemon, isPokemonFainted } from "./pokem
 import { applySwitch, getAvailableSwitchIndexes } from "./switch"
 import { applyAttack, getPokemonLabel } from "./move"
 
+// Gets Pokémon effective speed as speed is dynamic in Pokémon
 export function getEffectiveSpeed(pokemon: BattlePokemon) {
   const speedStage = pokemon.statStages?.speed ?? 0
   return Math.floor(pokemon.speed * getStageMultiplier(speedStage))
 }
 
+// Gets chance of Pokémon waking up each turn
 export function wakeUpChance(sleepTurnsElapsed: number){
   const safeTurns = Math.max(0, sleepTurnsElapsed)
   return Math.min(100, (safeTurns / 3) * 100)
 }
 
+// Determines which Pokémon moves first based on priority of action
 export function actionPriority(state: BattleState, action: BattleAction) {
   if (action.type === "switch") return 10
 
@@ -22,6 +25,7 @@ export function actionPriority(state: BattleState, action: BattleAction) {
   return move?.priority ?? 0
 }
 
+// Determines which Pokémon should act first
 export function shouldActFirst(state: BattleState, first: BattleAction, second: BattleAction) {
   const firstPriority = actionPriority(state, first)
   const secondPriority = actionPriority(state, second)
@@ -40,6 +44,7 @@ export function shouldActFirst(state: BattleState, first: BattleAction, second: 
   return Math.random() >= 0.5
 }
 
+// Resolves Pokémon actions
 export function resolveAction(state: BattleState, action: BattleAction, events: string[]) {
   if (action.type === "switch") {
     applySwitch(state, action.side, action.toIndex, events)
@@ -47,18 +52,21 @@ export function resolveAction(state: BattleState, action: BattleAction, events: 
   }
 
   const actor = getActivePokemon(state, action.side)
+  // Checks if Pokémon is fainted, therefore it cannot act
   const actorLabel = getPokemonLabel(action.side, actor.name)
   if (isPokemonFainted(actor)) {
     events.push(`${actorLabel} couldn't move because it has fainted.`)
     return
   }
 
+  // Checks if Pokémon is flinched, therefore it cannot act
   if (actor.flinched) {
     actor.flinched = false
     events.push(`${actorLabel} flinched and couldn't move!`)
     return
   }
 
+  // Checks if Pokémon is paralysed, therefore it cannot act
   if (actor.status === "paralysis") {
     const isFullyParalyzed = shouldApplyChance(25) // 25% chance to have turn skipped with paralysis.
     if (isFullyParalyzed) {
@@ -67,6 +75,7 @@ export function resolveAction(state: BattleState, action: BattleAction, events: 
     }
   }
 
+  // Checks if Pokémon is frozen, therefore it cannot act
   if (actor.status === "freeze") {
     const isStillFrozen = shouldApplyChance(80) // 80% chance to stay frozen, and 20% to thaw out each turn.
     if (isStillFrozen) {
@@ -79,6 +88,7 @@ export function resolveAction(state: BattleState, action: BattleAction, events: 
     }
   }
 
+  // Checks if Pokémon is asleep, therefore it cannot act
   if (actor.status === "sleep") {
     const chance = wakeUpChance(actor.sleepTurnsElapsed ?? 0)
     const wokeUp = shouldApplyChance(chance)
@@ -95,9 +105,11 @@ export function resolveAction(state: BattleState, action: BattleAction, events: 
     }
   }
 
+  // Otherwise apply attack/move
   applyAttack(state, action.side, action.moveIndex, events)
 }
 
+// Clear effects which are volatile
 export function clearTurnVolatileFlags(state: BattleState) {
   state.player.pokemon.forEach((pokemon) => {
     pokemon.flinched = false
@@ -108,6 +120,7 @@ export function clearTurnVolatileFlags(state: BattleState) {
   })
 }
 
+// Forces AI to switch if active Pokémon fainted
 export function forceAiSwitchIfFainted(state: BattleState, events: string[]) {
   if (state.winner) return
 
@@ -130,6 +143,7 @@ export function forceAiSwitchIfFainted(state: BattleState, events: string[]) {
   }
 }
 
+// Checks if a winner can be set
 export function setWinner(state: BattleState, winner: BattleSide, events: string[]) {
   if (state.winner) return
 
@@ -137,6 +151,7 @@ export function setWinner(state: BattleState, winner: BattleSide, events: string
   events.push(winner === "player" ? "You won!" : "Opponent has won!")
 }
 
+// Sets a winner if one side has all Pokémon fainted, opposite side is winner
 export function trySetWinnerIfNoPokemon(state: BattleState, events: string[]) {
   if (!hasAvailablePokemon(state, "player")) {
     setWinner(state, "ai", events)

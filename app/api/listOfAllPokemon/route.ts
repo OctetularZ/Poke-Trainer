@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPokemonListFull } from "@/lib/pokeapi/pokemon"
 
+// Gets a list of all Pokémon
+
+// Takes a limit, incremental, and type and ability filters
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const limit = parseInt(searchParams.get("limit") || "50", 10)

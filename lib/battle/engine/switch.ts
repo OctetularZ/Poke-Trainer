@@ -12,6 +12,7 @@ const DEFAULT_STAT_STAGES: BattleStatStages = {
   evasion: 0
 }
 
+// Handles forced switch actions for both sides, if active Pokémon has fainted during a turn.
 export function handleForcedSwitch(currentState: BattleState, side: BattleSide, toIndex: number) {
   const state = cloneState(currentState)
   const events: string[] = []
@@ -25,6 +26,7 @@ export function handleForcedSwitch(currentState: BattleState, side: BattleSide, 
   return {state, events}
 }
 
+// Applies a switch action
 export function applySwitch(state: BattleState, side: BattleSide, toIndex: number, events: string[]) {
   const current = state[side]
   const sideLabel = side === "player" ? "You" : "AI"
@@ -34,6 +36,7 @@ export function applySwitch(state: BattleState, side: BattleSide, toIndex: numbe
   }
   const target = current.pokemon[toIndex]
 
+  // Ensures no switching to fainted Pokémon
   if (!target || isPokemonFainted(target) || toIndex === current.activeIndex) {
     events.push(`${sideLabel} failed to switch.`)
     return
@@ -43,6 +46,7 @@ export function applySwitch(state: BattleState, side: BattleSide, toIndex: numbe
   events.push(`${sideLabel} switched to ${target.name}.`)
 }
 
+// Gets available Pokémon which can be switched into (non fainted Pokémon)
 export function getAvailableSwitchIndexes(state: BattleState, side: BattleSide) {
   const team = state[side]
 

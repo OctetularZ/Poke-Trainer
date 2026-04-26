@@ -1,8 +1,13 @@
 import axios from "./axiosInstance.js"
 import * as cheerio from "cheerio";
 
+/* 
+This file scraped all the Pokémon data from PokémonDatabase website so it could stored later into the database.
+*/
+
 const url = "https://pokemondb.net/pokedex/all"
 
+// Fetches all the names for Pokémon and gets their link so their further details can be investigated.
 export async function getPokemonList() {
   const { data } = await axios.get(url);
   const $ = cheerio.load(data);
@@ -24,6 +29,7 @@ export async function getPokemonList() {
   return pokemon;
 }
 
+// Goes through the Pokémon page to get all needed details of them.
 export async function scrapePokemonDetails(baseName, fName, url) {
   const { data } = await axios.get(url);
   const $ = cheerio.load(data);

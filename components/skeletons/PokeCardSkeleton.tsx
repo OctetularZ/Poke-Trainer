@@ -2,6 +2,8 @@ import Link from "next/link"
 import Image from "next/image"
 import React from "react"
 
+// A loading skelelton which is used for a loading PokémonCard
+
 const PokeCardSkeleton = () => {
   return (
     <Link href={"#"}>

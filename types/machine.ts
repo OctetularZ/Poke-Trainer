@@ -1,3 +1,5 @@
+// Typesript interfaces for Pokémon machines
+
 // export interface Machine {
 //   id: number,
 //   item: {name: string, url: string},

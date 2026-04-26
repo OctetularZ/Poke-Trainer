@@ -13,6 +13,7 @@ export function getPokemonLabel(side: BattleSide, name: string) {
   return side === "player" ? `Your ${name}` : `Opposing ${name}`
 }
 
+// Applies effects from a used move
 function applyMoveEffects(
   attacker: BattlePokemon,
   defender: BattlePokemon,
@@ -43,6 +44,7 @@ function applyMoveEffects(
       continue
     }
 
+    // Applies effect based on effect codes
     if (effect.code === "flinch") {
       for (const target of targets) {
         if (isPokemonFainted(target)) continue
@@ -129,6 +131,7 @@ function applyMoveEffects(
   }
 }
 
+// Gets the move effects from the move
 export function getMoveEffects(move: BattlePokemon["moves"][number]): BattleEffect[] {
   if (move.effectList?.length) {
     return move.effectList
@@ -149,6 +152,7 @@ export function getMoveEffects(move: BattlePokemon["moves"][number]): BattleEffe
   ]
 }
 
+// Applies the attack from the move. Damage.
 export function applyAttack(
   state: BattleState,
   side: BattleSide,
@@ -168,6 +172,7 @@ export function applyAttack(
     return
   }
 
+  // Checks if move can still be used.
   if (move.remainingPP != null) {
     if (move.remainingPP <= 0) {
       events.push(`${actorLabel} has no PP left for ${move.name}.`)
@@ -195,6 +200,7 @@ export function applyAttack(
 
   events.push(`${actorLabel} used ${move.name} for ${result.damage} damage.`)
 
+  // Displays a unique message based on how effective the move was or if a certain happened.
   if (result.wasCritical) {
     events.push("A critical hit!")
   }

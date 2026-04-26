@@ -75,6 +75,7 @@ const EMPTY_RESULT: ShowdownMappingResult = {
   effectData: null,
 }
 
+// Map showdown's stat abbreviations to full names
 const STAT_KEY_MAP: Record<string, MoveStat> = {
   atk: "attack",
   def: "defense",
@@ -85,6 +86,7 @@ const STAT_KEY_MAP: Record<string, MoveStat> = {
   evasion: "evasion",
 }
 
+// Normalises names for consistency
 export function toMoveId(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "")
 }
@@ -107,6 +109,7 @@ export async function loadShowdownMovesIndex(filePath = "scraping/moves.json") {
   return index
 }
 
+// Converts showdown abbreviations to full status effect names
 function mapStatus(status: string | undefined) {
   switch (status) {
     case "brn":
@@ -126,6 +129,7 @@ function mapStatus(status: string | undefined) {
   }
 }
 
+// Groups Showdown targets to broader descriptions
 function mapTarget(target: string | undefined): MoveEffectTarget {
   if (!target) return "target"
 
@@ -144,6 +148,7 @@ function mapTarget(target: string | undefined): MoveEffectTarget {
   return "target"
 }
 
+// Converts Showdown stat boots to a more consistent effect format
 function mapBoosts(boosts: ShowdownBoosts | undefined, target: MoveEffectTarget, chance: number | null) {
   if (!boosts) return null
 
@@ -167,6 +172,7 @@ function mapBoosts(boosts: ShowdownBoosts | undefined, target: MoveEffectTarget,
   } as NormalizedEffect
 }
 
+// Handles volatile effects separaretly
 function mapVolatileStatus(volatileStatus: string | undefined, chance: number | null, target: MoveEffectTarget) {
   if (!volatileStatus) return null
 
@@ -201,6 +207,7 @@ function addEffect(effects: NormalizedEffect[], effect: NormalizedEffect | null)
   effects.push(effect)
 }
 
+// Remove duplicates effect as Showdown can store the same effect in multiple fields
 function dedupeEffects(effects: NormalizedEffect[]) {
   const seen = new Set<string>()
 
@@ -212,6 +219,7 @@ function dedupeEffects(effects: NormalizedEffect[]) {
   })
 }
 
+// Store raw data for moves which couldn't be mapped so they are not lost.
 function buildShowdownRawData(move: ShowdownMove, moveId: string) {
   const data: Record<string, unknown> = {
     moveId,
@@ -248,6 +256,12 @@ function buildShowdownRawData(move: ShowdownMove, moveId: string) {
 
   return data
 }
+
+/**
+ * Converts Pokémon Showdown move data into a simplified internal effect format.
+ * 
+ * This was done so I could store them into my database in a preferrable format.
+ */
 
 export function mapShowdownMoveEffects(move: ShowdownMove): ShowdownMappingResult {
   const effects: NormalizedEffect[] = []
@@ -319,6 +333,7 @@ export function mapShowdownMoveEffects(move: ShowdownMove): ShowdownMappingResul
   }
 
   if (move.flags?.charge) {
+    // Solar beam and blade handled separarelty as they are unique
     const isSolarMove = moveId === "solarbeam" || moveId === "solarblade"
 
     addEffect(effects, {
@@ -495,6 +510,7 @@ export function mapShowdownMoveEffects(move: ShowdownMove): ShowdownMappingResul
     })
   }
 
+  // Process secondary effect as they have their own chance values
   const allSecondaries = [move.secondary, ...(move.secondaries ?? [])].filter(Boolean) as ShowdownSecondary[]
   for (const secondary of allSecondaries) {
     const chance = secondary.chance ?? null
@@ -516,6 +532,7 @@ export function mapShowdownMoveEffects(move: ShowdownMove): ShowdownMappingResul
 
   let effectList = dedupeEffects(effects)
 
+  // Fallback to raw showdown data
   if (effectList.length === 0) {
     effectList = [
       {

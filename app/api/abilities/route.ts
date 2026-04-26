@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+// Fetches a list of all Pokémon abilities (name and Id)
 export async function GET() {
   try {
     const abilities = await prisma.pokemonAbility.findMany({

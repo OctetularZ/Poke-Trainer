@@ -5,6 +5,8 @@ import { PokemonStats } from "./stats";
 import { TypeEffectiveness } from "./type";
 import { EvolutionTree } from "./evolution";
 
+// Typesript interface for Pokémon
+
 export interface Pokemon {
   id: number,
   slug: string,

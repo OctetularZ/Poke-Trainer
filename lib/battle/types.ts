@@ -1,6 +1,8 @@
 import { Prisma } from "@/app/generated/prisma/client"
 import { PokemonSprites } from "@/types/pokemon"
 
+// Interfaces and types for Pokémon battles
+
 export type BattleSide = "player" | "ai"
 export type BattleEffectTarget = "self" | "target" | "both" | "field" | null
 export type BattleStatus = "burn" | "poison" | "badly_poison" | "paralysis" | "sleep" | "freeze"

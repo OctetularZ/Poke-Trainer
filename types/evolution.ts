@@ -1,6 +1,8 @@
 import { PokemonSprites } from "./pokemon"
 import { PokemonType } from "./type"
 
+// Typesript interfaces for Pokémon evolutions
+
 export interface EvolutionTree {
   id: number,
   name: string,

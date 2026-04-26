@@ -3,6 +3,7 @@ import { EvolutionTree } from "@/types/evolution";
 import { Pokemon } from "@/types/pokemon";
 import { fetchSprites } from "./helpers/fetchSprites";
 
+// Gets a Pokémon's evolution if any
 export async function getPokemonWithEvolution(pokemonId: number): Promise<Pokemon> {
   const pokemon = await prisma.pokemon.findUnique({
     where: { id: pokemonId },
@@ -47,7 +48,7 @@ export async function getPokemonWithEvolution(pokemonId: number): Promise<Pokemo
   } as Pokemon
 }
 
-
+// Gets a Pokémon's full evolution chain
 export async function getFullEvolutionChain(pokemonId: number): Promise<EvolutionTree> {
   // Find the base Pokemon (traverse backwards)
   let base = await getPokemonWithEvolution(pokemonId)

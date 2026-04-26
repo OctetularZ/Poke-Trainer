@@ -1,6 +1,7 @@
 import { PokemonForm } from "@/types/form"
 import { getPokemonBasic } from "../pokemon";
 
+// Fetches forms of a Pokémon
 export const fetchPokemonForms = async (pokemonForms: PokemonForm[]) => {
   try {
     const pokemonFormPromises = pokemonForms.map((form) => {

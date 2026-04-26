@@ -1,5 +1,7 @@
 import axios from "axios";
 
+// Defines a global axios instance with a header to prevent being detected as spam.
+
 const axiosInstance = axios.create({
   headers: {
     "User-Agent":

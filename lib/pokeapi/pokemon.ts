@@ -4,6 +4,9 @@ import { getFullEvolutionChain } from "./evolution";
 import { fetchPokemonForms } from "./helpers/fetchPokemonForms";
 import { fetchSprites } from "./helpers/fetchSprites";
 
+// Functions for Pokémon-related database queries
+
+// Fetches basic Pokémon data such as name and types from the DB
 export async function getPokemonBasic(name?: string, slug?: string): Promise<Pokemon> {
   let pokemon = null;
   if (slug) {
@@ -52,6 +55,7 @@ export async function getPokemonBasic(name?: string, slug?: string): Promise<Pok
   } as Pokemon
 }
 
+// Fetches in-depth Pokémon information from the DB
 export async function getPokemonInfo(slug: string): Promise<Pokemon> {
   const pokemon = await prisma.pokemon.findUnique({
     where: {slug: slug},
@@ -174,6 +178,7 @@ export async function getPokemonInfo(slug: string): Promise<Pokemon> {
   } as Pokemon
 }
 
+// Fetches a random Pokémon from the DB
 export async function getRandomPokemon(): Promise<Pokemon> {
   const count = await prisma.pokemon.count()
   const skip = Math.floor(Math.random() * count)
@@ -298,6 +303,7 @@ export async function getRandomPokemon(): Promise<Pokemon> {
   } as Pokemon
 }
 
+// Fetches a list of Pokémon from the database with filters and incremental
 export async function getPokemonList(
   limit: number,
   offset: number,
@@ -383,6 +389,7 @@ export async function getPokemonList(
 
 }
 
+// Fetches a list of Pokémon from the database with filters and incremental but with more data than previous function
 export async function getPokemonListFull(
   limit: number,
   offset: number,

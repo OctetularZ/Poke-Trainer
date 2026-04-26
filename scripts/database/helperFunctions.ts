@@ -1,7 +1,7 @@
 // Gets the Pokemon's ID from PokeAPI to get the Pokemon's information (primarily - sprites/images) from PokeAPI too
 export async function getPokeApiId(pokemonName: string, formName?: string): Promise<number | null> {
   try {
-    // PokeAPI format (base name + form name) i.e.: "pikachu" + "alolan" → "pikachu-alola"
+    // Normalising to PokeAPI format (base name + form name) i.e.: "pikachu" + "alolan" → "pikachu-alola"
     const baseSlug = pokemonName
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')

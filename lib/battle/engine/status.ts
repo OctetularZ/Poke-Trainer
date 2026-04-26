@@ -2,13 +2,16 @@ import { BattleSide, BattleState } from "../types"
 import { getActivePokemon, hasAvailablePokemon, isPokemonFainted } from "./pokemon"
 import { getPokemonLabel } from "./move"
 
+// Calculates the damage from end of turn status effects
 function getResidualDamage(maxHp: number, divisor: number) {
   return Math.max(1, Math.floor(maxHp / divisor))
 }
 
+// Applies end of turn status effect damage
 export function applyEndOfTurnStatus(state: BattleState, events: string[]) {
   const sides: BattleSide[] = ["player", "ai"]
 
+  // Iterate through both sides at end of turn
   for (const side of sides) {
     const activePokemon = getActivePokemon(state, side)
     const actorLabel = getPokemonLabel(side, activePokemon.name)
@@ -20,6 +23,7 @@ export function applyEndOfTurnStatus(state: BattleState, events: string[]) {
     let damage = 0
     let sourceLabel = ""
 
+    // Check all damage sources (only one can be applied at a time)
     if (status === "poison" || status === "badly_poison") {
       damage = getResidualDamage(activePokemon.maxHp, 8)
       sourceLabel = "poison"
@@ -40,6 +44,7 @@ export function applyEndOfTurnStatus(state: BattleState, events: string[]) {
       events.push(`${actorLabel} was hurt by ${sourceLabel}.`)
     }
 
+    // Checks if Pokémon faints from damage triggering a switch
     if (activePokemon.currentHp === 0) {
       activePokemon.fainted = true
       events.push(`${actorLabel} has fainted!`)

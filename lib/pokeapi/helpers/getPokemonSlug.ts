@@ -1,6 +1,4 @@
-// TO:DO - Match Pokedex entries (descriptions) to Pokemon form (last thing - form based)
-// Fix infinite recursion on fetching Pokemon Evolutions
-// Add moves back to Pokemon Display
+// Creates a slug for the Pokémon which is used to uniquely identify them and search PokéAPI
 
 export function getPokemonSlug(name: string) {
   const match = name.match(/^(.+?)\s*\((.+)\)$/);

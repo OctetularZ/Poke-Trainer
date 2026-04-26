@@ -1,3 +1,5 @@
+// Typesript interfaces for Pokémon stats
+
 export interface PokemonStats {
   hpBase: number;
   hpMin: number;

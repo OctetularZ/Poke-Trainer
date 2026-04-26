@@ -4,6 +4,10 @@ import { BattleEffect, BattleMove, BattlePokemon } from "./types"
 const DEFAULT_LEVEL = 100
 const DEFAULT_IV = 31
 
+/* 
+These functions map Pokémon fetched from the database to Battle Pokémon/Teams to be used in battle engine
+*/
+
 const natureEffects: Record<
   string,
   {

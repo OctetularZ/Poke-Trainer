@@ -3,6 +3,8 @@
 import type { Prisma } from "@/app/generated/prisma/client"
 import { Game } from "./game"
 
+// Typesript interfaces for Pokémon moves
+
 export interface GameMove {
   id: number,
   method: string,

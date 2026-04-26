@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRandomPokemon } from "@/lib/pokeapi/pokemon"
 
+// Gets a random pokémon from the DB
 export async function GET(request: NextRequest) {
   try {
     const pokemon = await getRandomPokemon()

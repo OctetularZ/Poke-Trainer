@@ -33,6 +33,7 @@ export async function updateProfile(formData: FormData) {
   return { success: true }
 }
 
+// Gets a user's profile information from the DB
 export async function getUserProfile() {
   const session = await auth.api.getSession({
     headers: await headers()
@@ -52,6 +53,7 @@ export async function getUserProfile() {
     }
   })
 
+  // Throw error if user cannot be found
   if (!user) {
     throw new Error('User not found')
   }

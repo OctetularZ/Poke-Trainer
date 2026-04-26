@@ -19,6 +19,9 @@ import {
 import { handleForcedSwitch } from "./switch"
 import { applyEndOfTurnStatus } from "./status"
 
+// The core battle engine
+
+// Handles how turns are resolved.
 export function resolveTurn(
   currentState: BattleState,
   playerAction: BattleAction,
@@ -35,10 +38,12 @@ export function resolveTurn(
     },
   ]
 
+  // Determines order of actions based on speed, priority, etc.
   const orderedActions = shouldActFirst(state, playerAction, aiAction)
     ? [playerAction, aiAction]
     : [aiAction, playerAction]
 
+  // Resolves actions
   for (const action of orderedActions) {
     resolveAction(state, action, events)
 
@@ -61,6 +66,7 @@ export function resolveTurn(
   }
   clearTurnVolatileFlags(state)
 
+  // Adds logs to an array and increments turns by 1
   state.turn += 1
   turnLogEntries.push(
     ...events.map((event) => ({
@@ -77,6 +83,7 @@ export function resolveTurn(
   }
 }
 
+// Resolves the turn timeline
 export function resolveTurnTimeline(
   currentState: BattleState,
   playerAction: BattleAction,
@@ -104,6 +111,8 @@ export function resolveTurnTimeline(
       const move = actor.moves[action.moveIndex]
       const wasMoveUsed = latestEvents.some((event) => event.includes(" used "))
 
+      // Adds the steps of a move to an array to later be rendered in order. Done so effects can be rendered correctly.
+      // Otherwise function similar to resolveTurns
       if (wasMoveUsed) {
         steps.push({
           kind: "move",
@@ -198,6 +207,7 @@ export function resolveTurnTimeline(
   }
 }
 
+// Resolves forced switches on the timeline
 export function resolveForcedSwitchTimeline(currentState: BattleState, side: BattleSide, toIndex: number): TurnTimelineResolution {
   const prevIndex = currentState[side].activeIndex
   const {state, events} = handleForcedSwitch(currentState, side, toIndex)

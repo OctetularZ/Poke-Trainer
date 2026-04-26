@@ -30,6 +30,7 @@ export function asBattleStatus(value: unknown): BattleStatus | null {
   return null
 }
 
+// Applies stat changes if any happen from a move effect
 export function applyStatChanges(
   target: BattlePokemon,
   changes: Array<Record<string, unknown>>,
@@ -50,6 +51,7 @@ export function applyStatChanges(
     }
   }
 
+  // Moves can have multiple stat changes
   for (const change of changes) {
     const stat = change.stat
     const direction = change.direction
@@ -64,6 +66,7 @@ export function applyStatChanges(
       continue
     }
 
+    // Determines whether stats are being increased or decreases.
     const signedStages = direction === "down" ? -Math.abs(stages) : Math.abs(stages)
     const current = target.statStages[stat as keyof NonNullable<typeof target.statStages>]
     const next = Math.max(MIN_STAGE, Math.min(MAX_STAGE, current + signedStages))
@@ -87,6 +90,7 @@ export function applyStatChanges(
   }
 }
 
+// Applies status effects for moves such as poison/burn
 export function applyStatusEffect(
   target: BattlePokemon,
   status: BattleStatus,
@@ -122,6 +126,7 @@ export function applyStatusEffect(
   }
 }
 
+// Resolves which Pokémon are being targeted for effects.
 export function resolveEffectTargets(
   effectTarget: BattleEffectTarget,
   attacker: BattlePokemon,

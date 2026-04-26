@@ -57,6 +57,8 @@ async function main() {
       }
     }
 
+    // Uploads every scraped Pokémon to the database depending on what information I want to add or update in DB.
+    // This file changes a lot for whatever I want to update or add to the database so it is not worth commenting but this is the general idea
     await prisma.move.upsert({
       where: { name: m.Name },
       update: {

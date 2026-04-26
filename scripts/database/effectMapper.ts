@@ -1,6 +1,8 @@
 // This was my original approach to finding what move effects did for each move.
 // Luckily, I managed to find pokemon showdowns json version which helped out TREMENDOUSLY and saved me hours of coding
 
+// This file doesn't need to commented but left here for later use. This was not used for this submitted project.
+
 type MoveEffectTarget = "self" | "target" | "both" | "field"
 type MoveStatus = "burn" | "poison" | "paralysis" | "sleep" | "freeze"
 type MoveStat = 

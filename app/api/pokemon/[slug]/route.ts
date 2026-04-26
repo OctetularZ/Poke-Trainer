@@ -5,6 +5,7 @@ interface PokemonRouteProps {
   params: Promise<{ slug: string }>
 }
 
+// Get a pokémon information from the db using its unique slug
 export async function GET(request: NextRequest, {params}: PokemonRouteProps) {
   const { slug } = await params
 

@@ -1,3 +1,5 @@
+// Maps multipliers for Pokémon based on type
+
 const TYPE_CHART: Record<string, Record<string, number>> = {
   normal: { rock: 0.5, ghost: 0, steel: 0.5 },
   fire: {
@@ -153,6 +155,7 @@ const TYPE_CHART: Record<string, Record<string, number>> = {
   },
 }
 
+// Gets the type multiplier for Pokémon
 export function getTypeMultiplier(moveType: string, defenderTypes: string[]) {
   const attackType = moveType.toLowerCase()
 
