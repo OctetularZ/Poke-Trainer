@@ -53,8 +53,7 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 
 ## Project Status
 
-🚧 **Work in Progress** — Core pages and backend setup are underway.  
-Expect frequent updates as features are added.
+🚧 **Work in Progress (Working Link)** — [Poké Trainer](https://poke-trainer-omega.vercel.app/).
 
 ---
 
