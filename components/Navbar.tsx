@@ -28,6 +28,7 @@ const Navbar = () => {
         </button>
         <Link
           href="/"
+          onClick={() => setDropdownOpen(false)}
           className="hover:scale-105 transition-transform max-sm:mx-auto max-sm:justify-self-center"
         >
           <h1 className="flex items-center justify-center text-bold text-4xl max-xs:text-3xl">
