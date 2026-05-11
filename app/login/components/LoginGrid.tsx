@@ -8,8 +8,8 @@ import Link from "next/link"
 
 const LoginGrid = () => {
   return (
-    <div className="relative justify-self-center animate-pulse-blue w-200 h-100 rounded-lg">
-      <div className="flex flex-row justify-self-center gap-20 justify-center rounded-lg w-200 h-100 bg-charmander-dull-200">
+    <div className="relative justify-self-center animate-pulse-blue w-200 h-100 max-lg:h-full rounded-lg max-lg:w-full max-lg:mx-10">
+      <div className="flex flex-row max-lg:flex-col justify-self-center gap-20 justify-center rounded-lg w-200 h-100 max-lg:h-full max-lg:py-10 max-lg:items-center bg-charmander-dull-200 max-lg:w-full max-lg:mx-10">
         <div className="flex flex-col justify-center items-center w-[50%]">
           <Image
             className="-mr-20"
@@ -19,7 +19,7 @@ const LoginGrid = () => {
             alt="Mega Charizard X Sprite"
           />
         </div>
-        <div className="flex flex-col justify-center gap-3 items-center w-[50%] bg-charmander-blue-500 rounded-r-lg">
+        <div className="flex flex-col justify-center gap-3 items-center w-[50%] bg-charmander-blue-500 rounded-r-lg max-lg:rounded-lg max-lg:py-5">
           <h1 className="text-white text-center text-4xl mb-5">Login</h1>
           <div className="flex flex-col justify-center items-center gap-2 w-full">
             <button

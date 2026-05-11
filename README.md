@@ -17,15 +17,33 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
   <img src="/public/preview/Pokedex Complete.gif" />
 </p>
 
-### Pokemon Pages (In progress)
+### Pokemon Pages (Complete - Will add abilities soon)
 
 <p align="center">
-  <img src="/public/preview/PokemonPages MK1.gif" />
+  <img src="/public/preview/Pokemon Pages.gif" />
+</p>
+
+### "Guess The Pokémon" mini-game (Complete)
+
+<p align="center">
+  <img src="/public/preview/Guess The Pokemon.gif" />
+</p>
+
+### Team Builder (Complete - Working on responsiveness)
+
+<p align="center">
+  <img src="/public/preview/Team Builder.gif" />
+</p>
+
+### Battle (Complete - Working on responsiveness)
+
+<p align="center">
+  <img src="/public/preview/Battle.gif" />
 </p>
 
 ---
 
-## Features (Planned & In Progress)
+## Features (Implemented & In Progress)
 
 - **Pokédex** – Browse detailed information on every Pokémon.
 - **Pokémon Info** – Type, stats, abilities, evolutions, and more.
@@ -40,12 +58,12 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 
 ## Tech Stack
 
-- **Framework:** [Next.js](https://nextjs.org/)
+- **Framework:** [Next.js](https://nextjs.org/)/React.js
 - **Authentication:** Zod and [Better Auth](https://www.better-auth.com/)
 - **Database & ORM:** [PostgreSQL](https://www.postgresql.org/) + [Prisma](https://www.prisma.io/)
 - **Cloud Storage:** [AWS S3](https://aws.amazon.com/s3/) (might change)
 - **Web Scraping:** Node.js, Cheerio, Axios
-- **AI/ML:** Node.js (might change to Python)
+- **AI/ML:** Node.js/TypeCcript
 - **Styling:** Tailwind CSS
 - **Hosting:** Vercel
 
@@ -67,3 +85,12 @@ A **Next.js-powered companion website for Pokémon fans** — featuring a Pokéd
 - [x] Add Pokémon battle simulator with AI logic
 - [x] Polish UI with Tailwind CSS
 - [x] Deploy to Vercel
+
+## What I'm doing now
+
+- Working on responsiveness
+- Improving performance
+- Implementing Pokémon more battle mechanics (there's a LOT :/)
+- Working on more battle animations
+- Adding items and abilities in battles
+- Creating guides for playing Pokémon
